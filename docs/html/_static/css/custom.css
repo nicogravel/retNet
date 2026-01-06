@@ -1,0 +1,62 @@
+a[href='red'] {
+    color: red;
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+}
+.nbinput .prompt,
+.nboutput .prompt {
+    display: none;
+}
+.nboutput.stderr {
+    display: none;
+}
+
+a[href='red'] {
+    color: red;
+    pointer-events: none;
+    cursor: default;
+    text-decoration: none;
+}
+.nbinput .prompt,
+.nboutput .prompt {
+    display: none;
+}
+.nboutput.stderr {
+    display: none;
+}
+
+.documentwrapper {
+    display: flex;
+    gap: 50px;
+}
+
+.wy-nav-side {
+    left: calc(50vw - 600px);
+}
+
+.body {
+    margin-left: 80px !important;
+    max-width: 800px;
+    margin-right: 0;
+}
+
+.body {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.sphinxsidebar h3 {
+    margin-top: 20px; 
+}
+
+p img[alt="Julia"],
+div img[alt="Julia"],
+.document img[alt="Julia"] {
+    height: 2em !important;
+    max-height: 2em !important;
+    max-width: 2em !important;
+    width: auto !important;
+    vertical-align: text-bottom !important;
+    display: inline-block !important;
+}

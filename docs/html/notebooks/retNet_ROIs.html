@@ -1,0 +1,1207 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>2. Retinotopy-constrained ROI Network Extraction &#8212; retNet_fMRI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3. Multivariate Ornstein-Uhlenbeck Effective Connectivity" href="retNet_MOU.html" />
+    <link rel="prev" title="1. Human Connectome Project 7T fMRI Retinotopy Dataset" href="retNet_HCP.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p></p><h3>Table of Contents</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="retNet_HCP.html">1. Human Connectome Project 7T fMRI Retinotopy Dataset</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Retinotopy-constrained ROI Network Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Environment-setup-&amp;-pyCortex-configuration">2.1. Environment setup &amp; pyCortex configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Retinotopic-map-visualization">2.2. Retinotopic map visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Visual-field-selectivity-analysis">2.3. Visual field selectivity analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Download-status-check">2.4. Download status check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Wang-Kastner-ROIs">2.5. Wang-Kastner ROIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#retNet:-ROIs-from-V1/V2/V3-quarter-fields">2.6. retNet: ROIs from V1/V2/V3 quarter-fields</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_MOU.html">3. Multivariate Ornstein-Uhlenbeck Effective Connectivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_rDCM.html">4. Regression Dynamic Causal Modeling Effective Connectivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_model-cross-learning.html">5. Cross-task generalization between MOU and rDCM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_model-convergence.html">6. Convergence of MOU and rDCM derived EC</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="retNet_HCP.html" title="previous chapter"><span class="section-number">1. </span>Human Connectome Project 7T fMRI Retinotopy Dataset</a></li>
+      <li>Next: <a href="retNet_MOU.html" title="next chapter"><span class="section-number">3. </span>Multivariate Ornstein-Uhlenbeck Effective Connectivity</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="retNet_HCP.html" title="Previous document"><span class="section-number">1. </span>Human Connectome Project 7T fMRI Retinotopy Dataset</a>
+        </li>
+        <li>
+          <a href="retNet_MOU.html" title="Next document"><span class="section-number">3. </span>Multivariate Ornstein-Uhlenbeck Effective Connectivity</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <section id="Retinotopy-constrained-ROI-Network-Extraction">
+<h1><span class="section-number">2. </span>Retinotopy-constrained ROI Network Extraction<a class="headerlink" href="#Retinotopy-constrained-ROI-Network-Extraction" title="Permalink to this heading">¶</a></h1>
+<p>This notebook illustrates how to extract a network of region-of-interest (ROI) time series from visual cortex areas V1/V2/V3 defined by the Wang-Kastner atlas and the average population receptive field (pRF) maps included in the <strong>Human Connectome Project (HCP) 7T fMRI dataset</strong>.</p>
+<p>The processing pipeline consists of six stages: configuring the environment with pyCortex and neuroimaging libraries for the 59k fsaverage_LR surface space, visualizing HCP group-average retinotopy maps (181 subjects) with R² thresholding (10%) to mask unreliable voxels, analyzing visual field selectivity through polar angle histograms for quality control, checking download status of subjects with complete data (&gt;5GB), extracting mean time series from all 25 Wang-Kastner visual areas across 10
+scan types per subject (retinotopy stimulus, movie-watching, resting state) with z-scoring and R² masking, and subdividing V1/V2/V3 into 12 quarter-field subregions per hemisphere based on eccentricity bins (0-2° foveal, 2-6° para-foveal) and polar angle quadrants for fine-grained retinotopic connectivity analysis. Output is organized into Wang-Kastner/ directory for full 25-ROI time series and EVC/ directory for V1/V2/V3 quarter-field time series, saved as <code class="docutils literal notranslate"><span class="pre">.mat</span></code> files.</p>
+<p>The division between foveal and para-foveal bins is to approximate halves with similar cortical area. For details see following paper (Figure 6):</p>
+<p>Benson, N. C., Yoon, J. M. D., Forenzo, D., Engel, S. A., Kay, K. N., &amp; Winawer, J. (2022). <strong>Variability of the surface area of the V1, V2, and V3 maps in a large sample of human observers</strong>. Journal of Neuroscience, 42(46), 8629-8646. <a class="reference external" href="https://doi.org/10.1523/JNEUROSCI.0690-21.2022">https://doi.org/10.1523/JNEUROSCI.0690-21.2022</a></p>
+<p>The subdivision into 24 ROI encompasing foveal and para-foveal quarter-fields was originally introduced in:</p>
+<p>Gravel, N., Renken, R. J., Harvey, B. M., Deco, G., Cornelissen, F. W., &amp; Gilson, M. (2020). <strong>Propagation of BOLD activity reveals task-dependent directed interactions across human visual cortex</strong>. Cerebral Cortex, 30(11), 5899-5914. <a class="reference external" href="https://doi.org/10.1093/cercor/bhaa165">https://doi.org/10.1093/cercor/bhaa165</a></p>
+<section id="Environment-setup-&amp;-pyCortex-configuration">
+<h2><span class="section-number">2.1. </span>Environment setup &amp; pyCortex configuration<a class="headerlink" href="#Environment-setup-&-pyCortex-configuration" title="Permalink to this heading">¶</a></h2>
+<p>Configure pyCortex filestore with HCP template subject (hcp_999999) and import neuroimaging libraries for CIFTI file handling in 59k fsaverage_LR surface space.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">nibabel</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nb</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">nilearn.surface</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">surface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <span class="n">ListedColormap</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cortex</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">cortex.polyutils</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">cortex.options</span><span class="w"> </span><span class="kn">import</span> <span class="n">config</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">cortex</span><span class="o">.</span><span class="n">options</span><span class="o">.</span><span class="n">usercfg</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;basic&#39;</span><span class="p">,</span><span class="s1">&#39;filestore&#39;</span><span class="p">))</span>
+
+<span class="c1"># I expect to see RuntimeWarnings in this block</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;Mean of empty slice&#39;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;invalid value encountered in remainder&#39;</span><span class="p">)</span>
+
+
+<span class="c1"># HCP template subject</span>
+<span class="c1"># note: I used the connectome workbench to adapt some atlases. Specifically the following functions:</span>
+<span class="c1"># wb_command -cifti-separate</span>
+<span class="c1"># wb_command -metric-resample</span>
+<span class="c1"># wb_command -cifti-create-dense-scalar</span>
+<span class="c1">#</span>
+<span class="c1"># you the workbench in the path:</span>
+<span class="c1"># echo &#39;export PATH=$PATH:/Applications/workbench/bin_macosx64&#39; &gt;&gt; ~/.bashrc</span>
+<span class="c1"># source .bashrc</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">folder</span>  <span class="o">=</span> <span class="s1">&#39;/home/nicogravel/anaconda3/envs/py36/share/pycortex/db/hcp_999999/atlases&#39;</span>
+<span class="n">subject</span> <span class="o">=</span> <span class="s1">&#39;hcp_999999&#39;</span>
+<span class="c1">#bks    = &#39;/Users/nicogravel/piCortex/share/pycortex/db/hcp_999999/surfaces&#39;</span>
+<span class="c1">#surf   = &#39;/bks/100610.L.very_inflated_1.6mm_MSMAll.59k_fs_LR.surf.gii&#39;</span>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># HCP retinotopic atlases (for 181 subjects)</span>
+<span class="c1"># ...obtained from the .nii cifti HCP files using nibabel &#39;load&#39;</span>
+<span class="c1"># ----------------------------------------------------------------------------------------------------------------------</span>
+
+<span class="n">r2thr</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">subj</span>  <span class="o">=</span> <span class="mi">2</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">surf_data_from_cifti</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">surf_name</span><span class="p">):</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">nb</span><span class="o">.</span><span class="n">cifti2</span><span class="o">.</span><span class="n">BrainModelAxis</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">data_indices</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">axis</span><span class="o">.</span><span class="n">iter_structures</span><span class="p">():</span>  <span class="c1"># Iterates over volumetric and surface structures</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="n">surf_name</span><span class="p">:</span>                                 <span class="c1"># Just looking for a surface</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">data_indices</span><span class="p">]</span>                       <span class="c1"># Assume brainmodels axis is last, move it to front</span>
+            <span class="n">vtx_indices</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">vertex</span>                        <span class="c1"># Generally 1-N, except medial wall vertices</span>
+            <span class="n">surf_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">vtx_indices</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,)</span> <span class="o">+</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">surf_data</span><span class="p">[</span><span class="n">vtx_indices</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="k">return</span> <span class="n">surf_data</span>
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No structure named </span><span class="si">{</span><span class="n">surf_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Variance explained</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">ret_map</span>    <span class="o">=</span> <span class="s1">&#39;/fsaverage_LR59k/S1200_7T_Retinotopy181.All.Fit3_R2_MSMAll.59k_fs_LR.dscalar.nii&#39;</span>
+<span class="n">cifti</span>      <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">ret_map</span><span class="p">)</span>
+<span class="n">cifti_data</span> <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+
+<span class="n">cifti_hdr</span>  <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">header</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cifti_hdr</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cifti</span><span class="o">.</span><span class="n">ndim</span><span class="p">)]</span>
+<span class="n">map_lh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_LEFT&#39;</span><span class="p">)</span>
+<span class="n">map_rh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_RIGHT&#39;</span><span class="p">)</span>
+<span class="c1">#rsq_mask = np.hstack((map_lh[:,0], map_rh[:,0]))</span>
+<span class="n">rsq_mask</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_lh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_rh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">rsq_mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">rsq_mask</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Wang-Kastner atlas of visual areas + curvature maps</span>
+<span class="c1"># ...obtained from the .nii cifti HCP files using nibabel &#39;cifti2&#39;</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">wang_lh</span>   <span class="o">=</span> <span class="s1">&#39;/fsaverage_LR59k/L.wang2015.59k_fs_LR.label.gii&#39;</span>
+<span class="n">wang_rh</span>   <span class="o">=</span> <span class="s1">&#39;/fsaverage_LR59k/R.wang2015.59k_fs_LR.label.gii&#39;</span>
+<span class="n">map_lh</span>    <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">wang_lh</span><span class="p">)</span><span class="o">.</span><span class="n">agg_data</span><span class="p">()</span>
+<span class="n">map_rh</span>    <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">wang_rh</span><span class="p">)</span><span class="o">.</span><span class="n">agg_data</span><span class="p">()</span>
+<span class="n">both_hemis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">map_lh</span> <span class="p">,</span> <span class="n">map_rh</span><span class="p">))</span>
+
+<span class="c1"># Whole atlases</span>
+<span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">both_hemis</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">vmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">both_hemis</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;tab20b&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">cmap</span><span class="o">.</span><span class="n">set_under</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">vertex</span> <span class="o">=</span> <span class="n">cortex</span><span class="o">.</span><span class="n">Vertex</span><span class="p">(</span><span class="n">both_hemis</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="o">+</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+<span class="n">cortex</span><span class="o">.</span><span class="n">quickshow</span><span class="p">(</span><span class="n">vertex</span> <span class="p">,</span> <span class="n">with_rois</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="n">with_curvature</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">with_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Thresholded by the HCP pRFs variance explained</span>
+<span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">both_hemis</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">vmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">both_hemis</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">both_hemis</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask</span><span class="o">&lt;</span><span class="n">r2thr</span><span class="p">)]</span><span class="o">=-</span><span class="mi">1</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;tab20b&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">cmap</span><span class="o">.</span><span class="n">set_under</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">vertex</span> <span class="o">=</span> <span class="n">cortex</span><span class="o">.</span><span class="n">Vertex</span><span class="p">(</span><span class="n">both_hemis</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="o">+</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+<span class="n">cortex</span><span class="o">.</span><span class="n">quickshow</span><span class="p">(</span><span class="n">vertex</span> <span class="p">,</span> <span class="n">with_rois</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="n">with_curvature</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">with_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicogravel/anaconda3/envs/py36/lib/python3.9/site-packages/scipy/__init__.py:146: UserWarning: A NumPy version &gt;=1.16.5 and &lt;1.23.0 is required for this version of SciPy (detected version 1.23.5
+  warnings.warn(f&#34;A NumPy version &gt;={np_minversion} and &lt;{np_maxversion}&#34;
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+/home/nicogravel/.config/pycortex/options.cfg
+/home/nicogravel/anaconda3/envs/py36/share/pycortex/db
+0.0
+56.061077
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_ROIs_2_2.png" src="../_images/notebooks_retNet_ROIs_2_2.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_ROIs_2_3.png" src="../_images/notebooks_retNet_ROIs_2_3.png" />
+</div>
+</div>
+</section>
+<section id="Retinotopic-map-visualization">
+<h2><span class="section-number">2.2. </span>Retinotopic map visualization<a class="headerlink" href="#Retinotopic-map-visualization" title="Permalink to this heading">¶</a></h2>
+<p>Load and visualize HCP group-average retinotopy maps including variance explained (R²), Wang-Kastner atlas, eccentricity, polar angle, and pRF size on inflated cortical surfaces.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Eccentricity</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">ret_map</span>    <span class="o">=</span> <span class="s1">&#39;/fsaverage_LR59k/S1200_7T_Retinotopy181.All.Fit3_Eccentricity_MSMAll.59k_fs_LR.dscalar.nii&#39;</span>
+<span class="n">cifti</span>      <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">ret_map</span><span class="p">)</span>
+<span class="n">cifti_data</span> <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">cifti_hdr</span>  <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">header</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cifti_hdr</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cifti</span><span class="o">.</span><span class="n">ndim</span><span class="p">)]</span>
+<span class="n">map_lh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_LEFT&#39;</span><span class="p">)</span>
+<span class="n">map_rh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_RIGHT&#39;</span><span class="p">)</span>
+<span class="n">both_hemis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">map_lh</span><span class="p">[:,</span><span class="n">subj</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">map_rh</span><span class="p">[:,</span><span class="n">subj</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">both_hemis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_lh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_rh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+<span class="n">both_hemis</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask</span><span class="o">&lt;</span><span class="n">r2thr</span><span class="p">)]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">both_hemis</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">vmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">both_hemis</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">both_hemis</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask</span><span class="o">&lt;</span><span class="n">r2thr</span><span class="p">)]</span><span class="o">=-</span><span class="mi">1</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;nipy_spectral_r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">cmap</span><span class="o">.</span><span class="n">set_under</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">vertex</span> <span class="o">=</span> <span class="n">cortex</span><span class="o">.</span><span class="n">Vertex</span><span class="p">(</span><span class="n">both_hemis</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span> <span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="o">+</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+<span class="n">cortex</span><span class="o">.</span><span class="n">quickshow</span><span class="p">(</span><span class="n">vertex</span> <span class="p">,</span> <span class="n">with_rois</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="n">with_curvature</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">with_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_ROIs_4_0.png" src="../_images/notebooks_retNet_ROIs_4_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># Polar angle</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">ret_map</span>    <span class="o">=</span> <span class="s1">&#39;/fsaverage_LR59k/S1200_7T_Retinotopy181.All.Fit3_PolarAngle_MSMAll.59k_fs_LR.dscalar.nii&#39;</span>
+<span class="n">cifti</span>      <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">ret_map</span><span class="p">)</span>
+<span class="n">cifti_data</span> <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cifti_hdr</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cifti</span><span class="o">.</span><span class="n">ndim</span><span class="p">)]</span>
+<span class="n">map_lh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_LEFT&#39;</span><span class="p">)</span>
+<span class="n">map_rh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_RIGHT&#39;</span><span class="p">)</span>
+<span class="n">both_hemis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">map_lh</span><span class="p">[:,</span><span class="n">subj</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">map_rh</span><span class="p">[:,</span><span class="n">subj</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">both_hemis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_lh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_rh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+<span class="n">both_hemis</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask</span><span class="o">&lt;</span><span class="n">r2thr</span><span class="p">)]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">both_hemis</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">vmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">both_hemis</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">both_hemis</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask</span><span class="o">&lt;</span><span class="n">r2thr</span><span class="p">)]</span><span class="o">=-</span><span class="mi">1</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;hsv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">cmap</span><span class="o">.</span><span class="n">set_under</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">vertex</span> <span class="o">=</span> <span class="n">cortex</span><span class="o">.</span><span class="n">Vertex</span><span class="p">(</span><span class="n">both_hemis</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span><span class="n">cmap</span> <span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="o">+</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+<span class="n">cortex</span><span class="o">.</span><span class="n">quickshow</span><span class="p">(</span><span class="n">vertex</span> <span class="p">,</span> <span class="n">with_rois</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="n">with_curvature</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">with_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_ROIs_5_0.png" src="../_images/notebooks_retNet_ROIs_5_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="c1"># pRF size</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">ret_map</span>    <span class="o">=</span> <span class="s1">&#39;/fsaverage_LR59k/S1200_7T_Retinotopy181.All.Fit3_ReceptiveFieldSize_MSMAll.59k_fs_LR.dscalar.nii&#39;</span>
+<span class="n">cifti</span>      <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">ret_map</span><span class="p">)</span>
+<span class="n">cifti_data</span> <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">cifti_hdr</span>  <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">header</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cifti_hdr</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cifti</span><span class="o">.</span><span class="n">ndim</span><span class="p">)]</span>
+<span class="n">map_lh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_LEFT&#39;</span><span class="p">)</span>
+<span class="n">map_rh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_RIGHT&#39;</span><span class="p">)</span>
+<span class="n">both_hemis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">map_lh</span><span class="p">[:,</span><span class="n">subj</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">map_rh</span><span class="p">[:,</span><span class="n">subj</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+<span class="n">both_hemis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_lh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_rh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)))</span>
+<span class="n">both_hemis</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask</span><span class="o">&lt;</span><span class="n">r2thr</span><span class="p">)]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="n">vmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">both_hemis</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">vmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">both_hemis</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+<span class="n">both_hemis</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask</span><span class="o">&lt;</span><span class="n">r2thr</span><span class="p">)]</span><span class="o">=-</span><span class="mi">1</span>
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">&#39;plasma&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">cmap</span><span class="o">.</span><span class="n">set_under</span><span class="p">(</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">vertex</span> <span class="o">=</span> <span class="n">cortex</span><span class="o">.</span><span class="n">Vertex</span><span class="p">(</span><span class="n">both_hemis</span><span class="p">,</span> <span class="n">subject</span><span class="p">,</span><span class="n">cmap</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="o">+</span><span class="mf">0.0001</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+<span class="n">cortex</span><span class="o">.</span><span class="n">quickshow</span><span class="p">(</span><span class="n">vertex</span> <span class="p">,</span> <span class="n">with_rois</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>  <span class="n">with_curvature</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">with_colorbar</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_ROIs_6_0.png" src="../_images/notebooks_retNet_ROIs_6_0.png" />
+</div>
+</div>
+</section>
+<section id="Visual-field-selectivity-analysis">
+<h2><span class="section-number">2.3. </span>Visual field selectivity analysis<a class="headerlink" href="#Visual-field-selectivity-analysis" title="Permalink to this heading">¶</a></h2>
+<p>Generate polar angle histograms for V1v/d, V2v/d, V3v/d to compare dorsal vs ventral divisions and verify retinotopic organization.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">bottleneck</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">bn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="n">rois</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;V1v&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V1d&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V2v&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V2d&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V3v&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V3d&quot;</span><span class="p">]</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">           &quot;hV4&quot;,</span>
+<span class="sd">           &quot;VO1&quot;,</span>
+<span class="sd">           &quot;VO2&quot;,</span>
+<span class="sd">           &quot;PHC1&quot;,</span>
+<span class="sd">           &quot;PHC2&quot;,</span>
+<span class="sd">           &quot;TO2&quot;,</span>
+<span class="sd">           &quot;TO1&quot;,</span>
+<span class="sd">           &quot;LO2&quot;,</span>
+<span class="sd">           &quot;LO1&quot;,</span>
+<span class="sd">           &quot;V3B&quot;,</span>
+<span class="sd">           &quot;V3A&quot;,</span>
+<span class="sd">           &quot;IPS0&quot;,</span>
+<span class="sd">           &quot;IPS1&quot;,</span>
+<span class="sd">           &quot;IPS2&quot;,</span>
+<span class="sd">           &quot;IPS3&quot;,</span>
+<span class="sd">           &quot;IPS4&quot;,</span>
+<span class="sd">           &quot;IPS5&quot;,</span>
+<span class="sd">           &quot;SPL1&quot;,</span>
+<span class="sd">           &quot;FEF&quot;]</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="c1">#rois = [&#39;V2&#39;, &#39;V3&#39;, &#39;LO1&#39;, &#39;LO2&#39;, &#39;LO3&#39;, &#39;MST&#39;, &#39;MT&#39;, &#39;IPS1&#39;, &#39;FEF&#39;]</span>
+
+
+<span class="c1"># Variance explained</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">ret_map</span>    <span class="o">=</span> <span class="s1">&#39;/fsaverage_LR59k/S1200_7T_Retinotopy181.All.Fit3_R2_MSMAll.59k_fs_LR.dscalar.nii&#39;</span>
+<span class="n">cifti</span>      <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">ret_map</span><span class="p">)</span>
+<span class="n">cifti_data</span> <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">cifti_hdr</span>  <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">header</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cifti_hdr</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cifti</span><span class="o">.</span><span class="n">ndim</span><span class="p">)]</span>
+<span class="n">map_lh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_LEFT&#39;</span><span class="p">)</span>
+<span class="n">map_rh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_RIGHT&#39;</span><span class="p">)</span>
+<span class="n">rsq_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">map_lh</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">map_rh</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))</span>
+<span class="n">rsq_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_lh</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span> <span class="o">%</span><span class="k">np</span>.hstack((map_lh[:,0], map_rh[:,0]))
+<span class="c1">#rsq_mask = np.hstack((map_lh[:,0], map_rh[:,0]))</span>
+<span class="n">rsq_mask_lh</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_lh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rsq_mask_rh</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_rh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+
+<span class="c1"># Wang</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">wmap_lh</span>    <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">wang_lh</span><span class="p">)</span><span class="o">.</span><span class="n">agg_data</span><span class="p">()</span>
+<span class="n">wmap_rh</span>    <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">wang_rh</span><span class="p">)</span><span class="o">.</span><span class="n">agg_data</span><span class="p">()</span>
+<span class="n">both_hemis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">wmap_lh</span> <span class="p">,</span> <span class="n">wmap_rh</span><span class="p">))</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">both_hemis</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="c1"># Angle</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">ret_map</span>    <span class="o">=</span> <span class="s1">&#39;/fsaverage_LR59k/S1200_7T_Retinotopy181.All.Fit3_PolarAngle_MSMAll.59k_fs_LR.dscalar.nii&#39;</span>
+<span class="n">cifti</span>      <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">ret_map</span><span class="p">)</span>
+<span class="n">cifti_data</span> <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cifti_hdr</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cifti</span><span class="o">.</span><span class="n">ndim</span><span class="p">)]</span>
+<span class="n">map_lh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_LEFT&#39;</span><span class="p">)</span>
+<span class="n">map_rh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_RIGHT&#39;</span><span class="p">)</span>
+<span class="n">pol_hemis</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">map_lh</span><span class="p">,</span> <span class="n">map_rh</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">pol_hemis</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+<span class="n">col</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">inferno</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.9</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">rois</span><span class="p">)))</span>
+<span class="n">col</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.4</span>
+<span class="n">alpha_addition_lh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">alpha_addition_rh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+
+
+<span class="n">alpha_addition_lh</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">alpha_addition_rh</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.4</span>
+
+<span class="n">f</span><span class="p">,</span> <span class="n">ss</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">rois</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">roi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rois</span><span class="p">):</span>
+    <span class="n">pol</span> <span class="o">=</span> <span class="n">map_lh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask_lh</span> <span class="o">&lt;</span> <span class="n">r2thr</span><span class="p">),:]</span>
+    <span class="n">pol</span> <span class="o">=</span> <span class="n">map_lh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">wmap_lh</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),:]</span>
+    <span class="n">pol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">pol</span><span class="p">)</span>
+    <span class="n">ss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">pol</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;left h.&#39;</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">25</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">alpha_addition_lh</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+    <span class="c1">#ss[i].axhline(0, ls=&#39;--&#39;, c=&#39;k&#39;)</span>
+    <span class="c1">#ss[i].axhline(bn.nanmean(pol.flatten()), ls=&#39;--&#39;, lw=5, c=col[i], dash_capstyle=&#39;round&#39;)</span>
+
+    <span class="n">ss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">roi</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
+
+    <span class="n">pol</span> <span class="o">=</span> <span class="n">map_rh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask_rh</span> <span class="o">&lt;</span> <span class="n">r2thr</span><span class="p">),:]</span>
+    <span class="n">pol</span> <span class="o">=</span> <span class="n">map_rh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">wmap_rh</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),:]</span>
+    <span class="n">pol</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">pol</span><span class="p">)</span>
+    <span class="n">ss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">pol</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;right h.&#39;</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">25</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">col</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">alpha_addition_rh</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">)</span>
+    <span class="c1">#ss[i].axhline(bn.nanmean(pol.flatten()), ls=&#39;--&#39;, lw=5, c=col[i]+alpha_addition, dash_capstyle=&#39;round&#39;)</span>
+
+    <span class="n">ss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">labelsize</span> <span class="o">=</span> <span class="mi">14</span><span class="p">)</span>
+    <span class="n">ss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">labelsize</span> <span class="o">=</span> <span class="mi">14</span><span class="p">,</span> <span class="n">rotation</span> <span class="o">=</span> <span class="mi">25</span><span class="p">)</span>
+
+    <span class="c1">#ss[i].legend(frameon=False, fontsize = 18)</span>
+    <span class="n">ss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">ymax</span><span class="o">=</span><span class="mi">360</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">spines</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="n">ss</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;polar angle&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">ss</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;relative frequency across subjects&#39;</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">(</span><span class="n">offset</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(118584,)
+(118584, 181)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_ROIs_8_1.png" src="../_images/notebooks_retNet_ROIs_8_1.png" />
+</div>
+</div>
+</section>
+<section id="Download-status-check">
+<h2><span class="section-number">2.4. </span>Download status check<a class="headerlink" href="#Download-status-check" title="Permalink to this heading">¶</a></h2>
+<p>Verify which subjects have complete data downloaded and report preprocessing status.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">fileobj</span>     <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;subj_id.txt&#39;</span><span class="p">)</span>
+<span class="n">data</span>        <span class="o">=</span> <span class="n">fileobj</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">subject_ID</span>  <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="c1">#print(&#39;Subjects : &#39;, subject_ID)</span>
+
+<span class="n">task_ID_1</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tfMRI_RETBAR1_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_RETBAR2_7T_PA&#39;</span>
+              <span class="p">]</span>
+
+<span class="n">task_ID_2</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tfMRI_MOVIE1_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE2_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE3_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE4_7T_AP&#39;</span><span class="p">,</span>
+             <span class="p">]</span>
+
+<span class="n">task_ID_3</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rfMRI_REST1_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST2_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST3_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST4_7T_AP&#39;</span>
+             <span class="p">]</span>
+
+<span class="n">task_ID</span> <span class="o">=</span> <span class="n">task_ID_1</span> <span class="o">+</span> <span class="n">task_ID_2</span> <span class="o">+</span> <span class="n">task_ID_3</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of tasks : &#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">task_ID</span><span class="p">))</span>
+
+<span class="n">temp_root</span> <span class="o">=</span> <span class="s1">&#39;/scratch/nicogravel/HCP_data/temp/&#39;</span>
+<span class="n">file</span>      <span class="o">=</span> <span class="s1">&#39;_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii&#39;</span>
+
+<span class="n">n_subj</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">x_subj</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">for</span> <span class="n">subj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subject_ID</span><span class="p">)):</span>
+    <span class="n">isdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="c1">#print(isdir)</span>
+    <span class="k">if</span> <span class="n">isdir</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span>
+        <span class="c1"># get size</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+            <span class="n">size</span><span class="o">+=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">ele</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;subject: &#39;</span><span class="p">,</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">],</span> <span class="s1">&#39;, size(MB): &#39;</span><span class="p">,</span>  <span class="n">size</span><span class="o">/</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">n_subj</span> <span class="o">=</span> <span class="o">+</span> <span class="n">n_subj</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">isdir</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">x_subj</span> <span class="o">=</span> <span class="o">+</span> <span class="n">x_subj</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Subject downloaded : &#39;</span><span class="p">,</span><span class="n">n_subj</span><span class="p">,</span> <span class="s1">&#39;,  Subject to download : &#39;</span><span class="p">,</span> <span class="n">x_subj</span><span class="p">)</span>
+
+<span class="n">n_subj</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">x_subj</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">for</span> <span class="n">subj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subject_ID</span><span class="p">)):</span>
+    <span class="n">isdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="c1">#print(isdir)</span>
+    <span class="k">if</span> <span class="n">isdir</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span>
+        <span class="c1"># get size</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+            <span class="n">size</span><span class="o">+=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">ele</span><span class="p">)</span>
+        <span class="c1">#print(&#39;subject: &#39;, subject_ID[subj], &#39;, size(MB): &#39;,  size/1024**2)</span>
+
+        <span class="k">if</span> <span class="n">size</span><span class="o">/</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="mi">5000</span><span class="p">:</span>
+            <span class="n">n_subj</span> <span class="o">=</span> <span class="o">+</span> <span class="n">n_subj</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">isdir</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">x_subj</span> <span class="o">=</span> <span class="o">+</span> <span class="n">x_subj</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Subjects whith full data : &#39;</span><span class="p">,</span><span class="n">n_subj</span><span class="p">,</span> <span class="s1">&#39;,  Subject to download : &#39;</span><span class="p">,</span> <span class="n">x_subj</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Number of tasks :  10
+subject:  100610 , size(MB):  5123.201560974121
+subject:  102311 , size(MB):  5123.201560974121
+subject:  102816 , size(MB):  5123.201560974121
+subject:  104416 , size(MB):  5123.201560974121
+subject:  105923 , size(MB):  5123.201560974121
+subject:  108323 , size(MB):  5123.201560974121
+subject:  109123 , size(MB):  5123.201560974121
+subject:  111312 , size(MB):  4536.369209289551
+subject:  111514 , size(MB):  5120.202827453613
+subject:  114823 , size(MB):  5120.202827453613
+subject:  115017 , size(MB):  5120.202827453613
+subject:  115825 , size(MB):  5120.202827453613
+subject:  116726 , size(MB):  5120.202827453613
+subject:  118225 , size(MB):  5120.202827453613
+subject:  125525 , size(MB):  5120.202827453613
+subject:  126426 , size(MB):  5120.202827453613
+subject:  128935 , size(MB):  5120.202827453613
+subject:  130518 , size(MB):  5120.202827453613
+subject:  131217 , size(MB):  5120.202827453613
+subject:  131722 , size(MB):  5120.202827453613
+subject:  134627 , size(MB):  5120.202827453613
+subject:  134829 , size(MB):  5120.202827453613
+subject:  135124 , size(MB):  5120.202827453613
+subject:  137128 , size(MB):  5120.202827453613
+subject:  140117 , size(MB):  5120.202827453613
+subject:  144226 , size(MB):  5120.202827453613
+subject:  145834 , size(MB):  5120.202827453613
+subject:  146129 , size(MB):  5120.202827453613
+subject:  146432 , size(MB):  5120.202827453613
+subject:  146735 , size(MB):  5120.202827453613
+subject:  146937 , size(MB):  5120.202827453613
+subject:  148133 , size(MB):  5120.202827453613
+subject:  150423 , size(MB):  5120.202827453613
+subject:  155938 , size(MB):  5120.202827453613
+subject:  156334 , size(MB):  5120.202827453613
+subject:  157336 , size(MB):  5120.202827453613
+subject:  158035 , size(MB):  5120.202827453613
+subject:  158136 , size(MB):  5120.202827453613
+subject:  159239 , size(MB):  5120.202827453613
+subject:  162935 , size(MB):  5120.202827453613
+subject:  164131 , size(MB):  5120.202827453613
+subject:  164636 , size(MB):  5120.202827453613
+subject:  165436 , size(MB):  5120.202827453613
+subject:  167036 , size(MB):  5120.202827453613
+subject:  167440 , size(MB):  5120.202827453613
+subject:  169343 , size(MB):  5120.202827453613
+subject:  169747 , size(MB):  5120.202827453613
+subject:  171633 , size(MB):  5120.202827453613
+subject:  172130 , size(MB):  5120.202827453613
+subject:  173334 , size(MB):  5120.202827453613
+subject:  175237 , size(MB):  5120.202827453613
+subject:  176542 , size(MB):  5120.202827453613
+subject:  177140 , size(MB):  5120.202827453613
+subject:  177645 , size(MB):  5120.202827453613
+subject:  177746 , size(MB):  5120.202827453613
+subject:  178142 , size(MB):  5120.202827453613
+subject:  178243 , size(MB):  5120.202827453613
+subject:  178647 , size(MB):  5120.202827453613
+subject:  180533 , size(MB):  5120.202827453613
+subject:  181232 , size(MB):  5120.202827453613
+subject:  181636 , size(MB):  1590.863899230957
+subject:  182436 , size(MB):  5120.202827453613
+subject:  182739 , size(MB):  5120.202827453613
+subject:  185442 , size(MB):  5120.202827453613
+subject:  186949 , size(MB):  5120.202827453613
+subject:  187345 , size(MB):  5120.202827453613
+subject:  191033 , size(MB):  5120.202827453613
+subject:  191336 , size(MB):  5120.202827453613
+subject:  191841 , size(MB):  5120.202827453613
+subject:  192439 , size(MB):  5120.202827453613
+subject:  192641 , size(MB):  5120.202827453613
+subject:  193845 , size(MB):  5120.202827453613
+subject:  195041 , size(MB):  5120.202827453613
+subject:  196144 , size(MB):  5120.202827453613
+subject:  197348 , size(MB):  5120.202827453613
+subject:  198653 , size(MB):  5120.202827453613
+subject:  199655 , size(MB):  5120.202827453613
+subject:  200210 , size(MB):  5120.202827453613
+subject:  200311 , size(MB):  5120.202827453613
+subject:  200614 , size(MB):  5120.202827453613
+subject:  201515 , size(MB):  5120.202827453613
+subject:  203418 , size(MB):  5120.202827453613
+subject:  204521 , size(MB):  5120.202827453613
+subject:  205220 , size(MB):  5120.202827453613
+subject:  209228 , size(MB):  5120.202827453613
+subject:  212419 , size(MB):  5120.202827453613
+subject:  214019 , size(MB):  5120.202827453613
+subject:  214524 , size(MB):  5120.202827453613
+subject:  221319 , size(MB):  5120.202827453613
+subject:  233326 , size(MB):  5120.202827453613
+subject:  239136 , size(MB):  5120.202827453613
+subject:  246133 , size(MB):  5120.202827453613
+subject:  249947 , size(MB):  5120.202827453613
+subject:  251833 , size(MB):  5120.202827453613
+subject:  257845 , size(MB):  5120.202827453613
+subject:  263436 , size(MB):  5120.202827453613
+subject:  283543 , size(MB):  5120.202827453613
+subject:  318637 , size(MB):  5120.202827453613
+subject:  320826 , size(MB):  5120.202827453613
+subject:  330324 , size(MB):  5120.202827453613
+subject:  346137 , size(MB):  5120.202827453613
+subject:  352738 , size(MB):  5120.202827453613
+subject:  360030 , size(MB):  5120.202827453613
+subject:  365343 , size(MB):  5120.202827453613
+subject:  380036 , size(MB):  5120.202827453613
+subject:  381038 , size(MB):  5120.202827453613
+subject:  389357 , size(MB):  5120.202827453613
+subject:  393247 , size(MB):  5120.202827453613
+subject:  395756 , size(MB):  5120.202827453613
+subject:  397760 , size(MB):  5120.202827453613
+subject:  406836 , size(MB):  5120.202827453613
+subject:  412528 , size(MB):  5120.202827453613
+subject:  429040 , size(MB):  5120.202827453613
+subject:  436845 , size(MB):  5120.202827453613
+subject:  463040 , size(MB):  5120.202827453613
+subject:  467351 , size(MB):  5120.202827453613
+subject:  473952 , size(MB):  0.0
+subject:  525541 , size(MB):  5120.202827453613
+subject:  536647 , size(MB):  1590.863899230957
+subject:  541943 , size(MB):  5120.202827453613
+subject:  547046 , size(MB):  5120.202827453613
+subject:  550439 , size(MB):  5120.202827453613
+subject:  552241 , size(MB):  1590.863899230957
+subject:  562345 , size(MB):  5120.202827453613
+subject:  572045 , size(MB):  5120.202827453613
+subject:  573249 , size(MB):  5120.202827453613
+subject:  581450 , size(MB):  5120.202827453613
+subject:  585256 , size(MB):  992.6682052612305
+subject:  601127 , size(MB):  5120.202827453613
+subject:  617748 , size(MB):  5120.202827453613
+subject:  627549 , size(MB):  5120.202827453613
+subject:  638049 , size(MB):  5120.202827453613
+subject:  654552 , size(MB):  5120.202827453613
+subject:  671855 , size(MB):  5120.202827453613
+subject:  680957 , size(MB):  5120.202827453613
+subject:  690152 , size(MB):  5120.202827453613
+subject:  706040 , size(MB):  5120.202827453613
+subject:  724446 , size(MB):  5120.202827453613
+subject:  725751 , size(MB):  5120.202827453613
+subject:  732243 , size(MB):  5120.202827453613
+subject:  745555 , size(MB):  0.0
+subject:  751550 , size(MB):  3304.997627258301
+subject:  878877 , size(MB):  5120.202827453613
+subject:  898176 , size(MB):  5120.202827453613
+subject:  899885 , size(MB):  5120.202827453613
+subject:  901139 , size(MB):  5120.202827453613
+subject:  905147 , size(MB):  5120.202827453613
+subject:  910241 , size(MB):  5120.202827453613
+subject:  926862 , size(MB):  5120.202827453613
+subject:  927359 , size(MB):  5120.202827453613
+subject:  942658 , size(MB):  5120.202827453613
+subject:  951457 , size(MB):  5111.747848510742
+subject:  958976 , size(MB):  5120.202827453613
+subject:  966975 , size(MB):  5120.202827453613
+subject:  995174 , size(MB):  5120.202827453613
+Subject downloaded :  155 ,  Subject to download :  17
+Subjects whith full data :  147 ,  Subject to download :  17
+</pre></div></div>
+</div>
+</section>
+<section id="Wang-Kastner-ROIs">
+<h2><span class="section-number">2.5. </span>Wang-Kastner ROIs<a class="headerlink" href="#Wang-Kastner-ROIs" title="Permalink to this heading">¶</a></h2>
+<p>Extract mean time series from all 25 visual areas per hemisphere across 10 scan types, applying R² threshold masking and z-scoring.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
+
+
+<span class="n">folder</span>  <span class="o">=</span> <span class="s1">&#39;/home/nicogravel/anaconda3/envs/py36/share/pycortex/db/hcp_999999/atlases&#39;</span>
+<span class="n">subject</span> <span class="o">=</span> <span class="s1">&#39;hcp_999999&#39;</span>
+
+
+
+<span class="n">rois</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;V1v&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V1d&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V2v&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V2d&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V3v&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V3d&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;hV4&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;VO1&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;VO2&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;PHC1&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;PHC2&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;TO2&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;TO1&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;LO2&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;LO1&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V3B&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V3A&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;IPS0&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;IPS1&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;IPS2&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;IPS3&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;IPS4&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;IPS5&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;SPL1&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;FEF&quot;</span><span class="p">]</span>
+<span class="c1">#&#39;&#39;&#39;</span>
+
+<span class="c1">#rois = [&#39;V2&#39;, &#39;V3&#39;, &#39;LO1&#39;, &#39;LO2&#39;, &#39;LO3&#39;, &#39;MST&#39;, &#39;MT&#39;, &#39;IPS1&#39;, &#39;FEF&#39;]</span>
+
+
+<span class="c1"># Variance explained</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">ret_map</span>    <span class="o">=</span> <span class="s1">&#39;/fsaverage_LR59k/S1200_7T_Retinotopy181.All.Fit3_R2_MSMAll.59k_fs_LR.dscalar.nii&#39;</span>
+<span class="n">cifti</span>      <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">ret_map</span><span class="p">)</span>
+<span class="n">cifti_data</span> <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">cifti_hdr</span>  <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">header</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cifti_hdr</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cifti</span><span class="o">.</span><span class="n">ndim</span><span class="p">)]</span>
+<span class="n">map_lh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_LEFT&#39;</span><span class="p">)</span>
+<span class="n">map_rh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_RIGHT&#39;</span><span class="p">)</span>
+<span class="c1">#rsq_mask = np.hstack((map_lh[:,0], map_rh[:,0]))</span>
+<span class="c1">#rsq_mask = np.nanmean(map_lh[:,0]) %np.hstack((map_lh[:,0], map_rh[:,0]))</span>
+<span class="c1">#rsq_mask = np.hstack((map_lh[:,0], map_rh[:,0]))</span>
+<span class="n">rsq_mask_lh</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_lh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rsq_mask_rh</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_rh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+
+
+<span class="c1"># Wang</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">wmap_lh</span>    <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">wang_lh</span><span class="p">)</span><span class="o">.</span><span class="n">agg_data</span><span class="p">()</span>
+<span class="n">wmap_rh</span>    <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">wang_rh</span><span class="p">)</span><span class="o">.</span><span class="n">agg_data</span><span class="p">()</span>
+
+
+
+
+<span class="c1"># Time series</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+
+
+<span class="n">fileobj</span>     <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;subj_id.txt&#39;</span><span class="p">)</span>
+<span class="n">data</span>        <span class="o">=</span> <span class="n">fileobj</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">subject_ID</span>  <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="c1">#print(subject_ID)</span>
+
+<span class="c1">#import re</span>
+<span class="n">bad_subjs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;111312&#39;</span><span class="p">,</span><span class="s1">&#39;126931&#39;</span><span class="p">,</span><span class="s1">&#39;132118&#39;</span><span class="p">,</span><span class="s1">&#39;901442&#39;</span><span class="p">,</span><span class="s1">&#39;973770&#39;</span><span class="p">]</span>
+<span class="c1">#resultwords  = [word for word in re.split(&quot;\W+&quot;,query) if word and word.lower() not in stopwords]  # filter out empty words</span>
+<span class="c1">#result  = [word for word in subject_ID if word.lower() not in bad_subjs]</span>
+<span class="c1">#subject_ID  = &#39;&#39;.join(str(result))</span>
+<span class="c1">#print(subject_ID.difference(bad_subjs))</span>
+
+<span class="n">task_ID_1</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tfMRI_RETBAR1_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_RETBAR2_7T_PA&#39;</span>
+              <span class="p">]</span>
+
+<span class="n">task_ID_2</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tfMRI_MOVIE1_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE2_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE3_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE4_7T_AP&#39;</span><span class="p">,</span>
+             <span class="p">]</span>
+
+<span class="n">task_ID_3</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rfMRI_REST1_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST2_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST3_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST4_7T_AP&#39;</span>
+             <span class="p">]</span>
+
+<span class="n">task_ID</span> <span class="o">=</span> <span class="n">task_ID_1</span>  <span class="o">+</span> <span class="n">task_ID_2</span> <span class="o">+</span> <span class="n">task_ID_3</span>
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">task_ID</span><span class="p">))</span>
+
+<span class="n">temp_root</span> <span class="o">=</span> <span class="s1">&#39;/scratch/nicogravel/HCP_data/temp/&#39;</span>
+<span class="n">file</span>      <span class="o">=</span> <span class="s1">&#39;_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii&#39;</span>
+
+<span class="n">prep_pth</span> <span class="o">=</span> <span class="s1">&#39;/home/nicogravel/Laminar_VisualFieldMapping/HCP_7T_prep/WangKastner/&#39;</span>
+
+
+<span class="c1"># For each 7T HCP retinotopy subject</span>
+<span class="k">for</span> <span class="n">subj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subject_ID</span><span class="p">)):</span>
+    <span class="n">isdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If there the HCP subject directory has been downloaded...</span>
+    <span class="k">if</span> <span class="n">isdir</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># get size</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span> <span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span>    <span class="p">):</span>
+            <span class="n">size</span><span class="o">+=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">ele</span><span class="p">)</span>
+        <span class="c1"># and if all files are present yet not preprocessed...</span>
+        <span class="k">if</span> <span class="n">size</span><span class="o">/</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="mi">5000</span><span class="p">:</span>
+            <span class="n">isprepdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">prep_pth</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Pre-process: divide into foveal and peripheral quarterfields</span>
+            <span class="k">if</span> <span class="n">isprepdir</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">prep_pth</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">])</span>
+
+                <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">task_ID</span><span class="p">)):</span>
+
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Processing data for subject :&#39;</span><span class="p">,</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">],</span> <span class="s1">&#39;task :&#39;</span><span class="p">,</span> <span class="n">task_ID</span><span class="p">[</span><span class="n">run</span><span class="p">])</span>
+                    <span class="n">temp_save_path</span> <span class="o">=</span> <span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">task_ID</span><span class="p">[</span><span class="n">run</span><span class="p">]</span> <span class="o">+</span> <span class="n">file</span>
+                    <span class="c1"># Time series</span>
+                    <span class="n">cifti</span>      <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">temp_save_path</span><span class="p">)</span>
+                    <span class="n">cifti_data</span> <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+                    <span class="n">cifti_hdr</span>  <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">header</span>
+                    <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cifti_hdr</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cifti</span><span class="o">.</span><span class="n">ndim</span><span class="p">)]</span>
+
+                    <span class="n">tcourses_lh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_LEFT&#39;</span><span class="p">)</span>
+                    <span class="n">tcourses_rh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_RIGHT&#39;</span><span class="p">)</span>
+                    <span class="n">tcourses_lh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask_lh</span><span class="o">&lt;</span><span class="n">r2thr</span><span class="p">),:]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">tcourses_rh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask_rh</span><span class="o">&lt;</span><span class="n">r2thr</span><span class="p">),:]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">tcourses_lh</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">tcourses_rh</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+                    <span class="n">lh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">25</span><span class="p">,</span><span class="n">tcourses_lh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="n">rh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">25</span><span class="p">,</span><span class="n">tcourses_rh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+
+                    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">roi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rois</span><span class="p">):</span>
+
+                        <span class="n">tc_lh</span> <span class="o">=</span> <span class="n">tcourses_lh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">wmap_lh</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),:]</span>
+                        <span class="n">tc_lh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tc_lh</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="n">lh</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">tc_lh</span><span class="p">)</span>
+                        <span class="n">tc_rh</span> <span class="o">=</span> <span class="n">tcourses_rh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">wmap_rh</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),:]</span>
+                        <span class="n">tc_rh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tc_rh</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="n">rh</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">tc_rh</span><span class="p">)</span>
+
+
+                    <span class="n">sio</span><span class="o">.</span><span class="n">savemat</span><span class="p">(</span><span class="n">prep_pth</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">task_ID</span><span class="p">[</span><span class="n">run</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.mat&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;lh&#39;</span><span class="p">:</span> <span class="n">lh</span><span class="p">,</span> <span class="s1">&#39;rh&#39;</span><span class="p">:</span> <span class="n">rh</span> <span class="p">})</span>
+<br/></pre></div>
+</div>
+</div>
+</section>
+<section id="retNet:-ROIs-from-V1/V2/V3-quarter-fields">
+<h2><span class="section-number">2.6. </span>retNet: ROIs from V1/V2/V3 quarter-fields<a class="headerlink" href="#retNet:-ROIs-from-V1/V2/V3-quarter-fields" title="Permalink to this heading">¶</a></h2>
+<p>Subdivide early visual cortex into foveal/parafoveal × upper/lower visual field quadrants for fine-grained retinotopic connectivity analysis.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">27</span><span class="p">):</span>
+    <span class="n">roi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">wmap_lh</span><span class="o">==</span><span class="n">i</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">roi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">rois</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
+
+<span class="n">folder</span>  <span class="o">=</span> <span class="s1">&#39;/home/nicogravel/anaconda3/envs/py36/share/pycortex/db/hcp_999999/atlases&#39;</span>
+<span class="n">subject</span> <span class="o">=</span> <span class="s1">&#39;hcp_999999&#39;</span>
+
+<span class="n">rois</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;V1v&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V1d&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V2v&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V2d&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V3v&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;V3d&quot;</span><span class="p">]</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">           &quot;hV4&quot;,</span>
+<span class="sd">           &quot;VO1&quot;,</span>
+<span class="sd">           &quot;VO2&quot;,</span>
+<span class="sd">           &quot;PHC1&quot;,</span>
+<span class="sd">           &quot;PHC2&quot;,</span>
+<span class="sd">           &quot;TO2&quot;,</span>
+<span class="sd">           &quot;TO1&quot;,</span>
+<span class="sd">           &quot;LO2&quot;,</span>
+<span class="sd">           &quot;LO1&quot;,</span>
+<span class="sd">           &quot;V3B&quot;,</span>
+<span class="sd">           &quot;V3A&quot;,</span>
+<span class="sd">           &quot;IPS0&quot;,</span>
+<span class="sd">           &quot;IPS1&quot;,</span>
+<span class="sd">           &quot;IPS2&quot;,</span>
+<span class="sd">           &quot;IPS3&quot;,</span>
+<span class="sd">           &quot;IPS4&quot;,</span>
+<span class="sd">           &quot;IPS5&quot;,</span>
+<span class="sd">           &quot;SPL1&quot;,</span>
+<span class="sd">           &quot;FEF&quot;]</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="c1">#rois = [&#39;V2&#39;, &#39;V3&#39;, &#39;LO1&#39;, &#39;LO2&#39;, &#39;LO3&#39;, &#39;MST&#39;, &#39;MT&#39;, &#39;IPS1&#39;, &#39;FEF&#39;]</span>
+
+
+<span class="c1"># Variance explained</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">ret_map</span>    <span class="o">=</span> <span class="s1">&#39;/fsaverage_LR59k/S1200_7T_Retinotopy181.All.Fit3_R2_MSMAll.59k_fs_LR.dscalar.nii&#39;</span>
+<span class="n">cifti</span>      <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">ret_map</span><span class="p">)</span>
+<span class="n">cifti_data</span> <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">cifti_hdr</span>  <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">header</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cifti_hdr</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cifti</span><span class="o">.</span><span class="n">ndim</span><span class="p">)]</span>
+<span class="n">map_lh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_LEFT&#39;</span><span class="p">)</span>
+<span class="n">map_rh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_RIGHT&#39;</span><span class="p">)</span>
+<span class="n">rsq_mask_lh</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_lh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">rsq_mask_rh</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_rh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Eccentricity</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">ret_map</span>    <span class="o">=</span> <span class="s1">&#39;/fsaverage_LR59k/S1200_7T_Retinotopy181.All.Fit3_Eccentricity_MSMAll.59k_fs_LR.dscalar.nii&#39;</span>
+<span class="n">cifti</span>      <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">ret_map</span><span class="p">)</span>
+<span class="n">cifti_data</span> <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">cifti_hdr</span>  <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">header</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cifti_hdr</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cifti</span><span class="o">.</span><span class="n">ndim</span><span class="p">)]</span>
+<span class="n">map_lh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_LEFT&#39;</span><span class="p">)</span>
+<span class="n">map_rh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_RIGHT&#39;</span><span class="p">)</span>
+<span class="n">ecc_lh</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_lh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ecc_rh</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_rh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Angle</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">ret_map</span>    <span class="o">=</span> <span class="s1">&#39;/fsaverage_LR59k/S1200_7T_Retinotopy181.All.Fit3_PolarAngle_MSMAll.59k_fs_LR.dscalar.nii&#39;</span>
+<span class="n">cifti</span>      <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">ret_map</span><span class="p">)</span>
+<span class="n">cifti_data</span> <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cifti_hdr</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cifti</span><span class="o">.</span><span class="n">ndim</span><span class="p">)]</span>
+<span class="n">map_lh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_LEFT&#39;</span><span class="p">)</span>
+<span class="n">map_rh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_RIGHT&#39;</span><span class="p">)</span>
+<span class="n">pol_lh</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_lh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">pol_rh</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">map_rh</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Wang</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">wmap_lh</span>    <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">wang_lh</span><span class="p">)</span><span class="o">.</span><span class="n">agg_data</span><span class="p">()</span>
+<span class="n">wmap_rh</span>    <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">folder</span> <span class="o">+</span> <span class="n">wang_rh</span><span class="p">)</span><span class="o">.</span><span class="n">agg_data</span><span class="p">()</span>
+
+
+
+<span class="c1"># Time series</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+<span class="n">fileobj</span>     <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;subj_id.txt&#39;</span><span class="p">)</span>
+<span class="n">data</span>        <span class="o">=</span> <span class="n">fileobj</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">subject_ID</span>  <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+
+<span class="n">task_ID_1</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tfMRI_RETBAR1_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_RETBAR2_7T_PA&#39;</span>
+              <span class="p">]</span>
+
+<span class="n">task_ID_2</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tfMRI_MOVIE1_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE2_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE3_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE4_7T_AP&#39;</span><span class="p">,</span>
+             <span class="p">]</span>
+
+<span class="n">task_ID_3</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rfMRI_REST1_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST2_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST3_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST4_7T_AP&#39;</span>
+             <span class="p">]</span>
+
+<span class="n">task_ID</span> <span class="o">=</span> <span class="n">task_ID_1</span>  <span class="o">+</span> <span class="n">task_ID_2</span> <span class="o">+</span> <span class="n">task_ID_3</span>
+
+<span class="n">temp_root</span> <span class="o">=</span> <span class="s1">&#39;/scratch/nicogravel/HCP_data/temp/&#39;</span>
+<span class="n">file</span>      <span class="o">=</span> <span class="s1">&#39;_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii&#39;</span>
+
+<span class="c1">#prep_pth = &#39;/home/nicogravel/Laminar_VisualFieldMapping/HCP_7T_prep/WangKastner/&#39;</span>
+<span class="n">prep_pth</span> <span class="o">=</span> <span class="s1">&#39;/home/nicogravel/Laminar_VisualFieldMapping/HCP_7T_prep/EVC/&#39;</span>
+
+<span class="n">eccBin</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">eccMin</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">eccMax</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">sigMax</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">v1v2v3</span> <span class="o">=</span> <span class="p">{</span><span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;V1&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;V2&#39;</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="s1">&#39;V3&#39;</span><span class="p">}</span>
+
+
+<span class="n">n_subj</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">x_subj</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+<span class="c1"># For each 7T HCP retinotopy subject</span>
+<span class="k">for</span> <span class="n">subj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subject_ID</span><span class="p">)):</span>
+    <span class="n">isdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+    <span class="c1"># If there the HCP subject directory has been downloaded...</span>
+    <span class="k">if</span> <span class="n">isdir</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="c1"># get size</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span> <span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span>    <span class="p">):</span>
+            <span class="n">size</span><span class="o">+=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">ele</span><span class="p">)</span>
+        <span class="c1"># and if all files are present yet not preprocessed...</span>
+        <span class="k">if</span> <span class="n">size</span><span class="o">/</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span> <span class="o">&gt;</span> <span class="mi">5000</span><span class="p">:</span>
+            <span class="n">n_subj</span> <span class="o">=</span> <span class="o">+</span> <span class="n">n_subj</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">isprepdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">prep_pth</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+            <span class="c1"># Pre-process: divide into foveal and peripheral quarterfields</span>
+            <span class="k">if</span> <span class="n">isprepdir</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+                <span class="n">x_subj</span> <span class="o">=</span> <span class="o">+</span> <span class="n">x_subj</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Subjects preprocessed : &#39;</span><span class="p">,</span><span class="n">n_subj</span><span class="p">,</span> <span class="s1">&#39;,  Subject to preprocess : &#39;</span><span class="p">,</span> <span class="n">x_subj</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">prep_pth</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">task_ID</span><span class="p">)):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Processing data for subject :&#39;</span><span class="p">,</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">],</span> <span class="s1">&#39;task :&#39;</span><span class="p">,</span> <span class="n">task_ID</span><span class="p">[</span><span class="n">run</span><span class="p">])</span>
+                    <span class="n">temp_save_path</span> <span class="o">=</span> <span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">task_ID</span><span class="p">[</span><span class="n">run</span><span class="p">]</span> <span class="o">+</span> <span class="n">file</span>
+                    <span class="c1"># Time series</span>
+                    <span class="n">cifti</span>      <span class="o">=</span> <span class="n">nb</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">temp_save_path</span><span class="p">)</span>
+                    <span class="n">cifti_data</span> <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">get_fdata</span><span class="p">(</span><span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+                    <span class="n">cifti_hdr</span>  <span class="o">=</span> <span class="n">cifti</span><span class="o">.</span><span class="n">header</span>
+                    <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">cifti_hdr</span><span class="o">.</span><span class="n">get_axis</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cifti</span><span class="o">.</span><span class="n">ndim</span><span class="p">)]</span>
+
+                    <span class="n">tcourses_lh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_LEFT&#39;</span><span class="p">)</span>
+                    <span class="n">tcourses_rh</span> <span class="o">=</span> <span class="n">surf_data_from_cifti</span><span class="p">(</span><span class="n">cifti_data</span><span class="p">,</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;CIFTI_STRUCTURE_CORTEX_RIGHT&#39;</span><span class="p">)</span>
+
+                    <span class="n">tcourses_lh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask_lh</span><span class="o">&lt;</span><span class="n">r2thr</span><span class="p">),:]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                    <span class="n">tcourses_rh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">rsq_mask_rh</span><span class="o">&lt;</span><span class="n">r2thr</span><span class="p">),:]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+
+                    <span class="n">data_lh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">tcourses_lh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="n">data_rh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">tcourses_rh</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+                    <span class="c1"># lf, lp, uf, up</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">v1v2v3</span><span class="p">:</span>
+
+                        <span class="n">c</span> <span class="o">=</span> <span class="n">c</span> <span class="o">+</span> <span class="mi">1</span>
+
+
+
+                        <span class="c1"># Left hemisphere</span>
+
+                        <span class="nb">print</span><span class="p">(</span><span class="n">rois</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="c1"># ventral: upper-fovea</span>
+                        <span class="n">tc</span> <span class="o">=</span> <span class="n">tcourses_lh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">wmap_lh</span> <span class="o">==</span> <span class="n">i</span> <span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">pol_lh</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pol_lh</span> <span class="o">&lt;</span> <span class="mi">90</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">ecc_lh</span> <span class="o">&gt;</span> <span class="n">eccMin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ecc_lh</span> <span class="o">&lt;</span> <span class="n">eccBin</span><span class="p">)),:]</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                        <span class="n">data_lh</span><span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span>  <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tc</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+                        <span class="c1"># ventral: upper-parafovea</span>
+                        <span class="n">tc</span> <span class="o">=</span> <span class="n">tcourses_lh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">wmap_lh</span> <span class="o">==</span> <span class="n">i</span> <span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">pol_lh</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pol_lh</span> <span class="o">&lt;</span> <span class="mi">90</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">ecc_lh</span> <span class="o">&gt;</span> <span class="n">eccBin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ecc_lh</span> <span class="o">&lt;</span> <span class="n">eccMax</span><span class="p">)),:]</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                        <span class="n">data_lh</span><span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tc</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+                        <span class="nb">print</span><span class="p">(</span><span class="n">rois</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                        <span class="c1"># dorsal: lower-fovea</span>
+                        <span class="n">tc</span> <span class="o">=</span> <span class="n">tcourses_lh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">wmap_lh</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">pol_lh</span> <span class="o">&gt;</span> <span class="mi">270</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pol_lh</span> <span class="o">&lt;</span> <span class="mi">360</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">ecc_lh</span> <span class="o">&gt;</span> <span class="n">eccMin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ecc_lh</span> <span class="o">&lt;</span> <span class="n">eccBin</span><span class="p">)),:]</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                        <span class="n">data_lh</span><span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tc</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+                        <span class="c1"># dorsal: lower-parafovea</span>
+                        <span class="n">tc</span> <span class="o">=</span> <span class="n">tcourses_lh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">wmap_lh</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">pol_lh</span> <span class="o">&gt;</span> <span class="mi">270</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pol_lh</span> <span class="o">&lt;</span> <span class="mi">360</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">ecc_lh</span> <span class="o">&gt;</span> <span class="n">eccBin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ecc_lh</span> <span class="o">&lt;</span> <span class="n">eccMax</span><span class="p">)),:]</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="n">tc</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                        <span class="n">data_lh</span><span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="mi">3</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tc</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+                        <span class="c1"># Right hemisphere</span>
+
+                        <span class="c1"># ventral: upper-fovea</span>
+                        <span class="n">tc</span> <span class="o">=</span> <span class="n">tcourses_rh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">wmap_rh</span> <span class="o">==</span> <span class="n">i</span> <span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">pol_rh</span> <span class="o">&gt;</span> <span class="mi">90</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pol_rh</span> <span class="o">&lt;</span> <span class="mi">180</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">ecc_rh</span> <span class="o">&gt;</span> <span class="n">eccMin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ecc_rh</span> <span class="o">&lt;</span> <span class="n">eccBin</span><span class="p">)),:]</span>
+                        <span class="n">data_rh</span><span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="mi">0</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tc</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+                        <span class="c1"># ventral: upper-parafovea</span>
+                        <span class="n">tc</span> <span class="o">=</span> <span class="n">tcourses_rh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">wmap_rh</span> <span class="o">==</span> <span class="n">i</span> <span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">pol_rh</span> <span class="o">&gt;</span> <span class="mi">90</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pol_rh</span> <span class="o">&lt;</span> <span class="mi">180</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">ecc_rh</span> <span class="o">&gt;</span> <span class="n">eccBin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ecc_rh</span> <span class="o">&lt;</span> <span class="n">eccMax</span><span class="p">)),:]</span>
+                        <span class="n">data_rh</span><span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="mi">1</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tc</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+                        <span class="c1"># dorsal: lower-fovea</span>
+                        <span class="n">tc</span> <span class="o">=</span> <span class="n">tcourses_rh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">wmap_rh</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">pol_rh</span> <span class="o">&gt;</span> <span class="mi">180</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pol_rh</span> <span class="o">&lt;</span> <span class="mi">270</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">ecc_rh</span> <span class="o">&gt;</span> <span class="n">eccMin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ecc_rh</span> <span class="o">&lt;</span> <span class="n">eccBin</span><span class="p">)),:]</span>
+                        <span class="n">data_rh</span><span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="mi">2</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tc</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+                        <span class="c1"># dorsal: lower-parafovea</span>
+                        <span class="n">tc</span> <span class="o">=</span> <span class="n">tcourses_rh</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">wmap_rh</span> <span class="o">==</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">pol_rh</span> <span class="o">&gt;</span> <span class="mi">180</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">pol_rh</span> <span class="o">&lt;</span> <span class="mi">270</span><span class="p">)</span> <span class="o">&amp;</span> \
+                                            <span class="p">(</span><span class="n">ecc_rh</span> <span class="o">&gt;</span> <span class="n">eccBin</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">ecc_rh</span> <span class="o">&lt;</span> <span class="n">eccMax</span><span class="p">)),:]</span>
+                        <span class="n">data_rh</span><span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="mi">3</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">zscore</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">tc</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+
+
+
+
+
+                    <span class="c1"># Save the preprocessed data:</span>
+                    <span class="n">sio</span><span class="o">.</span><span class="n">savemat</span><span class="p">(</span><span class="n">prep_pth</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">task_ID</span><span class="p">[</span><span class="n">run</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;_ecv24rois.mat&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;data_lh&#39;</span><span class="p">:</span> <span class="n">data_lh</span><span class="p">,</span> <span class="s1">&#39;data_rh&#39;</span><span class="p">:</span> <span class="n">data_rh</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="retNet_HCP.html" title="Previous document"><span class="section-number">1. </span>Human Connectome Project 7T fMRI Retinotopy Dataset</a>
+        </li>
+        <li>
+          <a href="retNet_MOU.html" title="Next document"><span class="section-number">3. </span>Multivariate Ornstein-Uhlenbeck Effective Connectivity</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      <a href="../_sources/notebooks/retNet_ROIs.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

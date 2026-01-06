@@ -1,0 +1,1079 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>1. Human Connectome Project 7T fMRI Retinotopy Dataset &#8212; retNet_fMRI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2. Retinotopy-constrained ROI Network Extraction" href="retNet_ROIs.html" />
+    <link rel="prev" title="Retinotopy-constrained EC at 7T-fMRI" href="../index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p></p><h3>Table of Contents</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Human Connectome Project 7T fMRI Retinotopy Dataset</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Environment-setup-&amp;-dependencies">1.1. Environment setup &amp; dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Subject-ID-configuration">1.2. Subject ID configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Task-&amp;-path-definition">1.3. Task &amp; path definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Download-status-check">1.4. Download status check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Batch-download">1.5. Batch download</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_ROIs.html">2. Retinotopy-constrained ROI Network Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_MOU.html">3. Multivariate Ornstein-Uhlenbeck Effective Connectivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_rDCM.html">4. Regression Dynamic Causal Modeling Effective Connectivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_model-cross-learning.html">5. Cross-task generalization between MOU and rDCM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_model-convergence.html">6. Convergence of MOU and rDCM derived EC</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../index.html" title="previous chapter">Retinotopy-constrained EC at 7T-fMRI</a></li>
+      <li>Next: <a href="retNet_ROIs.html" title="next chapter"><span class="section-number">2. </span>Retinotopy-constrained ROI Network Extraction</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="../index.html" title="Previous document">Retinotopy-constrained EC at 7T-fMRI</a>
+        </li>
+        <li>
+          <a href="retNet_ROIs.html" title="Next document"><span class="section-number">2. </span>Retinotopy-constrained ROI Network Extraction</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <section id="Human-Connectome-Project-7T-fMRI-Retinotopy-Dataset">
+<h1><span class="section-number">1. </span>Human Connectome Project 7T fMRI Retinotopy Dataset<a class="headerlink" href="#Human-Connectome-Project-7T-fMRI-Retinotopy-Dataset" title="Permalink to this heading">¶</a></h1>
+<p>This notebook shows how to automate the download and management of <strong>Human Connectome Project (HCP) 7T fMRI dataset</strong>. The data involved ultra-high 7 Tesla fMRI retinotopic mapping data in 181 healthy adults, with additional movie-watching, and resting-state runs (1.6-mm resolution and repetition time of 1s).</p>
+<p>The notebook covers five main stages: configuring the environment and AWS credentials for S3 access, loading validated subject IDs with complete retinotopy data, defining task parameters for retinotopy (RETBAR 1-2), movie-watching (MOVIE 1-4), and resting-state (REST 1-4) scans, checking the download status of existing data, and performing batch downloads from the <a class="reference external" href="https://wiki.humanconnectome.org/docs/How%20to%20Get%20Access%20to%20the%20HCP%20OpenAccess%20Amazon%20S3%20Bucket.html">HCP OpenAccess S3
+bucket</a>. Each subject requires approximately 2-3 GB of storage across 10 scan runs. Note that HCP database access (free registration) is required, and AWS credentials should be configured before running the download scripts.</p>
+<p>Benson, N. C., Jamison, K. W., Arcaro, M. J., Vu, A. T., Glasser, M. F., Coalson, T. S., Van Essen, D. V., Yacoub, E., Ugurbil, K., Winawer, J., &amp; Kay, K. (2018). <strong>The Human Connectome Project 7 Tesla retinotopy dataset: Description and population receptive field analysis</strong>. Journal of Vision, 18(13), 23. <a class="reference external" href="https://doi.org/10.1167/18.13.23">https://doi.org/10.1167/18.13.23</a></p>
+<section id="Environment-setup-&amp;-dependencies">
+<h2><span class="section-number">1.1. </span>Environment setup &amp; dependencies<a class="headerlink" href="#Environment-setup-&-dependencies" title="Permalink to this heading">¶</a></h2>
+<p>Configure AWS credentials and import necessary libraries for CIFTI file handling and S3 data access.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">nibabel</span><span class="w"> </span><span class="kn">import</span> <span class="n">cifti2</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">itertools</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">nibabel</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">boto3</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pickle</span>
+
+
+<span class="n">aws_access_key_id</span><span class="o">=</span><span class="s1">&#39;xxxx...&#39;</span>
+<span class="n">aws_secret_access_key</span><span class="o">=</span><span class="s1">&#39;xxxx...&#39;</span>
+<br/></pre></div>
+</div>
+</div>
+</section>
+<section id="Subject-ID-configuration">
+<h2><span class="section-number">1.2. </span>Subject ID configuration<a class="headerlink" href="#Subject-ID-configuration" title="Permalink to this heading">¶</a></h2>
+<p>List of 184 validated HCP subject IDs with complete 7T retinotopy data.</p>
+<p>To get the 7T <code class="docutils literal notranslate"><span class="pre">subj_id.txt</span></code> :</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span><span class="m">100610</span>
+<span class="m">102311</span>
+<span class="m">102816</span>
+<span class="m">104416</span>
+<span class="m">105923</span>
+<span class="m">108323</span>
+<span class="m">109123</span>
+<span class="m">111312</span>
+<span class="m">111514</span>
+<span class="m">114823</span>
+<span class="m">115017</span>
+<span class="m">115825</span>
+<span class="m">116726</span>
+<span class="m">118225</span>
+<span class="m">125525</span>
+<span class="m">126426</span>
+<span class="m">128935</span>
+<span class="m">130518</span>
+<span class="m">131217</span>
+<span class="m">131722</span>
+<span class="m">134627</span>
+<span class="m">134829</span>
+<span class="m">135124</span>
+<span class="m">137128</span>
+<span class="m">140117</span>
+<span class="m">144226</span>
+<span class="m">145834</span>
+<span class="m">146129</span>
+<span class="m">146432</span>
+<span class="m">146735</span>
+<span class="m">146937</span>
+<span class="m">148133</span>
+<span class="m">150423</span>
+<span class="m">155938</span>
+<span class="m">156334</span>
+<span class="m">157336</span>
+<span class="m">158035</span>
+<span class="m">158136</span>
+<span class="m">159239</span>
+<span class="m">162935</span>
+<span class="m">164131</span>
+<span class="m">164636</span>
+<span class="m">165436</span>
+<span class="m">167036</span>
+<span class="m">167440</span>
+<span class="m">169343</span>
+<span class="m">169747</span>
+<span class="m">171633</span>
+<span class="m">172130</span>
+<span class="m">173334</span>
+<span class="m">175237</span>
+<span class="m">176542</span>
+<span class="m">177140</span>
+<span class="m">177645</span>
+<span class="m">177746</span>
+<span class="m">178142</span>
+<span class="m">178243</span>
+<span class="m">178647</span>
+<span class="m">180533</span>
+<span class="m">181232</span>
+<span class="m">181636</span>
+<span class="m">182436</span>
+<span class="m">182739</span>
+<span class="m">185442</span>
+<span class="m">186949</span>
+<span class="m">187345</span>
+<span class="m">191033</span>
+<span class="m">191336</span>
+<span class="m">191841</span>
+<span class="m">192439</span>
+<span class="m">192641</span>
+<span class="m">193845</span>
+<span class="m">195041</span>
+<span class="m">196144</span>
+<span class="m">197348</span>
+<span class="m">198653</span>
+<span class="m">199655</span>
+<span class="m">200210</span>
+<span class="m">200311</span>
+<span class="m">200614</span>
+<span class="m">201515</span>
+<span class="m">203418</span>
+<span class="m">204521</span>
+<span class="m">205220</span>
+<span class="m">209228</span>
+<span class="m">212419</span>
+<span class="m">214019</span>
+<span class="m">214524</span>
+<span class="m">221319</span>
+<span class="m">233326</span>
+<span class="m">239136</span>
+<span class="m">246133</span>
+<span class="m">249947</span>
+<span class="m">251833</span>
+<span class="m">257845</span>
+<span class="m">263436</span>
+<span class="m">283543</span>
+<span class="m">318637</span>
+<span class="m">320826</span>
+<span class="m">330324</span>
+<span class="m">346137</span>
+<span class="m">352738</span>
+<span class="m">360030</span>
+<span class="m">365343</span>
+<span class="m">380036</span>
+<span class="m">381038</span>
+<span class="m">389357</span>
+<span class="m">393247</span>
+<span class="m">395756</span>
+<span class="m">397760</span>
+<span class="m">406836</span>
+<span class="m">412528</span>
+<span class="m">429040</span>
+<span class="m">436845</span>
+<span class="m">463040</span>
+<span class="m">467351</span>
+<span class="m">473952</span>
+<span class="m">525541</span>
+<span class="m">536647</span>
+<span class="m">541943</span>
+<span class="m">547046</span>
+<span class="m">550439</span>
+<span class="m">552241</span>
+<span class="m">562345</span>
+<span class="m">572045</span>
+<span class="m">573249</span>
+<span class="m">581450</span>
+<span class="m">585256</span>
+<span class="m">601127</span>
+<span class="m">617748</span>
+<span class="m">627549</span>
+<span class="m">638049</span>
+<span class="m">654552</span>
+<span class="m">671855</span>
+<span class="m">680957</span>
+<span class="m">690152</span>
+<span class="m">706040</span>
+<span class="m">724446</span>
+<span class="m">725751</span>
+<span class="m">732243</span>
+<span class="m">745555</span>
+<span class="m">751550</span>
+<span class="m">757764</span>
+<span class="m">765864</span>
+<span class="m">770352</span>
+<span class="m">771354</span>
+<span class="m">782561</span>
+<span class="m">783462</span>
+<span class="m">789373</span>
+<span class="m">814649</span>
+<span class="m">818859</span>
+<span class="m">825048</span>
+<span class="m">826353</span>
+<span class="m">833249</span>
+<span class="m">859671</span>
+<span class="m">861456</span>
+<span class="m">871762</span>
+<span class="m">872764</span>
+<span class="m">878776</span>
+<span class="m">878877</span>
+<span class="m">898176</span>
+<span class="m">899885</span>
+<span class="m">901139</span>
+<span class="m">905147</span>
+<span class="m">910241</span>
+<span class="m">926862</span>
+<span class="m">927359</span>
+<span class="m">942658</span>
+<span class="m">951457</span>
+<span class="m">958976</span>
+<span class="m">966975</span>
+<span class="m">995174</span>
+</pre></div>
+</div>
+</section>
+<section id="Task-&amp;-path-definition">
+<h2><span class="section-number">1.3. </span>Task &amp; path definition<a class="headerlink" href="#Task-&-path-definition" title="Permalink to this heading">¶</a></h2>
+<p>Define task IDs for all scan types and configure local storage paths.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fileobj</span>     <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;subj_id.txt&#39;</span><span class="p">)</span>
+<span class="n">data</span>        <span class="o">=</span> <span class="n">fileobj</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">subject_ID</span>  <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Subjects : &#39;</span><span class="p">,</span> <span class="n">subject_ID</span><span class="p">)</span>
+
+<span class="n">task_ID_1</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tfMRI_RETBAR1_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_RETBAR2_7T_PA&#39;</span>
+              <span class="p">]</span>
+
+<span class="n">task_ID_2</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tfMRI_MOVIE1_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE2_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE3_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE4_7T_AP&#39;</span><span class="p">,</span>
+             <span class="p">]</span>
+
+<span class="n">task_ID_3</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rfMRI_REST1_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST2_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST3_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST4_7T_AP&#39;</span>
+             <span class="p">]</span>
+
+<span class="n">task_ID</span> <span class="o">=</span> <span class="n">task_ID_1</span> <span class="o">+</span> <span class="n">task_ID_2</span> <span class="o">+</span> <span class="n">task_ID_3</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of tasks : &#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">task_ID</span><span class="p">))</span>
+
+<span class="n">temp_root</span> <span class="o">=</span> <span class="s1">&#39;/scratch/nicogravel/HCP_data/temp/&#39;</span>
+<span class="n">file</span>      <span class="o">=</span> <span class="s1">&#39;_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Subjects :  [&#39;100610&#39;, &#39;102311&#39;, &#39;102816&#39;, &#39;104416&#39;, &#39;105923&#39;, &#39;108323&#39;, &#39;109123&#39;, &#39;111312&#39;, &#39;111514&#39;, &#39;114823&#39;, &#39;115017&#39;, &#39;115825&#39;, &#39;116726&#39;, &#39;118225&#39;, &#39;125525&#39;, &#39;126426&#39;, &#39;128935&#39;, &#39;130518&#39;, &#39;131217&#39;, &#39;131722&#39;, &#39;134627&#39;, &#39;134829&#39;, &#39;135124&#39;, &#39;137128&#39;, &#39;140117&#39;, &#39;144226&#39;, &#39;145834&#39;, &#39;146129&#39;, &#39;146432&#39;, &#39;146735&#39;, &#39;146937&#39;, &#39;148133&#39;, &#39;150423&#39;, &#39;155938&#39;, &#39;156334&#39;, &#39;157336&#39;, &#39;158035&#39;, &#39;158136&#39;, &#39;159239&#39;, &#39;162935&#39;, &#39;164131&#39;, &#39;164636&#39;, &#39;165436&#39;, &#39;167036&#39;, &#39;167440&#39;, &#39;169343&#39;, &#39;169747&#39;, &#39;171633&#39;, &#39;172130&#39;, &#39;173334&#39;, &#39;175237&#39;, &#39;176542&#39;, &#39;177140&#39;, &#39;177645&#39;, &#39;177746&#39;, &#39;178142&#39;, &#39;178243&#39;, &#39;178647&#39;, &#39;180533&#39;, &#39;181232&#39;, &#39;181636&#39;, &#39;182436&#39;, &#39;182739&#39;, &#39;185442&#39;, &#39;186949&#39;, &#39;187345&#39;, &#39;191033&#39;, &#39;191336&#39;, &#39;191841&#39;, &#39;192439&#39;, &#39;192641&#39;, &#39;193845&#39;, &#39;195041&#39;, &#39;196144&#39;, &#39;197348&#39;, &#39;198653&#39;, &#39;199655&#39;, &#39;200210&#39;, &#39;200311&#39;, &#39;200614&#39;, &#39;201515&#39;, &#39;203418&#39;, &#39;204521&#39;, &#39;205220&#39;, &#39;209228&#39;, &#39;212419&#39;, &#39;214019&#39;, &#39;214524&#39;, &#39;221319&#39;, &#39;233326&#39;, &#39;239136&#39;, &#39;246133&#39;, &#39;249947&#39;, &#39;251833&#39;, &#39;257845&#39;, &#39;263436&#39;, &#39;283543&#39;, &#39;318637&#39;, &#39;320826&#39;, &#39;330324&#39;, &#39;346137&#39;, &#39;352738&#39;, &#39;360030&#39;, &#39;365343&#39;, &#39;380036&#39;, &#39;381038&#39;, &#39;389357&#39;, &#39;393247&#39;, &#39;395756&#39;, &#39;397760&#39;, &#39;406836&#39;, &#39;412528&#39;, &#39;429040&#39;, &#39;436845&#39;, &#39;463040&#39;, &#39;467351&#39;, &#39;473952&#39;, &#39;525541&#39;, &#39;536647&#39;, &#39;541943&#39;, &#39;547046&#39;, &#39;550439&#39;, &#39;552241&#39;, &#39;562345&#39;, &#39;572045&#39;, &#39;573249&#39;, &#39;581450&#39;, &#39;585256&#39;, &#39;601127&#39;, &#39;617748&#39;, &#39;627549&#39;, &#39;638049&#39;, &#39;654552&#39;, &#39;671855&#39;, &#39;680957&#39;, &#39;690152&#39;, &#39;706040&#39;, &#39;724446&#39;, &#39;725751&#39;, &#39;732243&#39;, &#39;745555&#39;, &#39;751550&#39;, &#39;757764&#39;, &#39;765864&#39;, &#39;770352&#39;, &#39;771354&#39;, &#39;782561&#39;, &#39;783462&#39;, &#39;789373&#39;, &#39;814649&#39;, &#39;818859&#39;, &#39;825048&#39;, &#39;826353&#39;, &#39;833249&#39;, &#39;859671&#39;, &#39;861456&#39;, &#39;871762&#39;, &#39;872764&#39;, &#39;878776&#39;, &#39;878877&#39;, &#39;898176&#39;, &#39;899885&#39;, &#39;901139&#39;, &#39;905147&#39;, &#39;910241&#39;, &#39;926862&#39;, &#39;927359&#39;, &#39;942658&#39;, &#39;951457&#39;, &#39;958976&#39;, &#39;966975&#39;, &#39;995174&#39;]
+Number of tasks :  10
+</pre></div></div>
+</div>
+</section>
+<section id="Download-status-check">
+<h2><span class="section-number">1.4. </span>Download status check<a class="headerlink" href="#Download-status-check" title="Permalink to this heading">¶</a></h2>
+<p>Scan local directory to identify already-downloaded subjects and calculate storage requirements.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_subj</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">x_subj</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">subj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subject_ID</span><span class="p">)):</span>
+    <span class="n">isdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+    <span class="c1">#print(isdir)</span>
+    <span class="k">if</span> <span class="n">isdir</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span>
+        <span class="c1"># get size</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+            <span class="n">size</span><span class="o">+=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">ele</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;subject: &#39;</span><span class="p">,</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">],</span> <span class="s1">&#39;, size(MB): &#39;</span><span class="p">,</span>  <span class="n">size</span><span class="o">/</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">n_subj</span> <span class="o">=</span> <span class="o">+</span> <span class="n">n_subj</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">isdir</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">x_subj</span> <span class="o">=</span> <span class="o">+</span> <span class="n">x_subj</span> <span class="o">+</span> <span class="mi">1</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Subject downloaded : &#39;</span><span class="p">,</span><span class="n">n_subj</span><span class="p">,</span> <span class="s1">&#39;,  Subject to download : &#39;</span><span class="p">,</span> <span class="n">x_subj</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+subject:  100610 , size(MB):  5123.201560974121
+subject:  102311 , size(MB):  5123.201560974121
+subject:  102816 , size(MB):  5123.201560974121
+subject:  104416 , size(MB):  5123.201560974121
+subject:  105923 , size(MB):  5123.201560974121
+subject:  108323 , size(MB):  5123.201560974121
+subject:  109123 , size(MB):  5123.201560974121
+subject:  111312 , size(MB):  4536.369209289551
+subject:  111514 , size(MB):  5120.202827453613
+subject:  114823 , size(MB):  5120.202827453613
+subject:  115017 , size(MB):  5120.202827453613
+subject:  115825 , size(MB):  5120.202827453613
+subject:  116726 , size(MB):  5120.202827453613
+subject:  118225 , size(MB):  5120.202827453613
+subject:  125525 , size(MB):  5120.202827453613
+subject:  126426 , size(MB):  5120.202827453613
+subject:  128935 , size(MB):  5120.202827453613
+subject:  130518 , size(MB):  5120.202827453613
+subject:  131217 , size(MB):  5120.202827453613
+subject:  131722 , size(MB):  5120.202827453613
+subject:  134627 , size(MB):  5120.202827453613
+subject:  134829 , size(MB):  5120.202827453613
+subject:  135124 , size(MB):  5120.202827453613
+subject:  137128 , size(MB):  5120.202827453613
+subject:  140117 , size(MB):  5120.202827453613
+subject:  144226 , size(MB):  5120.202827453613
+subject:  145834 , size(MB):  5120.202827453613
+subject:  146129 , size(MB):  5120.202827453613
+subject:  146432 , size(MB):  5120.202827453613
+subject:  146735 , size(MB):  5120.202827453613
+subject:  146937 , size(MB):  5120.202827453613
+subject:  148133 , size(MB):  5120.202827453613
+subject:  150423 , size(MB):  5120.202827453613
+subject:  155938 , size(MB):  5120.202827453613
+subject:  156334 , size(MB):  5120.202827453613
+subject:  157336 , size(MB):  5120.202827453613
+subject:  158035 , size(MB):  5120.202827453613
+subject:  158136 , size(MB):  5120.202827453613
+subject:  159239 , size(MB):  5120.202827453613
+subject:  162935 , size(MB):  5120.202827453613
+subject:  164131 , size(MB):  5120.202827453613
+subject:  164636 , size(MB):  5120.202827453613
+subject:  165436 , size(MB):  5120.202827453613
+subject:  167036 , size(MB):  5120.202827453613
+subject:  167440 , size(MB):  5120.202827453613
+subject:  169343 , size(MB):  5120.202827453613
+subject:  169747 , size(MB):  5120.202827453613
+subject:  171633 , size(MB):  5120.202827453613
+subject:  172130 , size(MB):  5120.202827453613
+subject:  173334 , size(MB):  5120.202827453613
+subject:  175237 , size(MB):  5120.202827453613
+subject:  176542 , size(MB):  5120.202827453613
+subject:  177140 , size(MB):  5120.202827453613
+subject:  177645 , size(MB):  5120.202827453613
+subject:  177746 , size(MB):  5120.202827453613
+subject:  178142 , size(MB):  5120.202827453613
+subject:  178243 , size(MB):  5120.202827453613
+subject:  178647 , size(MB):  5120.202827453613
+subject:  180533 , size(MB):  5120.202827453613
+subject:  181232 , size(MB):  5120.202827453613
+subject:  181636 , size(MB):  1590.863899230957
+subject:  182436 , size(MB):  5120.202827453613
+subject:  182739 , size(MB):  5120.202827453613
+subject:  185442 , size(MB):  5120.202827453613
+subject:  186949 , size(MB):  5120.202827453613
+subject:  187345 , size(MB):  5120.202827453613
+subject:  191033 , size(MB):  5120.202827453613
+subject:  191336 , size(MB):  5120.202827453613
+subject:  191841 , size(MB):  5120.202827453613
+subject:  192439 , size(MB):  5120.202827453613
+subject:  192641 , size(MB):  5120.202827453613
+subject:  193845 , size(MB):  5120.202827453613
+subject:  195041 , size(MB):  5120.202827453613
+subject:  196144 , size(MB):  5120.202827453613
+subject:  197348 , size(MB):  5120.202827453613
+subject:  198653 , size(MB):  5120.202827453613
+subject:  199655 , size(MB):  5120.202827453613
+subject:  200210 , size(MB):  5120.202827453613
+subject:  200311 , size(MB):  5120.202827453613
+subject:  200614 , size(MB):  5120.202827453613
+subject:  201515 , size(MB):  5120.202827453613
+subject:  203418 , size(MB):  5120.202827453613
+subject:  204521 , size(MB):  5120.202827453613
+subject:  205220 , size(MB):  5120.202827453613
+subject:  209228 , size(MB):  5120.202827453613
+subject:  212419 , size(MB):  5120.202827453613
+subject:  214019 , size(MB):  5120.202827453613
+subject:  214524 , size(MB):  5120.202827453613
+subject:  221319 , size(MB):  5120.202827453613
+subject:  233326 , size(MB):  5120.202827453613
+subject:  239136 , size(MB):  5120.202827453613
+subject:  246133 , size(MB):  5120.202827453613
+subject:  249947 , size(MB):  5120.202827453613
+subject:  251833 , size(MB):  5120.202827453613
+subject:  257845 , size(MB):  5120.202827453613
+subject:  263436 , size(MB):  5120.202827453613
+subject:  283543 , size(MB):  5120.202827453613
+subject:  318637 , size(MB):  5120.202827453613
+subject:  320826 , size(MB):  5120.202827453613
+subject:  330324 , size(MB):  5120.202827453613
+subject:  346137 , size(MB):  5120.202827453613
+subject:  352738 , size(MB):  5120.202827453613
+subject:  360030 , size(MB):  5120.202827453613
+subject:  365343 , size(MB):  5120.202827453613
+subject:  380036 , size(MB):  5120.202827453613
+subject:  381038 , size(MB):  5120.202827453613
+subject:  389357 , size(MB):  5120.202827453613
+subject:  393247 , size(MB):  5120.202827453613
+subject:  395756 , size(MB):  5120.202827453613
+subject:  397760 , size(MB):  5120.202827453613
+subject:  406836 , size(MB):  5120.202827453613
+subject:  412528 , size(MB):  5120.202827453613
+subject:  429040 , size(MB):  5120.202827453613
+subject:  436845 , size(MB):  5120.202827453613
+subject:  463040 , size(MB):  5120.202827453613
+subject:  467351 , size(MB):  5120.202827453613
+subject:  473952 , size(MB):  0.0
+subject:  525541 , size(MB):  5120.202827453613
+subject:  536647 , size(MB):  1590.863899230957
+subject:  541943 , size(MB):  5120.202827453613
+subject:  547046 , size(MB):  5120.202827453613
+subject:  550439 , size(MB):  5120.202827453613
+subject:  552241 , size(MB):  1590.863899230957
+subject:  562345 , size(MB):  5120.202827453613
+subject:  572045 , size(MB):  5120.202827453613
+subject:  573249 , size(MB):  5120.202827453613
+subject:  581450 , size(MB):  5120.202827453613
+subject:  585256 , size(MB):  992.6682052612305
+subject:  601127 , size(MB):  5120.202827453613
+subject:  617748 , size(MB):  5120.202827453613
+subject:  627549 , size(MB):  5120.202827453613
+subject:  638049 , size(MB):  5120.202827453613
+subject:  654552 , size(MB):  5120.202827453613
+subject:  671855 , size(MB):  5120.202827453613
+subject:  680957 , size(MB):  5120.202827453613
+subject:  690152 , size(MB):  5120.202827453613
+subject:  706040 , size(MB):  5120.202827453613
+subject:  724446 , size(MB):  5120.202827453613
+subject:  725751 , size(MB):  5120.202827453613
+subject:  732243 , size(MB):  5120.202827453613
+subject:  745555 , size(MB):  0.0
+subject:  878877 , size(MB):  5120.202827453613
+subject:  898176 , size(MB):  5120.202827453613
+subject:  899885 , size(MB):  5120.202827453613
+subject:  901139 , size(MB):  5120.202827453613
+subject:  905147 , size(MB):  5120.202827453613
+subject:  910241 , size(MB):  5120.202827453613
+subject:  926862 , size(MB):  5120.202827453613
+subject:  927359 , size(MB):  5120.202827453613
+subject:  942658 , size(MB):  5120.202827453613
+subject:  951457 , size(MB):  5111.747848510742
+subject:  958976 , size(MB):  5120.202827453613
+subject:  966975 , size(MB):  5120.202827453613
+subject:  995174 , size(MB):  5120.202827453613
+Subject downloaded :  154 ,  Subject to download :  18
+</pre></div></div>
+</div>
+</section>
+<section id="Batch-download">
+<h2><span class="section-number">1.5. </span>Batch download<a class="headerlink" href="#Batch-download" title="Permalink to this heading">¶</a></h2>
+<p>Download CIFTI timeseries files from HCP OpenAccess bucket for all missing subjects and task runs.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_subj</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">x_subj</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">for</span> <span class="n">subj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">subject_ID</span><span class="p">)):</span>
+    <span class="n">isdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">isdir</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">folder</span> <span class="o">=</span> <span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span>
+        <span class="c1"># get size</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">scandir</span><span class="p">(</span><span class="n">folder</span><span class="p">):</span>
+            <span class="n">size</span><span class="o">+=</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getsize</span><span class="p">(</span><span class="n">ele</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;subject: &#39;</span><span class="p">,</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">],</span> <span class="s1">&#39;, size(MB): &#39;</span><span class="p">,</span>  <span class="n">size</span><span class="o">/</span><span class="mi">1024</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">n_subj</span> <span class="o">=</span> <span class="o">+</span> <span class="n">n_subj</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="n">isdir</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">task_ID</span><span class="p">)):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Processing data for subject :&#39;</span><span class="p">,</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">],</span> <span class="s1">&#39;task :&#39;</span><span class="p">,</span> <span class="n">task_ID</span><span class="p">[</span><span class="n">run</span><span class="p">])</span>
+            <span class="n">dbhcp</span> <span class="o">=</span> <span class="s1">&#39;HCP_1200/&#39;</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/MNINonLinear/Results/&#39;</span>
+            <span class="n">s3_client</span> <span class="o">=</span> <span class="n">boto3</span><span class="o">.</span><span class="n">client</span><span class="p">(</span><span class="s1">&#39;s3&#39;</span><span class="p">,</span>
+                                    <span class="n">aws_access_key_id</span> <span class="o">=</span> <span class="n">aws_access_key_id</span><span class="p">,</span>
+                                    <span class="n">aws_secret_access_key</span> <span class="o">=</span> <span class="n">aws_secret_access_key</span><span class="p">)</span>
+            <span class="n">s3_bucket_name</span> <span class="o">=</span> <span class="s1">&#39;hcp-openaccess&#39;</span>
+            <span class="n">s3_path</span> <span class="o">=</span> <span class="n">dbhcp</span> <span class="o">+</span> <span class="n">task_ID</span><span class="p">[</span><span class="n">run</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">task_ID</span><span class="p">[</span><span class="n">run</span><span class="p">]</span> <span class="o">+</span> <span class="n">file</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">s3_path</span><span class="p">)</span>
+            <span class="n">temp_save_path</span> <span class="o">=</span> <span class="n">temp_root</span> <span class="o">+</span> <span class="n">subject_ID</span><span class="p">[</span><span class="n">subj</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">task_ID</span><span class="p">[</span><span class="n">run</span><span class="p">]</span> <span class="o">+</span> <span class="n">file</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">temp_save_path</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Downloading...&#39;</span><span class="p">)</span>
+            <span class="n">s3_client</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span><span class="n">Bucket</span><span class="o">=</span><span class="n">s3_bucket_name</span><span class="p">,</span> <span class="n">Key</span><span class="o">=</span><span class="n">s3_path</span><span class="p">,</span> <span class="n">Filename</span><span class="o">=</span><span class="n">temp_save_path</span><span class="p">)</span>
+            <span class="n">sub_file</span> <span class="o">=</span> <span class="n">temp_save_path</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+subject:  100610 , size(MB):  5123.201560974121
+subject:  102311 , size(MB):  5123.201560974121
+subject:  102816 , size(MB):  5123.201560974121
+subject:  104416 , size(MB):  5123.201560974121
+subject:  105923 , size(MB):  5123.201560974121
+subject:  108323 , size(MB):  5123.201560974121
+subject:  109123 , size(MB):  5123.201560974121
+subject:  111312 , size(MB):  4536.369209289551
+subject:  111514 , size(MB):  5120.202827453613
+subject:  114823 , size(MB):  5120.202827453613
+subject:  115017 , size(MB):  5120.202827453613
+subject:  115825 , size(MB):  5120.202827453613
+subject:  116726 , size(MB):  5120.202827453613
+subject:  118225 , size(MB):  5120.202827453613
+subject:  125525 , size(MB):  5120.202827453613
+subject:  126426 , size(MB):  5120.202827453613
+subject:  128935 , size(MB):  5120.202827453613
+subject:  130518 , size(MB):  5120.202827453613
+subject:  131217 , size(MB):  5120.202827453613
+subject:  131722 , size(MB):  5120.202827453613
+subject:  134627 , size(MB):  5120.202827453613
+subject:  134829 , size(MB):  5120.202827453613
+subject:  135124 , size(MB):  5120.202827453613
+subject:  137128 , size(MB):  5120.202827453613
+subject:  140117 , size(MB):  5120.202827453613
+subject:  144226 , size(MB):  5120.202827453613
+subject:  145834 , size(MB):  5120.202827453613
+subject:  146129 , size(MB):  5120.202827453613
+subject:  146432 , size(MB):  5120.202827453613
+subject:  146735 , size(MB):  5120.202827453613
+subject:  146937 , size(MB):  5120.202827453613
+subject:  148133 , size(MB):  5120.202827453613
+subject:  150423 , size(MB):  5120.202827453613
+subject:  155938 , size(MB):  5120.202827453613
+subject:  156334 , size(MB):  5120.202827453613
+subject:  157336 , size(MB):  5120.202827453613
+subject:  158035 , size(MB):  5120.202827453613
+subject:  158136 , size(MB):  5120.202827453613
+subject:  159239 , size(MB):  5120.202827453613
+subject:  162935 , size(MB):  5120.202827453613
+subject:  164131 , size(MB):  5120.202827453613
+subject:  164636 , size(MB):  5120.202827453613
+subject:  165436 , size(MB):  5120.202827453613
+subject:  167036 , size(MB):  5120.202827453613
+subject:  167440 , size(MB):  5120.202827453613
+subject:  169343 , size(MB):  5120.202827453613
+subject:  169747 , size(MB):  5120.202827453613
+subject:  171633 , size(MB):  5120.202827453613
+subject:  172130 , size(MB):  5120.202827453613
+subject:  173334 , size(MB):  5120.202827453613
+subject:  175237 , size(MB):  5120.202827453613
+subject:  176542 , size(MB):  5120.202827453613
+subject:  177140 , size(MB):  5120.202827453613
+subject:  177645 , size(MB):  5120.202827453613
+subject:  177746 , size(MB):  5120.202827453613
+subject:  178142 , size(MB):  5120.202827453613
+subject:  178243 , size(MB):  5120.202827453613
+subject:  178647 , size(MB):  5120.202827453613
+subject:  180533 , size(MB):  5120.202827453613
+subject:  181232 , size(MB):  5120.202827453613
+subject:  181636 , size(MB):  1590.863899230957
+subject:  182436 , size(MB):  5120.202827453613
+subject:  182739 , size(MB):  5120.202827453613
+subject:  185442 , size(MB):  5120.202827453613
+subject:  186949 , size(MB):  5120.202827453613
+subject:  187345 , size(MB):  5120.202827453613
+subject:  191033 , size(MB):  5120.202827453613
+subject:  191336 , size(MB):  5120.202827453613
+subject:  191841 , size(MB):  5120.202827453613
+subject:  192439 , size(MB):  5120.202827453613
+subject:  192641 , size(MB):  5120.202827453613
+subject:  193845 , size(MB):  5120.202827453613
+subject:  195041 , size(MB):  5120.202827453613
+subject:  196144 , size(MB):  5120.202827453613
+subject:  197348 , size(MB):  5120.202827453613
+subject:  198653 , size(MB):  5120.202827453613
+subject:  199655 , size(MB):  5120.202827453613
+subject:  200210 , size(MB):  5120.202827453613
+subject:  200311 , size(MB):  5120.202827453613
+subject:  200614 , size(MB):  5120.202827453613
+subject:  201515 , size(MB):  5120.202827453613
+subject:  203418 , size(MB):  5120.202827453613
+subject:  204521 , size(MB):  5120.202827453613
+subject:  205220 , size(MB):  5120.202827453613
+subject:  209228 , size(MB):  5120.202827453613
+subject:  212419 , size(MB):  5120.202827453613
+subject:  214019 , size(MB):  5120.202827453613
+subject:  214524 , size(MB):  5120.202827453613
+subject:  221319 , size(MB):  5120.202827453613
+subject:  233326 , size(MB):  5120.202827453613
+subject:  239136 , size(MB):  5120.202827453613
+subject:  246133 , size(MB):  5120.202827453613
+subject:  249947 , size(MB):  5120.202827453613
+subject:  251833 , size(MB):  5120.202827453613
+subject:  257845 , size(MB):  5120.202827453613
+subject:  263436 , size(MB):  5120.202827453613
+subject:  283543 , size(MB):  5120.202827453613
+subject:  318637 , size(MB):  5120.202827453613
+subject:  320826 , size(MB):  5120.202827453613
+subject:  330324 , size(MB):  5120.202827453613
+subject:  346137 , size(MB):  5120.202827453613
+subject:  352738 , size(MB):  5120.202827453613
+subject:  360030 , size(MB):  5120.202827453613
+subject:  365343 , size(MB):  5120.202827453613
+subject:  380036 , size(MB):  5120.202827453613
+subject:  381038 , size(MB):  5120.202827453613
+subject:  389357 , size(MB):  5120.202827453613
+subject:  393247 , size(MB):  5120.202827453613
+subject:  395756 , size(MB):  5120.202827453613
+subject:  397760 , size(MB):  5120.202827453613
+subject:  406836 , size(MB):  5120.202827453613
+subject:  412528 , size(MB):  5120.202827453613
+subject:  429040 , size(MB):  5120.202827453613
+subject:  436845 , size(MB):  5120.202827453613
+subject:  463040 , size(MB):  5120.202827453613
+subject:  467351 , size(MB):  5120.202827453613
+subject:  473952 , size(MB):  0.0
+subject:  525541 , size(MB):  5120.202827453613
+subject:  536647 , size(MB):  1590.863899230957
+subject:  541943 , size(MB):  5120.202827453613
+subject:  547046 , size(MB):  5120.202827453613
+subject:  550439 , size(MB):  5120.202827453613
+subject:  552241 , size(MB):  1590.863899230957
+subject:  562345 , size(MB):  5120.202827453613
+subject:  572045 , size(MB):  5120.202827453613
+subject:  573249 , size(MB):  5120.202827453613
+subject:  581450 , size(MB):  5120.202827453613
+subject:  585256 , size(MB):  992.6682052612305
+subject:  601127 , size(MB):  5120.202827453613
+subject:  617748 , size(MB):  5120.202827453613
+subject:  627549 , size(MB):  5120.202827453613
+subject:  638049 , size(MB):  5120.202827453613
+subject:  654552 , size(MB):  5120.202827453613
+subject:  671855 , size(MB):  5120.202827453613
+subject:  680957 , size(MB):  5120.202827453613
+subject:  690152 , size(MB):  5120.202827453613
+subject:  706040 , size(MB):  5120.202827453613
+subject:  724446 , size(MB):  5120.202827453613
+subject:  725751 , size(MB):  5120.202827453613
+subject:  732243 , size(MB):  5120.202827453613
+subject:  745555 , size(MB):  0.0
+subject:  751550 , size(MB):  5120.202827453613
+subject:  757764 , size(MB):  5120.202827453613
+subject:  765864 , size(MB):  5120.202827453613
+subject:  770352 , size(MB):  5120.202827453613
+subject:  771354 , size(MB):  5120.202827453613
+subject:  782561 , size(MB):  5120.202827453613
+subject:  783462 , size(MB):  5120.202827453613
+subject:  789373 , size(MB):  5120.202827453613
+subject:  814649 , size(MB):  5120.202827453613
+subject:  818859 , size(MB):  5120.202827453613
+subject:  825048 , size(MB):  392.5213623046875
+Processing data for subject : 826353 task : tfMRI_RETBAR1_7T_AP
+HCP_1200/826353/MNINonLinear/Results/tfMRI_RETBAR1_7T_AP/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/826353/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 826353 task : tfMRI_RETBAR2_7T_PA
+HCP_1200/826353/MNINonLinear/Results/tfMRI_RETBAR2_7T_PA/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/826353/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 826353 task : tfMRI_MOVIE1_7T_AP
+HCP_1200/826353/MNINonLinear/Results/tfMRI_MOVIE1_7T_AP/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/826353/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 826353 task : tfMRI_MOVIE2_7T_PA
+HCP_1200/826353/MNINonLinear/Results/tfMRI_MOVIE2_7T_PA/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/826353/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 826353 task : tfMRI_MOVIE3_7T_PA
+HCP_1200/826353/MNINonLinear/Results/tfMRI_MOVIE3_7T_PA/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/826353/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 826353 task : tfMRI_MOVIE4_7T_AP
+HCP_1200/826353/MNINonLinear/Results/tfMRI_MOVIE4_7T_AP/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/826353/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 826353 task : rfMRI_REST1_7T_PA
+HCP_1200/826353/MNINonLinear/Results/rfMRI_REST1_7T_PA/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/826353/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 826353 task : rfMRI_REST2_7T_AP
+HCP_1200/826353/MNINonLinear/Results/rfMRI_REST2_7T_AP/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/826353/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 826353 task : rfMRI_REST3_7T_PA
+HCP_1200/826353/MNINonLinear/Results/rfMRI_REST3_7T_PA/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/826353/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 826353 task : rfMRI_REST4_7T_AP
+HCP_1200/826353/MNINonLinear/Results/rfMRI_REST4_7T_AP/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/826353/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 833249 task : tfMRI_RETBAR1_7T_AP
+HCP_1200/833249/MNINonLinear/Results/tfMRI_RETBAR1_7T_AP/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/833249/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 833249 task : tfMRI_RETBAR2_7T_PA
+HCP_1200/833249/MNINonLinear/Results/tfMRI_RETBAR2_7T_PA/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/833249/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 833249 task : tfMRI_MOVIE1_7T_AP
+HCP_1200/833249/MNINonLinear/Results/tfMRI_MOVIE1_7T_AP/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/833249/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 833249 task : tfMRI_MOVIE2_7T_PA
+HCP_1200/833249/MNINonLinear/Results/tfMRI_MOVIE2_7T_PA/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/833249/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 833249 task : tfMRI_MOVIE3_7T_PA
+HCP_1200/833249/MNINonLinear/Results/tfMRI_MOVIE3_7T_PA/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/833249/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 833249 task : tfMRI_MOVIE4_7T_AP
+HCP_1200/833249/MNINonLinear/Results/tfMRI_MOVIE4_7T_AP/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/833249/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 833249 task : rfMRI_REST1_7T_PA
+HCP_1200/833249/MNINonLinear/Results/rfMRI_REST1_7T_PA/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/833249/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 833249 task : rfMRI_REST2_7T_AP
+HCP_1200/833249/MNINonLinear/Results/rfMRI_REST2_7T_AP/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/833249/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 833249 task : rfMRI_REST3_7T_PA
+HCP_1200/833249/MNINonLinear/Results/rfMRI_REST3_7T_PA/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/833249/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 833249 task : rfMRI_REST4_7T_AP
+HCP_1200/833249/MNINonLinear/Results/rfMRI_REST4_7T_AP/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/833249/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 859671 task : tfMRI_RETBAR1_7T_AP
+HCP_1200/859671/MNINonLinear/Results/tfMRI_RETBAR1_7T_AP/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/859671/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 859671 task : tfMRI_RETBAR2_7T_PA
+HCP_1200/859671/MNINonLinear/Results/tfMRI_RETBAR2_7T_PA/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/859671/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 859671 task : tfMRI_MOVIE1_7T_AP
+HCP_1200/859671/MNINonLinear/Results/tfMRI_MOVIE1_7T_AP/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/859671/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 859671 task : tfMRI_MOVIE2_7T_PA
+HCP_1200/859671/MNINonLinear/Results/tfMRI_MOVIE2_7T_PA/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/859671/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 859671 task : tfMRI_MOVIE3_7T_PA
+HCP_1200/859671/MNINonLinear/Results/tfMRI_MOVIE3_7T_PA/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/859671/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 859671 task : tfMRI_MOVIE4_7T_AP
+HCP_1200/859671/MNINonLinear/Results/tfMRI_MOVIE4_7T_AP/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/859671/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 859671 task : rfMRI_REST1_7T_PA
+HCP_1200/859671/MNINonLinear/Results/rfMRI_REST1_7T_PA/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/859671/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 859671 task : rfMRI_REST2_7T_AP
+HCP_1200/859671/MNINonLinear/Results/rfMRI_REST2_7T_AP/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/859671/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 859671 task : rfMRI_REST3_7T_PA
+HCP_1200/859671/MNINonLinear/Results/rfMRI_REST3_7T_PA/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/859671/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 859671 task : rfMRI_REST4_7T_AP
+HCP_1200/859671/MNINonLinear/Results/rfMRI_REST4_7T_AP/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/859671/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 861456 task : tfMRI_RETBAR1_7T_AP
+HCP_1200/861456/MNINonLinear/Results/tfMRI_RETBAR1_7T_AP/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/861456/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 861456 task : tfMRI_RETBAR2_7T_PA
+HCP_1200/861456/MNINonLinear/Results/tfMRI_RETBAR2_7T_PA/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/861456/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 861456 task : tfMRI_MOVIE1_7T_AP
+HCP_1200/861456/MNINonLinear/Results/tfMRI_MOVIE1_7T_AP/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/861456/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 861456 task : tfMRI_MOVIE2_7T_PA
+HCP_1200/861456/MNINonLinear/Results/tfMRI_MOVIE2_7T_PA/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/861456/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 861456 task : tfMRI_MOVIE3_7T_PA
+HCP_1200/861456/MNINonLinear/Results/tfMRI_MOVIE3_7T_PA/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/861456/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 861456 task : tfMRI_MOVIE4_7T_AP
+HCP_1200/861456/MNINonLinear/Results/tfMRI_MOVIE4_7T_AP/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/861456/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 861456 task : rfMRI_REST1_7T_PA
+HCP_1200/861456/MNINonLinear/Results/rfMRI_REST1_7T_PA/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/861456/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 861456 task : rfMRI_REST2_7T_AP
+HCP_1200/861456/MNINonLinear/Results/rfMRI_REST2_7T_AP/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/861456/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 861456 task : rfMRI_REST3_7T_PA
+HCP_1200/861456/MNINonLinear/Results/rfMRI_REST3_7T_PA/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/861456/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 861456 task : rfMRI_REST4_7T_AP
+HCP_1200/861456/MNINonLinear/Results/rfMRI_REST4_7T_AP/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/861456/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 871762 task : tfMRI_RETBAR1_7T_AP
+HCP_1200/871762/MNINonLinear/Results/tfMRI_RETBAR1_7T_AP/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/871762/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 871762 task : tfMRI_RETBAR2_7T_PA
+HCP_1200/871762/MNINonLinear/Results/tfMRI_RETBAR2_7T_PA/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/871762/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 871762 task : tfMRI_MOVIE1_7T_AP
+HCP_1200/871762/MNINonLinear/Results/tfMRI_MOVIE1_7T_AP/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/871762/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 871762 task : tfMRI_MOVIE2_7T_PA
+HCP_1200/871762/MNINonLinear/Results/tfMRI_MOVIE2_7T_PA/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/871762/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 871762 task : tfMRI_MOVIE3_7T_PA
+HCP_1200/871762/MNINonLinear/Results/tfMRI_MOVIE3_7T_PA/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/871762/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 871762 task : tfMRI_MOVIE4_7T_AP
+HCP_1200/871762/MNINonLinear/Results/tfMRI_MOVIE4_7T_AP/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/871762/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 871762 task : rfMRI_REST1_7T_PA
+HCP_1200/871762/MNINonLinear/Results/rfMRI_REST1_7T_PA/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/871762/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 871762 task : rfMRI_REST2_7T_AP
+HCP_1200/871762/MNINonLinear/Results/rfMRI_REST2_7T_AP/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/871762/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 871762 task : rfMRI_REST3_7T_PA
+HCP_1200/871762/MNINonLinear/Results/rfMRI_REST3_7T_PA/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/871762/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 871762 task : rfMRI_REST4_7T_AP
+HCP_1200/871762/MNINonLinear/Results/rfMRI_REST4_7T_AP/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/871762/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 872764 task : tfMRI_RETBAR1_7T_AP
+HCP_1200/872764/MNINonLinear/Results/tfMRI_RETBAR1_7T_AP/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/872764/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 872764 task : tfMRI_RETBAR2_7T_PA
+HCP_1200/872764/MNINonLinear/Results/tfMRI_RETBAR2_7T_PA/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/872764/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 872764 task : tfMRI_MOVIE1_7T_AP
+HCP_1200/872764/MNINonLinear/Results/tfMRI_MOVIE1_7T_AP/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/872764/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 872764 task : tfMRI_MOVIE2_7T_PA
+HCP_1200/872764/MNINonLinear/Results/tfMRI_MOVIE2_7T_PA/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/872764/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 872764 task : tfMRI_MOVIE3_7T_PA
+HCP_1200/872764/MNINonLinear/Results/tfMRI_MOVIE3_7T_PA/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/872764/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 872764 task : tfMRI_MOVIE4_7T_AP
+HCP_1200/872764/MNINonLinear/Results/tfMRI_MOVIE4_7T_AP/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/872764/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 872764 task : rfMRI_REST1_7T_PA
+HCP_1200/872764/MNINonLinear/Results/rfMRI_REST1_7T_PA/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/872764/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 872764 task : rfMRI_REST2_7T_AP
+HCP_1200/872764/MNINonLinear/Results/rfMRI_REST2_7T_AP/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/872764/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 872764 task : rfMRI_REST3_7T_PA
+HCP_1200/872764/MNINonLinear/Results/rfMRI_REST3_7T_PA/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/872764/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 872764 task : rfMRI_REST4_7T_AP
+HCP_1200/872764/MNINonLinear/Results/rfMRI_REST4_7T_AP/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/872764/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 878776 task : tfMRI_RETBAR1_7T_AP
+HCP_1200/878776/MNINonLinear/Results/tfMRI_RETBAR1_7T_AP/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/878776/tfMRI_RETBAR1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 878776 task : tfMRI_RETBAR2_7T_PA
+HCP_1200/878776/MNINonLinear/Results/tfMRI_RETBAR2_7T_PA/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/878776/tfMRI_RETBAR2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 878776 task : tfMRI_MOVIE1_7T_AP
+HCP_1200/878776/MNINonLinear/Results/tfMRI_MOVIE1_7T_AP/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/878776/tfMRI_MOVIE1_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 878776 task : tfMRI_MOVIE2_7T_PA
+HCP_1200/878776/MNINonLinear/Results/tfMRI_MOVIE2_7T_PA/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/878776/tfMRI_MOVIE2_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 878776 task : tfMRI_MOVIE3_7T_PA
+HCP_1200/878776/MNINonLinear/Results/tfMRI_MOVIE3_7T_PA/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/878776/tfMRI_MOVIE3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 878776 task : tfMRI_MOVIE4_7T_AP
+HCP_1200/878776/MNINonLinear/Results/tfMRI_MOVIE4_7T_AP/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/878776/tfMRI_MOVIE4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 878776 task : rfMRI_REST1_7T_PA
+HCP_1200/878776/MNINonLinear/Results/rfMRI_REST1_7T_PA/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/878776/rfMRI_REST1_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 878776 task : rfMRI_REST2_7T_AP
+HCP_1200/878776/MNINonLinear/Results/rfMRI_REST2_7T_AP/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/878776/rfMRI_REST2_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 878776 task : rfMRI_REST3_7T_PA
+HCP_1200/878776/MNINonLinear/Results/rfMRI_REST3_7T_PA/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/878776/rfMRI_REST3_7T_PA_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+Processing data for subject : 878776 task : rfMRI_REST4_7T_AP
+HCP_1200/878776/MNINonLinear/Results/rfMRI_REST4_7T_AP/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+/scratch/nicogravel/HCP_data/temp/878776/rfMRI_REST4_7T_AP_Atlas_1.6mm_MSMAll_hp2000_clean.dtseries.nii
+Downloading...
+subject:  878877 , size(MB):  5120.202827453613
+subject:  898176 , size(MB):  5120.202827453613
+subject:  899885 , size(MB):  5120.202827453613
+subject:  901139 , size(MB):  5120.202827453613
+subject:  905147 , size(MB):  5120.202827453613
+subject:  910241 , size(MB):  5120.202827453613
+subject:  926862 , size(MB):  5120.202827453613
+subject:  927359 , size(MB):  5120.202827453613
+subject:  942658 , size(MB):  5120.202827453613
+subject:  951457 , size(MB):  5111.747848510742
+subject:  958976 , size(MB):  5120.202827453613
+subject:  966975 , size(MB):  5120.202827453613
+subject:  995174 , size(MB):  5120.202827453613
+</pre></div></div>
+</div>
+</section>
+</section>
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="../index.html" title="Previous document">Retinotopy-constrained EC at 7T-fMRI</a>
+        </li>
+        <li>
+          <a href="retNet_ROIs.html" title="Next document"><span class="section-number">2. </span>Retinotopy-constrained ROI Network Extraction</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      <a href="../_sources/notebooks/retNet_HCP.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,30 @@
+Retinotopy-constrained EC at 7T-fMRI
+####################################
+
+We probe the task-dependent structure–function relationship in early visual cortex (V1–V2–V3) using high‑resolution 7T fMRI and retinotopic maps. Comparing directed effective‑connectivity models—rDCM and multivariate Ornstein–Uhlenbeck (MOU)—on >150 HCP subjects, we find similar EC patterns driven by the same underlying dynamical system. Group‑level convergence emerges around 20 subjects, and cross‑model decoding (train on one, test on the other) is robust, showing both models capture BOLD propagation dynamics similarly.
+
+
+**********
+Content
+**********
+
+
+
+.. toctree::
+    :maxdepth: 2
+    :numbered:
+
+
+
+    notebooks/retNet_HCP
+    notebooks/retNet_ROIs
+    notebooks/retNet_MOU
+    notebooks/retNet_rDCM
+    notebooks/retNet_model-cross-learning
+    notebooks/retNet_model-convergence
+
+    
+
+
+
+

@@ -1,0 +1,2759 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>3. Multivariate Ornstein-Uhlenbeck Effective Connectivity &#8212; retNet_fMRI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/nbsphinx-code-cells.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4. Regression Dynamic Causal Modeling Effective Connectivity" href="retNet_rDCM.html" />
+    <link rel="prev" title="2. Retinotopy-constrained ROI Network Extraction" href="retNet_ROIs.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p></p><h3>Table of Contents</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="retNet_HCP.html">1. Human Connectome Project 7T fMRI Retinotopy Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_ROIs.html">2. Retinotopy-constrained ROI Network Extraction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Multivariate Ornstein-Uhlenbeck Effective Connectivity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#Environment-setup-&amp;-pyMOU-configuration">3.1. Environment setup &amp; pyMOU configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Retinotopy-time-series">3.2. Retinotopy time series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Lyapunov-optimization-of-the-spatio-temporal-covariances">3.3. Lyapunov optimization of the spatio-temporal covariances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Save-best-fitting-model-parameters">3.4. Save best fitting model parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_rDCM.html">4. Regression Dynamic Causal Modeling Effective Connectivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_model-cross-learning.html">5. Cross-task generalization between MOU and rDCM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="retNet_model-convergence.html">6. Convergence of MOU and rDCM derived EC</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="retNet_ROIs.html" title="previous chapter"><span class="section-number">2. </span>Retinotopy-constrained ROI Network Extraction</a></li>
+      <li>Next: <a href="retNet_rDCM.html" title="next chapter"><span class="section-number">4. </span>Regression Dynamic Causal Modeling Effective Connectivity</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="retNet_ROIs.html" title="Previous document"><span class="section-number">2. </span>Retinotopy-constrained ROI Network Extraction</a>
+        </li>
+        <li>
+          <a href="retNet_rDCM.html" title="Next document"><span class="section-number">4. </span>Regression Dynamic Causal Modeling Effective Connectivity</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <section id="Multivariate-Ornstein-Uhlenbeck-Effective-Connectivity">
+<h1><span class="section-number">3. </span>Multivariate Ornstein-Uhlenbeck Effective Connectivity<a class="headerlink" href="#Multivariate-Ornstein-Uhlenbeck-Effective-Connectivity" title="Permalink to this heading">¶</a></h1>
+<p>This notebook show how to estimate effective connectivity using the Multivariate Ornstein-Uhlenbeck (MOU) dynamical systems model.</p>
+<p>Gilson, M., Moreno-Bote, R., Ponce-Alvarez, A., Ritter, P., &amp; Deco, G. (2016). <strong>Estimation of directed effective connectivity from fMRI functional connectivity hints at asymmetries of cortical connectome</strong>. PLOS Computational Biology, 12(3), e1004762. <a class="reference external" href="https://doi.org/10.1371/journal.pcbi.1004762">https://doi.org/10.1371/journal.pcbi.1004762</a></p>
+<section id="Environment-setup-&amp;-pyMOU-configuration">
+<h2><span class="section-number">3.1. </span>Environment setup &amp; pyMOU configuration<a class="headerlink" href="#Environment-setup-&-pyMOU-configuration" title="Permalink to this heading">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os.path</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.linalg</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">spl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.io</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sio</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pymou</span><span class="w"> </span><span class="kn">import</span> <span class="n">MOU</span>
+
+
+<span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;PCB2016&#39;</span>
+<span class="c1">#model = &#39;NeNe2020&#39;</span>
+<span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;new_2021&#39;</span>
+<span class="c1">#model = &#39;pos2021&#39;</span>
+
+
+<span class="c1"># Optimization parameters</span>
+<span class="n">min_C</span>     <span class="o">=</span>  <span class="o">-</span><span class="mi">1</span>
+<span class="n">max_C</span>     <span class="o">=</span>   <span class="mi">1</span>
+<span class="n">eta_C</span>     <span class="o">=</span>   <span class="mf">0.005</span>
+<span class="n">eta_Sigma</span> <span class="o">=</span>   <span class="mf">0.05</span>
+<span class="n">eta_tau</span>   <span class="o">=</span>   <span class="mf">0.05</span>
+<span class="n">max_iter</span>  <span class="o">=</span>   <span class="mi">1000</span>
+
+<span class="n">n_sub</span>    <span class="o">=</span> <span class="mi">157</span> <span class="c1">#150</span>
+<span class="n">delta_TR</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1"># time shift</span>
+</pre></div>
+</div>
+</div>
+<p>The data is organized into retinotopy (RETBAR 1-2), movie-watching (MOVIE 1-4), and resting-state (REST 1-4) scans (10 sessions).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Model</span>
+<span class="n">n_cond</span>   <span class="o">=</span> <span class="mi">10</span>
+<span class="n">n_sess</span>   <span class="o">=</span> <span class="mi">10</span>
+<span class="n">n_rois</span>   <span class="o">=</span> <span class="mi">24</span>
+<span class="n">TR</span>       <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># Index dictionary</span>
+<span class="n">conf</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;tasks&#39;</span>   <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;vfm&#39;</span><span class="p">,</span><span class="s1">&#39;movie&#39;</span><span class="p">,</span><span class="s1">&#39;rest&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;eccen&#39;</span>   <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;fovea&#39;</span><span class="p">,</span><span class="s1">&#39;para-fovea&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;fovea&#39;</span>   <span class="p">:</span> <span class="p">[</span>
+                    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">22</span><span class="p">],</span>  <span class="c1">#  &lt; fovea</span>
+                    <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">15</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">19</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="mi">23</span><span class="p">],</span>   <span class="c1">#  &gt; fovea</span>
+                    <span class="p">],</span>
+        <span class="s1">&#39;roiname&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;V1&#39;</span><span class="p">,</span><span class="s1">&#39;V2&#39;</span><span class="p">,</span><span class="s1">&#39;V3&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;rois&#39;</span>    <span class="p">:</span> <span class="p">[</span>
+                    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="mi">14</span><span class="p">,</span><span class="mi">15</span><span class="p">],</span>   <span class="c1"># V1</span>
+                    <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">18</span><span class="p">,</span><span class="mi">19</span><span class="p">],</span>   <span class="c1"># V2</span>
+                    <span class="p">[</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">11</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">21</span><span class="p">,</span><span class="mi">22</span><span class="p">,</span><span class="mi">23</span><span class="p">]</span>  <span class="c1"># V3</span>
+                    <span class="p">],</span>
+        <span class="s1">&#39;task&#39;</span>    <span class="p">:</span> <span class="p">[</span>
+                    <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span>     <span class="c1"># retinotopy</span>
+                    <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">],</span> <span class="c1"># movie watching</span>
+                    <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>  <span class="c1"># resting state</span>
+                    <span class="p">],</span>
+
+        <span class="s1">&#39;hemis&#39;</span>   <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">,</span> <span class="s1">&#39;right&#39;</span><span class="p">],</span>
+        <span class="s1">&#39;flows&#39;</span>   <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;outflow&#39;</span><span class="p">,</span> <span class="s1">&#39;inflow&#39;</span><span class="p">]</span>
+        <span class="p">}</span>
+
+
+<span class="c1"># Time series</span>
+<span class="c1"># ---------------------------------------------------------------------------------------------------------------------------</span>
+
+<span class="n">task_ID_1</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tfMRI_RETBAR1_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_RETBAR2_7T_PA&#39;</span>
+              <span class="p">]</span>
+
+<span class="n">task_ID_2</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;tfMRI_MOVIE1_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE2_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE3_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;tfMRI_MOVIE4_7T_AP&#39;</span><span class="p">,</span>
+             <span class="p">]</span>
+
+<span class="n">task_ID_3</span>  <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;rfMRI_REST1_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST2_7T_AP&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST3_7T_PA&#39;</span><span class="p">,</span>
+              <span class="s1">&#39;rfMRI_REST4_7T_AP&#39;</span>
+             <span class="p">]</span>
+
+<span class="n">task_ID</span> <span class="o">=</span> <span class="n">task_ID_1</span> <span class="o">+</span> <span class="n">task_ID_2</span> <span class="o">+</span> <span class="n">task_ID_3</span>
+<span class="n">fileobj</span>     <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/home/nicolas/Documents/RetNet/retNet_analyses/HCP_7T_prep/subj_id.txt&#39;</span><span class="p">)</span>
+<span class="n">data</span>        <span class="o">=</span> <span class="n">fileobj</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">subject_ID</span>  <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="c1"># Subjects x Task</span>
+<span class="n">scans</span>    <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sub</span><span class="o">*</span><span class="mi">10</span><span class="p">)]</span>
+<span class="n">scan_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="n">n_sub</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+    <span class="n">scan</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">scans</span> <span class="k">if</span> <span class="n">x</span><span class="o">%</span><span class="k">10</span> ==n]
+    <span class="n">scan_idx</span><span class="p">[</span><span class="n">n</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">scan</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Subjects x Task : </span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">scan_idx</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Subjects x Task :
+ [[   0   10   20 ... 1540 1550 1560]
+ [   1   11   21 ... 1541 1551 1561]
+ [   2   12   22 ... 1542 1552 1562]
+ ...
+ [   7   17   27 ... 1547 1557 1567]
+ [   8   18   28 ... 1548 1558 1568]
+ [   9   19   29 ... 1549 1559 1569]]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prep_pth</span> <span class="o">=</span> <span class="s1">&#39;/home/nicolas/Documents/RetNet/ret-EC/&#39;</span>
+<span class="c1">#time_series = {&#39;data&#39;: data, &#39;scan_idx&#39;: scan_idx}</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">prep_pth</span> <span class="o">+</span> <span class="s1">&#39;tseries_24rois_allsubjects.npy&#39;</span><span class="p">)</span>
+<span class="n">time_series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span><span class="n">allow_pickle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">time_series</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+<span class="n">scan_idx</span> <span class="o">=</span> <span class="n">time_series</span><span class="p">[</span><span class="s1">&#39;scan_idx&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">scan_idx</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1">#tSeries = data[scan_idx[:,:]]</span>
+
+<span class="c1">#sio.savemat(prep_pth + &#39;HCP_ecv24rois.mat&#39;, {&#39;data&#39;: tSeries, &#39;scan_idx&#39;: scan_idx})</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(10, 157)
+</pre></div></div>
+</div>
+</section>
+<section id="Retinotopy-time-series">
+<h2><span class="section-number">3.2. </span>Retinotopy time series<a class="headerlink" href="#Retinotopy-time-series" title="Permalink to this heading">¶</a></h2>
+<p>Only part of the dataset was usable (157 participants). As a quality check, in what follows we print the time series for the first two sessions.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># print VFM (first two sessions)</span>
+<span class="n">tSeries</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_sub</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">n_rois</span><span class="p">,</span><span class="mi">300</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i_sess</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sub</span><span class="p">):</span>
+        <span class="n">tSeries</span><span class="p">[</span><span class="n">i_sub</span><span class="p">,</span><span class="n">i_sess</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">scan_idx</span><span class="p">[</span><span class="n">i_sess</span><span class="p">,</span><span class="n">i_sub</span><span class="p">]]</span>
+
+<span class="n">n_sub</span> <span class="o">=</span> <span class="n">tSeries</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">v_tau</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">n_tau</span> <span class="o">=</span> <span class="n">v_tau</span><span class="o">.</span><span class="n">size</span>
+<span class="n">t_time</span> <span class="o">=</span> <span class="n">tSeries</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">n_cond</span> <span class="o">=</span> <span class="mi">3</span>
+
+
+<span class="n">ts_emp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_sub</span><span class="p">,</span><span class="n">n_cond</span><span class="p">,</span><span class="n">n_rois</span><span class="p">,</span><span class="n">t_time</span><span class="p">])</span>
+<span class="n">FC_emp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_sub</span><span class="p">,</span><span class="n">n_cond</span><span class="p">,</span><span class="n">n_tau</span><span class="p">,</span><span class="n">n_rois</span><span class="p">,</span><span class="n">n_rois</span><span class="p">])</span>
+
+
+<span class="n">ts_emp</span> <span class="o">=</span> <span class="n">tSeries</span>
+<span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sub</span><span class="p">):</span>
+    <span class="c1">#print(f&#39;{i_sub}, {sub}&#39;)</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">tps</span> <span class="o">=</span> <span class="n">ts_emp</span><span class="p">[</span><span class="n">i_sub</span><span class="p">,</span><span class="mi">0</span><span class="p">,:,:]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">tps</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Spectral_r&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Source ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;TR&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1">#plt.colorbar()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">tps</span> <span class="o">=</span> <span class="n">ts_emp</span><span class="p">[</span><span class="n">i_sub</span><span class="p">,</span><span class="mi">1</span><span class="p">,:,:]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">tps</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Spectral_r&#39;</span><span class="p">)</span>
+    <span class="c1">#plt.ylabel(&#39;Source ROI&#39;, fontsize=10)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;TR&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="c1">#plt.colorbar()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_0.png" src="../_images/notebooks_retNet_MOU_7_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_1.png" src="../_images/notebooks_retNet_MOU_7_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_2.png" src="../_images/notebooks_retNet_MOU_7_2.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_3.png" src="../_images/notebooks_retNet_MOU_7_3.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_4.png" src="../_images/notebooks_retNet_MOU_7_4.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_5.png" src="../_images/notebooks_retNet_MOU_7_5.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_6.png" src="../_images/notebooks_retNet_MOU_7_6.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_7.png" src="../_images/notebooks_retNet_MOU_7_7.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_8.png" src="../_images/notebooks_retNet_MOU_7_8.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_9.png" src="../_images/notebooks_retNet_MOU_7_9.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_10.png" src="../_images/notebooks_retNet_MOU_7_10.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_11.png" src="../_images/notebooks_retNet_MOU_7_11.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_12.png" src="../_images/notebooks_retNet_MOU_7_12.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_13.png" src="../_images/notebooks_retNet_MOU_7_13.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_14.png" src="../_images/notebooks_retNet_MOU_7_14.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_15.png" src="../_images/notebooks_retNet_MOU_7_15.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_16.png" src="../_images/notebooks_retNet_MOU_7_16.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_17.png" src="../_images/notebooks_retNet_MOU_7_17.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_18.png" src="../_images/notebooks_retNet_MOU_7_18.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_19.png" src="../_images/notebooks_retNet_MOU_7_19.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_20.png" src="../_images/notebooks_retNet_MOU_7_20.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_21.png" src="../_images/notebooks_retNet_MOU_7_21.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_22.png" src="../_images/notebooks_retNet_MOU_7_22.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_23.png" src="../_images/notebooks_retNet_MOU_7_23.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_24.png" src="../_images/notebooks_retNet_MOU_7_24.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_25.png" src="../_images/notebooks_retNet_MOU_7_25.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_26.png" src="../_images/notebooks_retNet_MOU_7_26.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_27.png" src="../_images/notebooks_retNet_MOU_7_27.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_28.png" src="../_images/notebooks_retNet_MOU_7_28.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_29.png" src="../_images/notebooks_retNet_MOU_7_29.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_30.png" src="../_images/notebooks_retNet_MOU_7_30.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_31.png" src="../_images/notebooks_retNet_MOU_7_31.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_32.png" src="../_images/notebooks_retNet_MOU_7_32.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_33.png" src="../_images/notebooks_retNet_MOU_7_33.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_34.png" src="../_images/notebooks_retNet_MOU_7_34.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_35.png" src="../_images/notebooks_retNet_MOU_7_35.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_36.png" src="../_images/notebooks_retNet_MOU_7_36.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_37.png" src="../_images/notebooks_retNet_MOU_7_37.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_38.png" src="../_images/notebooks_retNet_MOU_7_38.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_39.png" src="../_images/notebooks_retNet_MOU_7_39.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_40.png" src="../_images/notebooks_retNet_MOU_7_40.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_41.png" src="../_images/notebooks_retNet_MOU_7_41.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_42.png" src="../_images/notebooks_retNet_MOU_7_42.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_43.png" src="../_images/notebooks_retNet_MOU_7_43.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_44.png" src="../_images/notebooks_retNet_MOU_7_44.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_45.png" src="../_images/notebooks_retNet_MOU_7_45.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_46.png" src="../_images/notebooks_retNet_MOU_7_46.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_47.png" src="../_images/notebooks_retNet_MOU_7_47.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_48.png" src="../_images/notebooks_retNet_MOU_7_48.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_49.png" src="../_images/notebooks_retNet_MOU_7_49.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_50.png" src="../_images/notebooks_retNet_MOU_7_50.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_51.png" src="../_images/notebooks_retNet_MOU_7_51.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_52.png" src="../_images/notebooks_retNet_MOU_7_52.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_53.png" src="../_images/notebooks_retNet_MOU_7_53.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_54.png" src="../_images/notebooks_retNet_MOU_7_54.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_55.png" src="../_images/notebooks_retNet_MOU_7_55.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_56.png" src="../_images/notebooks_retNet_MOU_7_56.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_57.png" src="../_images/notebooks_retNet_MOU_7_57.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_58.png" src="../_images/notebooks_retNet_MOU_7_58.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_59.png" src="../_images/notebooks_retNet_MOU_7_59.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_60.png" src="../_images/notebooks_retNet_MOU_7_60.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_61.png" src="../_images/notebooks_retNet_MOU_7_61.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_62.png" src="../_images/notebooks_retNet_MOU_7_62.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_63.png" src="../_images/notebooks_retNet_MOU_7_63.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_64.png" src="../_images/notebooks_retNet_MOU_7_64.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_65.png" src="../_images/notebooks_retNet_MOU_7_65.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_66.png" src="../_images/notebooks_retNet_MOU_7_66.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_67.png" src="../_images/notebooks_retNet_MOU_7_67.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_68.png" src="../_images/notebooks_retNet_MOU_7_68.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_69.png" src="../_images/notebooks_retNet_MOU_7_69.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_70.png" src="../_images/notebooks_retNet_MOU_7_70.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_71.png" src="../_images/notebooks_retNet_MOU_7_71.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_72.png" src="../_images/notebooks_retNet_MOU_7_72.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_73.png" src="../_images/notebooks_retNet_MOU_7_73.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_74.png" src="../_images/notebooks_retNet_MOU_7_74.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_75.png" src="../_images/notebooks_retNet_MOU_7_75.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_76.png" src="../_images/notebooks_retNet_MOU_7_76.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_77.png" src="../_images/notebooks_retNet_MOU_7_77.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_78.png" src="../_images/notebooks_retNet_MOU_7_78.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_79.png" src="../_images/notebooks_retNet_MOU_7_79.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_80.png" src="../_images/notebooks_retNet_MOU_7_80.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_81.png" src="../_images/notebooks_retNet_MOU_7_81.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_82.png" src="../_images/notebooks_retNet_MOU_7_82.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_83.png" src="../_images/notebooks_retNet_MOU_7_83.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_84.png" src="../_images/notebooks_retNet_MOU_7_84.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_85.png" src="../_images/notebooks_retNet_MOU_7_85.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_86.png" src="../_images/notebooks_retNet_MOU_7_86.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_87.png" src="../_images/notebooks_retNet_MOU_7_87.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_88.png" src="../_images/notebooks_retNet_MOU_7_88.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_89.png" src="../_images/notebooks_retNet_MOU_7_89.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_90.png" src="../_images/notebooks_retNet_MOU_7_90.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_91.png" src="../_images/notebooks_retNet_MOU_7_91.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_92.png" src="../_images/notebooks_retNet_MOU_7_92.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_93.png" src="../_images/notebooks_retNet_MOU_7_93.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_94.png" src="../_images/notebooks_retNet_MOU_7_94.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_95.png" src="../_images/notebooks_retNet_MOU_7_95.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_96.png" src="../_images/notebooks_retNet_MOU_7_96.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_97.png" src="../_images/notebooks_retNet_MOU_7_97.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_98.png" src="../_images/notebooks_retNet_MOU_7_98.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_99.png" src="../_images/notebooks_retNet_MOU_7_99.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_100.png" src="../_images/notebooks_retNet_MOU_7_100.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_101.png" src="../_images/notebooks_retNet_MOU_7_101.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_102.png" src="../_images/notebooks_retNet_MOU_7_102.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_103.png" src="../_images/notebooks_retNet_MOU_7_103.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_104.png" src="../_images/notebooks_retNet_MOU_7_104.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_105.png" src="../_images/notebooks_retNet_MOU_7_105.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_106.png" src="../_images/notebooks_retNet_MOU_7_106.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_107.png" src="../_images/notebooks_retNet_MOU_7_107.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_108.png" src="../_images/notebooks_retNet_MOU_7_108.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_109.png" src="../_images/notebooks_retNet_MOU_7_109.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_110.png" src="../_images/notebooks_retNet_MOU_7_110.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_111.png" src="../_images/notebooks_retNet_MOU_7_111.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_112.png" src="../_images/notebooks_retNet_MOU_7_112.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_113.png" src="../_images/notebooks_retNet_MOU_7_113.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_114.png" src="../_images/notebooks_retNet_MOU_7_114.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_115.png" src="../_images/notebooks_retNet_MOU_7_115.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_116.png" src="../_images/notebooks_retNet_MOU_7_116.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_117.png" src="../_images/notebooks_retNet_MOU_7_117.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_118.png" src="../_images/notebooks_retNet_MOU_7_118.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_119.png" src="../_images/notebooks_retNet_MOU_7_119.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_120.png" src="../_images/notebooks_retNet_MOU_7_120.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_121.png" src="../_images/notebooks_retNet_MOU_7_121.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_122.png" src="../_images/notebooks_retNet_MOU_7_122.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_123.png" src="../_images/notebooks_retNet_MOU_7_123.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_124.png" src="../_images/notebooks_retNet_MOU_7_124.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_125.png" src="../_images/notebooks_retNet_MOU_7_125.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_126.png" src="../_images/notebooks_retNet_MOU_7_126.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_127.png" src="../_images/notebooks_retNet_MOU_7_127.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_128.png" src="../_images/notebooks_retNet_MOU_7_128.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_129.png" src="../_images/notebooks_retNet_MOU_7_129.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_130.png" src="../_images/notebooks_retNet_MOU_7_130.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_131.png" src="../_images/notebooks_retNet_MOU_7_131.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_132.png" src="../_images/notebooks_retNet_MOU_7_132.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_133.png" src="../_images/notebooks_retNet_MOU_7_133.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_134.png" src="../_images/notebooks_retNet_MOU_7_134.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_135.png" src="../_images/notebooks_retNet_MOU_7_135.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_136.png" src="../_images/notebooks_retNet_MOU_7_136.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_137.png" src="../_images/notebooks_retNet_MOU_7_137.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_138.png" src="../_images/notebooks_retNet_MOU_7_138.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_139.png" src="../_images/notebooks_retNet_MOU_7_139.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_140.png" src="../_images/notebooks_retNet_MOU_7_140.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_141.png" src="../_images/notebooks_retNet_MOU_7_141.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_142.png" src="../_images/notebooks_retNet_MOU_7_142.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_143.png" src="../_images/notebooks_retNet_MOU_7_143.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_144.png" src="../_images/notebooks_retNet_MOU_7_144.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_145.png" src="../_images/notebooks_retNet_MOU_7_145.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_146.png" src="../_images/notebooks_retNet_MOU_7_146.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_147.png" src="../_images/notebooks_retNet_MOU_7_147.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_148.png" src="../_images/notebooks_retNet_MOU_7_148.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_149.png" src="../_images/notebooks_retNet_MOU_7_149.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_150.png" src="../_images/notebooks_retNet_MOU_7_150.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_151.png" src="../_images/notebooks_retNet_MOU_7_151.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_152.png" src="../_images/notebooks_retNet_MOU_7_152.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_153.png" src="../_images/notebooks_retNet_MOU_7_153.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_154.png" src="../_images/notebooks_retNet_MOU_7_154.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_155.png" src="../_images/notebooks_retNet_MOU_7_155.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_7_156.png" src="../_images/notebooks_retNet_MOU_7_156.png" />
+</div>
+</div>
+</section>
+<section id="Lyapunov-optimization-of-the-spatio-temporal-covariances">
+<h2><span class="section-number">3.3. </span>Lyapunov optimization of the spatio-temporal covariances<a class="headerlink" href="#Lyapunov-optimization-of-the-spatio-temporal-covariances" title="Permalink to this heading">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_cond</span> <span class="o">=</span> <span class="n">n_cond</span>
+<span class="n">pth</span>         <span class="o">=</span> <span class="s1">&#39;/home/nicolas/Documents/RetNet/ret-EC/new_results/&#39;</span>
+<span class="n">J_mod</span>       <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_cond</span><span class="p">,</span><span class="n">n_sub</span><span class="p">,</span><span class="n">n_rois</span><span class="p">,</span><span class="n">n_rois</span><span class="p">])</span>      <span class="c1"># Jacobian (off-diagonal elements = EC)</span>
+<span class="n">Sigma_mod</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_cond</span><span class="p">,</span><span class="n">n_sub</span><span class="p">,</span><span class="n">n_rois</span><span class="p">,</span><span class="n">n_rois</span><span class="p">])</span>  <span class="c1"># local variance (input covariance matrix, chosen to be diagonal)</span>
+<span class="n">EC_normed</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_cond</span><span class="p">,</span><span class="n">n_sub</span><span class="p">,</span><span class="n">n_rois</span><span class="p">,</span><span class="n">n_rois</span><span class="p">])</span>      <span class="c1"># Jacobian (off-diagonal elements = EC)</span>
+<span class="n">model_fit</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_cond</span><span class="p">,</span><span class="n">n_sub</span><span class="p">])</span>
+<span class="n">model_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_cond</span><span class="p">,</span><span class="n">n_sub</span><span class="p">])</span>
+<span class="n">t_time</span>      <span class="o">=</span> <span class="p">[</span><span class="mi">300</span><span class="p">,</span> <span class="mi">900</span><span class="p">]</span>
+
+
+<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sub</span><span class="p">):</span>
+
+        <span class="c1">#cond_idx = conf[&#39;task&#39;][i_cond]</span>
+
+        <span class="c1">#if i_cond == 0:</span>
+        <span class="c1">#  ts_emp   = np.zeros([len(cond_idx),t_time[0],n_rois])   # VFM is 300 TRs</span>
+        <span class="c1">#else:</span>
+        <span class="c1">#  ts_emp   = np.zeros([len(cond_idx),t_time[1],n_rois])   # Movie and Rest are 900 TRs</span>
+
+        <span class="c1">#for i_idx in range(len(cond_idx)):</span>
+        <span class="c1">#  dat = data[scan_idx[cond_idx[i_idx],i_sub]]</span>
+        <span class="c1">#  print(dat.shape)</span>
+        <span class="c1">#  if i_cond == 0:</span>
+        <span class="c1">#    ts_emp[i_idx,:,:] = dat[:,0:t_time[0]].T</span>
+        <span class="c1">#  else:</span>
+        <span class="c1">#    ts_emp[i_idx,:,:] = dat[:,0:t_time[1]].T</span>
+
+        <span class="c1">#print(ts_emp.shape)</span>
+        <span class="c1">#ts_avg = np.nanmean(ts_emp,axis=0)</span>
+        <span class="c1">#if i_cond == 0 or i_cond == 1:</span>
+        <span class="c1">#    tau = tau_x[:,conf[&#39;task&#39;][0],:].flatten().mean()</span>
+        <span class="c1">#if i_cond == 2 or i_cond == 3 or i_cond == 4 or i_cond == 5:</span>
+        <span class="c1">#    tau = tau_x[:,conf[&#39;task&#39;][1],:].flatten().mean()</span>
+        <span class="c1">#if i_cond == 6 or i_cond == 7 or i_cond == 8 or i_cond == 9:</span>
+        <span class="c1">#    tau = tau_x[:,conf[&#39;task&#39;][2],:].flatten().mean()</span>
+
+        <span class="c1">#tau = tau_x[:,i_cond,:].flatten().mean()</span>
+
+        <span class="n">runs</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;task&#39;</span><span class="p">][</span><span class="n">i_cond</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">i_cond</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">run_1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">scan_idx</span><span class="p">[</span><span class="n">runs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">i_sub</span><span class="p">]]</span>
+            <span class="n">run_2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">scan_idx</span><span class="p">[</span><span class="n">runs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">i_sub</span><span class="p">]]</span>
+            <span class="n">ts_emp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">run_1</span><span class="p">,</span> <span class="n">run_2</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">if</span> <span class="n">i_cond</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">i_cond</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">run_1</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">scan_idx</span><span class="p">[</span><span class="n">runs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">i_sub</span><span class="p">]]</span>
+            <span class="n">run_2</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">scan_idx</span><span class="p">[</span><span class="n">runs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">i_sub</span><span class="p">]]</span>
+            <span class="n">run_3</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">scan_idx</span><span class="p">[</span><span class="n">runs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">i_sub</span><span class="p">]]</span>
+            <span class="n">run_4</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">scan_idx</span><span class="p">[</span><span class="n">runs</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">i_sub</span><span class="p">]]</span>
+            <span class="n">ts_emp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">run_1</span><span class="p">,</span> <span class="n">run_2</span><span class="p">,</span> <span class="n">run_3</span><span class="p">,</span> <span class="n">run_4</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ts_emp</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">ts_emp</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+
+        <span class="c1">#ts = data[scan_idx[i_cond,i_sub]].T</span>
+        <span class="c1">#for i_cond in range(n_cond):</span>
+        <span class="c1">#for i_sub in range(n_sub):</span>
+        <span class="c1">#ts_lh   = ts[0:12,:] # left hemisphere</span>
+        <span class="c1">#ts_rh   = ts[12:24,:] # right hemisphere</span>
+        <span class="c1">#ts_avg  = np.vstack((ts_lh,ts_rh))</span>
+        <span class="c1">#print(ts_avg.shape)</span>
+
+        <span class="c1">#tau = np.nanmean(tau_x[i_sub,i_sess,:],axis=0)</span>
+
+
+
+        <span class="n">mou</span> <span class="o">=</span> <span class="n">MOU</span><span class="p">()</span>
+
+        <span class="c1">#mou.fit(ts_avg, tau,eta_C=0.0001, eta_Sigma=0.0001, max_iter=5000, min_C=0.0, algo_version=model)</span>
+        <span class="c1">#mou.fit(ts_avg, tau, min_C=0, max_C=1, eta_C=0.0001, eta_Sigma=0.0001, max_iter=5000, algo_version=model)</span>
+        <span class="c1">#mou.fit(ts, tau, min_C=-0.1, max_C=0.1, eta_C=0.001, eta_Sigma=0.001, max_iter=5000, algo_version=model)</span>
+
+
+        <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;PCB2016&#39;</span><span class="p">:</span>
+          <span class="n">mou</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">ts_emp</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">min_C</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">max_C</span><span class="o">=</span><span class="n">max_C</span><span class="p">,</span> <span class="n">eta_C</span><span class="o">=</span><span class="n">eta_C</span><span class="p">,</span> <span class="n">eta_Sigma</span><span class="o">=</span><span class="n">eta_Sigma</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">algo_version</span><span class="o">=</span><span class="s1">&#39;PCB2016&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;NeNe2020&#39;</span><span class="p">:</span>
+            <span class="n">mou</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">ts_emp</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">min_C</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">max_C</span><span class="o">=</span><span class="n">max_C</span><span class="p">,</span> <span class="n">eta_C</span><span class="o">=</span><span class="n">eta_C</span><span class="p">,</span> <span class="n">eta_Sigma</span><span class="o">=</span><span class="n">eta_Sigma</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span><span class="n">algo_version</span><span class="o">=</span><span class="s1">&#39;NeNe2020&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;2021&#39;</span><span class="p">:</span>
+            <span class="n">mou</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">ts_emp</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">min_C</span><span class="o">=</span><span class="n">min_C</span><span class="p">,</span> <span class="n">max_C</span><span class="o">=</span><span class="n">max_C</span><span class="p">,</span> <span class="n">eta_C</span><span class="o">=</span><span class="n">eta_C</span><span class="p">,</span> <span class="n">eta_Sigma</span><span class="o">=</span><span class="n">eta_Sigma</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">algo_version</span><span class="o">=</span><span class="s1">&#39;2021&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;pos2021&#39;</span><span class="p">:</span>
+            <span class="n">mou</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">ts_emp</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">min_C</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">max_C</span><span class="o">=</span><span class="n">max_C</span><span class="p">,</span> <span class="n">eta_C</span><span class="o">=</span><span class="n">eta_C</span><span class="p">,</span> <span class="n">eta_Sigma</span><span class="o">=</span><span class="n">eta_Sigma</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">algo_version</span><span class="o">=</span><span class="s1">&#39;2021&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">model</span> <span class="o">==</span> <span class="s1">&#39;new_2021&#39;</span><span class="p">:</span>
+            <span class="n">mou</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">ts_emp</span><span class="p">,</span> <span class="n">lag</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">min_C</span><span class="o">=</span><span class="n">min_C</span><span class="p">,</span> <span class="n">max_C</span><span class="o">=</span><span class="n">max_C</span><span class="p">,</span> <span class="n">eta_C</span><span class="o">=</span><span class="n">eta_C</span><span class="p">,</span> <span class="n">eta_tau</span><span class="o">=</span><span class="n">eta_tau</span><span class="p">,</span> <span class="n">eta_Sigma</span><span class="o">=</span><span class="n">eta_Sigma</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">10000</span><span class="p">,</span> <span class="n">algo_version</span><span class="o">=</span><span class="s1">&#39;2021&#39;</span><span class="p">)</span>
+
+
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;participant : &#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;tasks&#39;</span><span class="p">][</span><span class="n">i_cond</span><span class="p">],</span> <span class="s1">&#39;Model fit (Pearson correlation):&#39;</span><span class="p">,</span><span class="n">mou</span><span class="o">.</span><span class="n">d_fit</span><span class="p">[</span><span class="s1">&#39;correlation&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;participant : &#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">conf</span><span class="p">[</span><span class="s1">&#39;tasks&#39;</span><span class="p">][</span><span class="n">i_cond</span><span class="p">],</span> <span class="s1">&#39;Model error (matrix distance):&#39;</span><span class="p">,</span><span class="n">mou</span><span class="o">.</span><span class="n">d_fit</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">])</span>
+
+        <span class="c1"># get results</span>
+        <span class="n">J_mod</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">i_sub</span><span class="p">,:,:]</span>       <span class="o">=</span> <span class="n">mou</span><span class="o">.</span><span class="n">J</span> <span class="c1"># J_ij connection from source i to target j</span>
+        <span class="n">Sigma_mod</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">i_sub</span><span class="p">,:,:]</span>   <span class="o">=</span> <span class="n">mou</span><span class="o">.</span><span class="n">Sigma</span>
+        <span class="n">model_fit</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">i_sub</span><span class="p">]</span>       <span class="o">=</span> <span class="n">mou</span><span class="o">.</span><span class="n">d_fit</span><span class="p">[</span><span class="s1">&#39;correlation&#39;</span><span class="p">]</span>
+        <span class="n">model_error</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">i_sub</span><span class="p">]</span>     <span class="o">=</span> <span class="n">mou</span><span class="o">.</span><span class="n">d_fit</span><span class="p">[</span><span class="s1">&#39;distance&#39;</span><span class="p">]</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(600, 24)
+participant :  1 vfm Model fit (Pearson correlation): 0.791544360691087
+participant :  1 vfm Model error (matrix distance): 0.5428170171725957
+(600, 24)
+participant :  2 vfm Model fit (Pearson correlation): 0.6430734156517526
+participant :  2 vfm Model error (matrix distance): 0.4754288794917413
+(600, 24)
+participant :  3 vfm Model fit (Pearson correlation): 0.813274177088821
+participant :  3 vfm Model error (matrix distance): 0.5690151344902958
+(600, 24)
+participant :  4 vfm Model fit (Pearson correlation): 0.9334048139206934
+participant :  4 vfm Model error (matrix distance): 0.6095956532048941
+(600, 24)
+participant :  5 vfm Model fit (Pearson correlation): 0.9285054015018929
+participant :  5 vfm Model error (matrix distance): 0.5978288588923386
+(600, 24)
+participant :  6 vfm Model fit (Pearson correlation): 0.7244603406937349
+participant :  6 vfm Model error (matrix distance): 0.3877286532337017
+(600, 24)
+participant :  7 vfm Model fit (Pearson correlation): 0.6968089701341946
+participant :  7 vfm Model error (matrix distance): 0.665617301918931
+(600, 24)
+participant :  8 vfm Model fit (Pearson correlation): 0.9440283473728889
+participant :  8 vfm Model error (matrix distance): 0.6189230835264765
+(600, 24)
+participant :  9 vfm Model fit (Pearson correlation): 0.9345053920565263
+participant :  9 vfm Model error (matrix distance): 0.5681217555442029
+(600, 24)
+participant :  10 vfm Model fit (Pearson correlation): 0.9480582826427967
+participant :  10 vfm Model error (matrix distance): 0.5069425997528443
+(600, 24)
+participant :  11 vfm Model fit (Pearson correlation): 0.8692774998440876
+participant :  11 vfm Model error (matrix distance): 0.5907467146066046
+(600, 24)
+participant :  12 vfm Model fit (Pearson correlation): 0.8870728270744226
+participant :  12 vfm Model error (matrix distance): 0.4930353419484488
+(600, 24)
+participant :  13 vfm Model fit (Pearson correlation): 0.7961822112648915
+participant :  13 vfm Model error (matrix distance): 0.3479593225742038
+(600, 24)
+</pre></div></div>
+</div>
+</section>
+<section id="Save-best-fitting-model-parameters">
+<h2><span class="section-number">3.4. </span>Save best fitting model parameters<a class="headerlink" href="#Save-best-fitting-model-parameters" title="Permalink to this heading">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">appendix</span> <span class="o">=</span> <span class="n">model</span>
+<span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pth</span><span class="p">,</span><span class="s1">&#39;Fit_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">),</span> <span class="n">model_fit</span><span class="p">[</span><span class="n">i_cond</span><span class="p">])</span>
+<span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pth</span><span class="p">,</span><span class="s1">&#39;Error_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">),</span> <span class="n">model_error</span><span class="p">[</span><span class="n">i_cond</span><span class="p">])</span>
+<span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pth</span><span class="p">,</span><span class="s1">&#39;J_mod_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">),</span> <span class="n">J_mod</span><span class="p">[</span><span class="n">i_cond</span><span class="p">])</span>  <span class="c1"># Save only condition i_cond</span>
+<span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pth</span><span class="p">,</span><span class="s1">&#39;Sigma_mod_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">),</span> <span class="n">Sigma_mod</span><span class="p">[</span><span class="n">i_cond</span><span class="p">])</span>
+<span class="c1">#np.save(os.path.join(pth,&#39;Tau_mean_&#39; + appendix + &#39;.npy&#39;), tau)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(3, 157, 24, 24)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sub</span><span class="p">):</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="c1"># =============================================================================</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">vmax_ret</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">J_mod_full</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i_sub</span><span class="p">,:,:])),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">J_mod_full</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i_sub</span><span class="p">,:,:])))</span>
+    <span class="n">im0</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">J_mod_full</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i_sub</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">vmax_ret</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax_ret</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;BrBG_r&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Source ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Target ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;retinotopy&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im0</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;EC&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Add subject label vertically on the left</span>
+    <span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="o">-</span><span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;Subject </span><span class="si">{</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span>
+                <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">fontweight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">vmax_mov</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">J_mod_full</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i_sub</span><span class="p">,:,:])),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">J_mod_full</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i_sub</span><span class="p">,:,:])))</span>
+    <span class="n">im1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">J_mod_full</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="n">i_sub</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">vmax_mov</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax_mov</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;BrBG_r&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Source ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;movie&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im1</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;EC&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">sca</span><span class="p">(</span><span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">vmax_rest</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">J_mod_full</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i_sub</span><span class="p">,:,:])),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">J_mod_full</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i_sub</span><span class="p">,:,:])))</span>
+    <span class="n">im2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">J_mod_full</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="n">i_sub</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=-</span><span class="n">vmax_rest</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax_rest</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;BrBG_r&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Source ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;rest&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">im2</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">axs</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.15</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;EC&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_0.png" src="../_images/notebooks_retNet_MOU_13_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_1.png" src="../_images/notebooks_retNet_MOU_13_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_2.png" src="../_images/notebooks_retNet_MOU_13_2.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_3.png" src="../_images/notebooks_retNet_MOU_13_3.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_4.png" src="../_images/notebooks_retNet_MOU_13_4.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_5.png" src="../_images/notebooks_retNet_MOU_13_5.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_6.png" src="../_images/notebooks_retNet_MOU_13_6.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_7.png" src="../_images/notebooks_retNet_MOU_13_7.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_8.png" src="../_images/notebooks_retNet_MOU_13_8.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_9.png" src="../_images/notebooks_retNet_MOU_13_9.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_10.png" src="../_images/notebooks_retNet_MOU_13_10.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_11.png" src="../_images/notebooks_retNet_MOU_13_11.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_12.png" src="../_images/notebooks_retNet_MOU_13_12.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_13.png" src="../_images/notebooks_retNet_MOU_13_13.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_14.png" src="../_images/notebooks_retNet_MOU_13_14.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_15.png" src="../_images/notebooks_retNet_MOU_13_15.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_16.png" src="../_images/notebooks_retNet_MOU_13_16.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_17.png" src="../_images/notebooks_retNet_MOU_13_17.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_18.png" src="../_images/notebooks_retNet_MOU_13_18.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_19.png" src="../_images/notebooks_retNet_MOU_13_19.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_20.png" src="../_images/notebooks_retNet_MOU_13_20.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_21.png" src="../_images/notebooks_retNet_MOU_13_21.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_22.png" src="../_images/notebooks_retNet_MOU_13_22.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_23.png" src="../_images/notebooks_retNet_MOU_13_23.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_24.png" src="../_images/notebooks_retNet_MOU_13_24.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_25.png" src="../_images/notebooks_retNet_MOU_13_25.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_26.png" src="../_images/notebooks_retNet_MOU_13_26.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_27.png" src="../_images/notebooks_retNet_MOU_13_27.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_28.png" src="../_images/notebooks_retNet_MOU_13_28.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_29.png" src="../_images/notebooks_retNet_MOU_13_29.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_30.png" src="../_images/notebooks_retNet_MOU_13_30.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_31.png" src="../_images/notebooks_retNet_MOU_13_31.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_32.png" src="../_images/notebooks_retNet_MOU_13_32.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_33.png" src="../_images/notebooks_retNet_MOU_13_33.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_34.png" src="../_images/notebooks_retNet_MOU_13_34.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_35.png" src="../_images/notebooks_retNet_MOU_13_35.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_36.png" src="../_images/notebooks_retNet_MOU_13_36.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_37.png" src="../_images/notebooks_retNet_MOU_13_37.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_38.png" src="../_images/notebooks_retNet_MOU_13_38.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_39.png" src="../_images/notebooks_retNet_MOU_13_39.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_40.png" src="../_images/notebooks_retNet_MOU_13_40.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_41.png" src="../_images/notebooks_retNet_MOU_13_41.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_42.png" src="../_images/notebooks_retNet_MOU_13_42.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_43.png" src="../_images/notebooks_retNet_MOU_13_43.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_44.png" src="../_images/notebooks_retNet_MOU_13_44.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_45.png" src="../_images/notebooks_retNet_MOU_13_45.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_46.png" src="../_images/notebooks_retNet_MOU_13_46.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_47.png" src="../_images/notebooks_retNet_MOU_13_47.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_48.png" src="../_images/notebooks_retNet_MOU_13_48.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_49.png" src="../_images/notebooks_retNet_MOU_13_49.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_50.png" src="../_images/notebooks_retNet_MOU_13_50.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_51.png" src="../_images/notebooks_retNet_MOU_13_51.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_52.png" src="../_images/notebooks_retNet_MOU_13_52.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_53.png" src="../_images/notebooks_retNet_MOU_13_53.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_54.png" src="../_images/notebooks_retNet_MOU_13_54.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_55.png" src="../_images/notebooks_retNet_MOU_13_55.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_56.png" src="../_images/notebooks_retNet_MOU_13_56.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_57.png" src="../_images/notebooks_retNet_MOU_13_57.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_58.png" src="../_images/notebooks_retNet_MOU_13_58.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_59.png" src="../_images/notebooks_retNet_MOU_13_59.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_60.png" src="../_images/notebooks_retNet_MOU_13_60.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_61.png" src="../_images/notebooks_retNet_MOU_13_61.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_62.png" src="../_images/notebooks_retNet_MOU_13_62.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_63.png" src="../_images/notebooks_retNet_MOU_13_63.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_64.png" src="../_images/notebooks_retNet_MOU_13_64.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_65.png" src="../_images/notebooks_retNet_MOU_13_65.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_66.png" src="../_images/notebooks_retNet_MOU_13_66.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_67.png" src="../_images/notebooks_retNet_MOU_13_67.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_68.png" src="../_images/notebooks_retNet_MOU_13_68.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_69.png" src="../_images/notebooks_retNet_MOU_13_69.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_70.png" src="../_images/notebooks_retNet_MOU_13_70.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_71.png" src="../_images/notebooks_retNet_MOU_13_71.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_72.png" src="../_images/notebooks_retNet_MOU_13_72.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_73.png" src="../_images/notebooks_retNet_MOU_13_73.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_74.png" src="../_images/notebooks_retNet_MOU_13_74.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_75.png" src="../_images/notebooks_retNet_MOU_13_75.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_76.png" src="../_images/notebooks_retNet_MOU_13_76.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_77.png" src="../_images/notebooks_retNet_MOU_13_77.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_78.png" src="../_images/notebooks_retNet_MOU_13_78.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_79.png" src="../_images/notebooks_retNet_MOU_13_79.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_80.png" src="../_images/notebooks_retNet_MOU_13_80.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_81.png" src="../_images/notebooks_retNet_MOU_13_81.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_82.png" src="../_images/notebooks_retNet_MOU_13_82.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_83.png" src="../_images/notebooks_retNet_MOU_13_83.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_84.png" src="../_images/notebooks_retNet_MOU_13_84.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_85.png" src="../_images/notebooks_retNet_MOU_13_85.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_86.png" src="../_images/notebooks_retNet_MOU_13_86.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_87.png" src="../_images/notebooks_retNet_MOU_13_87.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_88.png" src="../_images/notebooks_retNet_MOU_13_88.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_89.png" src="../_images/notebooks_retNet_MOU_13_89.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_90.png" src="../_images/notebooks_retNet_MOU_13_90.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_91.png" src="../_images/notebooks_retNet_MOU_13_91.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_92.png" src="../_images/notebooks_retNet_MOU_13_92.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_93.png" src="../_images/notebooks_retNet_MOU_13_93.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_94.png" src="../_images/notebooks_retNet_MOU_13_94.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_95.png" src="../_images/notebooks_retNet_MOU_13_95.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_96.png" src="../_images/notebooks_retNet_MOU_13_96.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_97.png" src="../_images/notebooks_retNet_MOU_13_97.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_98.png" src="../_images/notebooks_retNet_MOU_13_98.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_99.png" src="../_images/notebooks_retNet_MOU_13_99.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_100.png" src="../_images/notebooks_retNet_MOU_13_100.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_101.png" src="../_images/notebooks_retNet_MOU_13_101.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_102.png" src="../_images/notebooks_retNet_MOU_13_102.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_103.png" src="../_images/notebooks_retNet_MOU_13_103.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_104.png" src="../_images/notebooks_retNet_MOU_13_104.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_105.png" src="../_images/notebooks_retNet_MOU_13_105.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_106.png" src="../_images/notebooks_retNet_MOU_13_106.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_107.png" src="../_images/notebooks_retNet_MOU_13_107.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_108.png" src="../_images/notebooks_retNet_MOU_13_108.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_109.png" src="../_images/notebooks_retNet_MOU_13_109.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_110.png" src="../_images/notebooks_retNet_MOU_13_110.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_111.png" src="../_images/notebooks_retNet_MOU_13_111.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_112.png" src="../_images/notebooks_retNet_MOU_13_112.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_113.png" src="../_images/notebooks_retNet_MOU_13_113.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_114.png" src="../_images/notebooks_retNet_MOU_13_114.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_115.png" src="../_images/notebooks_retNet_MOU_13_115.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_116.png" src="../_images/notebooks_retNet_MOU_13_116.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_117.png" src="../_images/notebooks_retNet_MOU_13_117.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_118.png" src="../_images/notebooks_retNet_MOU_13_118.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_119.png" src="../_images/notebooks_retNet_MOU_13_119.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_120.png" src="../_images/notebooks_retNet_MOU_13_120.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_121.png" src="../_images/notebooks_retNet_MOU_13_121.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_122.png" src="../_images/notebooks_retNet_MOU_13_122.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_123.png" src="../_images/notebooks_retNet_MOU_13_123.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_124.png" src="../_images/notebooks_retNet_MOU_13_124.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_125.png" src="../_images/notebooks_retNet_MOU_13_125.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_126.png" src="../_images/notebooks_retNet_MOU_13_126.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_127.png" src="../_images/notebooks_retNet_MOU_13_127.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_128.png" src="../_images/notebooks_retNet_MOU_13_128.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_129.png" src="../_images/notebooks_retNet_MOU_13_129.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_130.png" src="../_images/notebooks_retNet_MOU_13_130.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_131.png" src="../_images/notebooks_retNet_MOU_13_131.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_132.png" src="../_images/notebooks_retNet_MOU_13_132.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_133.png" src="../_images/notebooks_retNet_MOU_13_133.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_134.png" src="../_images/notebooks_retNet_MOU_13_134.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_135.png" src="../_images/notebooks_retNet_MOU_13_135.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_136.png" src="../_images/notebooks_retNet_MOU_13_136.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_137.png" src="../_images/notebooks_retNet_MOU_13_137.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_138.png" src="../_images/notebooks_retNet_MOU_13_138.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_139.png" src="../_images/notebooks_retNet_MOU_13_139.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_140.png" src="../_images/notebooks_retNet_MOU_13_140.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_141.png" src="../_images/notebooks_retNet_MOU_13_141.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_142.png" src="../_images/notebooks_retNet_MOU_13_142.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_143.png" src="../_images/notebooks_retNet_MOU_13_143.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_144.png" src="../_images/notebooks_retNet_MOU_13_144.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_145.png" src="../_images/notebooks_retNet_MOU_13_145.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_146.png" src="../_images/notebooks_retNet_MOU_13_146.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_147.png" src="../_images/notebooks_retNet_MOU_13_147.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_148.png" src="../_images/notebooks_retNet_MOU_13_148.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_149.png" src="../_images/notebooks_retNet_MOU_13_149.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_150.png" src="../_images/notebooks_retNet_MOU_13_150.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_151.png" src="../_images/notebooks_retNet_MOU_13_151.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_152.png" src="../_images/notebooks_retNet_MOU_13_152.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_153.png" src="../_images/notebooks_retNet_MOU_13_153.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_154.png" src="../_images/notebooks_retNet_MOU_13_154.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_155.png" src="../_images/notebooks_retNet_MOU_13_155.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_MOU_13_156.png" src="../_images/notebooks_retNet_MOU_13_156.png" />
+</div>
+</div>
+<p>Subject 115 does not contains EC for the retinotopy task (convergence error? NaN along the way?). Therefore, we will not use this subject for the comparison with rDCM.</p>
+</section>
+</section>
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          &larr;
+          <a href="retNet_ROIs.html" title="Previous document"><span class="section-number">2. </span>Retinotopy-constrained ROI Network Extraction</a>
+        </li>
+        <li>
+          <a href="retNet_rDCM.html" title="Next document"><span class="section-number">4. </span>Regression Dynamic Causal Modeling Effective Connectivity</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      <a href="../_sources/notebooks/retNet_MOU.ipynb.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

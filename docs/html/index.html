@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Retinotopy-constrained EC at 7T-fMRI &#8212; retNet_fMRI  documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="1. Human Connectome Project 7T fMRI Retinotopy Dataset" href="notebooks/retNet_HCP.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  <div class="document">
+    
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><p></p><h3>Table of Contents</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/retNet_HCP.html">1. Human Connectome Project 7T fMRI Retinotopy Dataset</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/retNet_ROIs.html">2. Retinotopy-constrained ROI Network Extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/retNet_MOU.html">3. Multivariate Ornstein-Uhlenbeck Effective Connectivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/retNet_rDCM.html">4. Regression Dynamic Causal Modeling Effective Connectivity</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/retNet_model-cross-learning.html">5. Cross-task generalization between MOU and rDCM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/retNet_model-convergence.html">6. Convergence of MOU and rDCM derived EC</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+      <li>Next: <a href="notebooks/retNet_HCP.html" title="next chapter"><span class="section-number">1. </span>Human Connectome Project 7T fMRI Retinotopy Dataset</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+              <div class="related top">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          <a href="notebooks/retNet_HCP.html" title="Next document"><span class="section-number">1. </span>Human Connectome Project 7T fMRI Retinotopy Dataset</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+
+          <div class="body" role="main">
+            
+  <section id="retinotopy-constrained-ec-at-7t-fmri">
+<h1>Retinotopy-constrained EC at 7T-fMRI<a class="headerlink" href="#retinotopy-constrained-ec-at-7t-fmri" title="Permalink to this heading">¶</a></h1>
+<p>We probe the task-dependent structure–function relationship in early visual cortex (V1–V2–V3) using high‑resolution 7T fMRI and retinotopic maps. Comparing directed effective‑connectivity models—rDCM and multivariate Ornstein–Uhlenbeck (MOU)—on &gt;150 HCP subjects, we find similar EC patterns driven by the same underlying dynamical system. Group‑level convergence emerges around 20 subjects, and cross‑model decoding (train on one, test on the other) is robust, showing both models capture BOLD propagation dynamics similarly.</p>
+<section id="content">
+<h2>Content<a class="headerlink" href="#content" title="Permalink to this heading">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/retNet_HCP.html">1. Human Connectome Project 7T fMRI Retinotopy Dataset</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_HCP.html#Environment-setup-&amp;-dependencies">1.1. Environment setup &amp; dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_HCP.html#Subject-ID-configuration">1.2. Subject ID configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_HCP.html#Task-&amp;-path-definition">1.3. Task &amp; path definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_HCP.html#Download-status-check">1.4. Download status check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_HCP.html#Batch-download">1.5. Batch download</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/retNet_ROIs.html">2. Retinotopy-constrained ROI Network Extraction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_ROIs.html#Environment-setup-&amp;-pyCortex-configuration">2.1. Environment setup &amp; pyCortex configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_ROIs.html#Retinotopic-map-visualization">2.2. Retinotopic map visualization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_ROIs.html#Visual-field-selectivity-analysis">2.3. Visual field selectivity analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_ROIs.html#Download-status-check">2.4. Download status check</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_ROIs.html#Wang-Kastner-ROIs">2.5. Wang-Kastner ROIs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_ROIs.html#retNet:-ROIs-from-V1/V2/V3-quarter-fields">2.6. retNet: ROIs from V1/V2/V3 quarter-fields</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/retNet_MOU.html">3. Multivariate Ornstein-Uhlenbeck Effective Connectivity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_MOU.html#Environment-setup-&amp;-pyMOU-configuration">3.1. Environment setup &amp; pyMOU configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_MOU.html#Retinotopy-time-series">3.2. Retinotopy time series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_MOU.html#Lyapunov-optimization-of-the-spatio-temporal-covariances">3.3. Lyapunov optimization of the spatio-temporal covariances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_MOU.html#Save-best-fitting-model-parameters">3.4. Save best fitting model parameters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/retNet_rDCM.html">4. Regression Dynamic Causal Modeling Effective Connectivity</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_rDCM.html#Environment-setup-&amp;-rDCM-configuration">4.1. Environment setup &amp; rDCM configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_rDCM.html#Regression-dynamic-causal-modeling-(DCM)-framework">4.2. Regression dynamic causal modeling (DCM) framework</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_rDCM.html#Applying-regression-DCM">4.3. Applying regression DCM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_rDCM.html#Load-and-plot-the-rDCM-EC">4.4. Load and plot the rDCM EC</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/retNet_model-cross-learning.html">5. Cross-task generalization between MOU and rDCM</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-cross-learning.html#Environment-setup-&amp;-index-configuration">5.1. Environment setup &amp; index configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-cross-learning.html#Detect-subjects-with-all-zero-matrices-in-any-condition">5.2. Detect subjects with all-zero matrices in any condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-cross-learning.html#Load-rDCM-results">5.3. Load rDCM results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-cross-learning.html#Remove-the-same-problematic-subjects-from-rDCM-arrays">5.4. Remove the same problematic subjects from rDCM arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-cross-learning.html#Normalize-EC-matrices">5.5. Normalize EC matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-cross-learning.html#Within-and-across-model-task-classification">5.6. Within and across model task classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-cross-learning.html#Cross-decoding-between-MOU-and-rDCM">5.7. Cross-decoding between MOU and rDCM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/retNet_model-convergence.html">6. Convergence of MOU and rDCM derived EC</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-convergence.html#Environment-setup-&amp;-index-configuration">6.1. Environment setup &amp; index configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-convergence.html#Detect-subjects-with-all-zero-matrices-in-any-condition">6.2. Detect subjects with all-zero matrices in any condition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-convergence.html#Load-rDCM-results">6.3. Load rDCM results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-convergence.html#Remove-the-same-problematic-subjects-from-rDCM-arrays">6.4. Remove the same problematic subjects from rDCM arrays</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-convergence.html#Normalize-EC-matrices">6.5. Normalize EC matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-convergence.html#Principal-Component-Analysis">6.6. Principal Component Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-convergence.html#Variability-in-within-hemisphere-connections">6.7. Variability in within-hemisphere connections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-convergence.html#Variability-in-callosal-connections">6.8. Variability in callosal connections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="notebooks/retNet_model-convergence.html#Model-convergence">6.9. Model convergence</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+          </div>
+              <div class="related bottom">
+                &nbsp;
+  <nav id="rellinks">
+    <ul>
+        <li>
+          <a href="notebooks/retNet_HCP.html" title="Next document"><span class="section-number">1. </span>Human Connectome Project 7T fMRI Retinotopy Dataset</a>
+          &rarr;
+        </li>
+    </ul>
+  </nav>
+              </div>
+          
+        </div>
+      </div>
+    <div class="clearer"></div>
+  </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
