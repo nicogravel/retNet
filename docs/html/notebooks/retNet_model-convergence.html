@@ -51,6 +51,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#Variability-in-within-hemisphere-connections">6.7. Variability in within-hemisphere connections</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Variability-in-callosal-connections">6.8. Variability in callosal connections</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Model-convergence">6.9. Model convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Graph-metrics">6.10. Graph metrics</a></li>
 </ul>
 </li>
 </ul>
@@ -152,7 +153,8 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">out_path</span> <span class="o">=</span> <span class="s1">&#39;/home/nicolas/Documents/RetNet/ret-EC/new_results/&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#out_path = &#39;/home/nicolas/Documents/RetNet/ret-EC/new_results/&#39;</span>
+<span class="n">save_path</span> <span class="o">=</span> <span class="s2">&quot;/home/nicolas/Documents/GitHubProjects/retNet/docs_local/source/notebooks/results_MOU/&quot;</span>
 
 <span class="c1"># Index dictionary</span>
 <span class="n">conf</span> <span class="o">=</span> <span class="p">{</span>
@@ -192,12 +194,12 @@
 
 <span class="c1"># Load the MOU results</span>
 <span class="n">appendix</span> <span class="o">=</span> <span class="n">model</span>
-<span class="n">model_fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;Fit_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
-<span class="n">model_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;Error_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
-<span class="n">J_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;J_mod_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
-<span class="n">Sigma_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;Sigma_mod_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
-<span class="n">tau_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;Tau_rois_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
-<span class="n">tau</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s1">&#39;Tau_mean_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
+<span class="n">model_fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;Fit_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
+<span class="n">model_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;Error_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
+<span class="n">J_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;J_mod_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
+<span class="n">Sigma_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;Sigma_mod_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
+<span class="c1">#tau_x = np.load(os.path.join(save_path, &#39;Tau_rois_&#39; + appendix + &#39;.npy&#39;))</span>
+<span class="c1">#tau = np.load(os.path.join(save_path, &#39;Tau_mean_&#39; + appendix + &#39;.npy&#39;))</span>
 
 
 <span class="c1"># Print shapes of all arrays to determine the correct axis for subject removal</span>
@@ -206,8 +208,8 @@
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;model_error: </span><span class="si">{</span><span class="n">model_error</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;J_mod: </span><span class="si">{</span><span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sigma_mod: </span><span class="si">{</span><span class="n">Sigma_mod</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tau_x: </span><span class="si">{</span><span class="n">tau_x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tau: </span><span class="si">{</span><span class="n">tau</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1">#print(f&quot;tau_x: {tau_x.shape}&quot;)</span>
+<span class="c1">#print(f&quot;tau: {tau.shape}&quot;)</span>
 </pre></div>
 </div>
 </div>
@@ -221,8 +223,6 @@ model_fit: (3, 157)
 model_error: (3, 157)
 J_mod: (3, 157, 24, 24)
 Sigma_mod: (3, 157, 24, 24)
-tau_x: (157, 3, 24)
-tau: ()
 </pre></div></div>
 </div>
 </section>
@@ -233,22 +233,28 @@ tau: ()
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Detect subjects with all-zero matrices in any condition</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Detect subjects with all-zero OFF-DIAGONAL elements in any condition</span>
 <span class="n">problematic_subjects_any_zero</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">num_subjects</span> <span class="o">=</span> <span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Assuming all conditions have the same number of subjects</span>
-<span class="n">num_conditions</span> <span class="o">=</span> <span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 3 conditions: retinotopy, movie, rest</span>
+<span class="n">num_subjects</span> <span class="o">=</span> <span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">num_conditions</span> <span class="o">=</span> <span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_subjects</span><span class="p">):</span>
     <span class="n">is_problematic</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">for</span> <span class="n">cond_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_conditions</span><span class="p">):</span>
-        <span class="n">matrix</span> <span class="o">=</span> <span class="n">J_mod</span><span class="p">[</span><span class="n">cond_idx</span><span class="p">][</span><span class="n">i_sub</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">matrix</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">J_mod</span><span class="p">[</span><span class="n">cond_idx</span><span class="p">,</span> <span class="n">i_sub</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+        <span class="c1"># Create a copy and zero out the diagonal to check only off-diagonal elements</span>
+        <span class="n">off_diag_matrix</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">off_diag_matrix</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Check if all off-diagonal elements are zero (or very close to zero)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">off_diag_matrix</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject </span><span class="si">{</span><span class="n">i_sub</span><span class="si">}</span><span class="s2">, Condition </span><span class="si">{</span><span class="n">cond_idx</span><span class="si">}</span><span class="s2">: All off-diagonal elements are zero&quot;</span><span class="p">)</span>
             <span class="n">is_problematic</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">break</span>  <span class="c1"># No need to check further conditions for this subject</span>
+            <span class="k">break</span>
     <span class="k">if</span> <span class="n">is_problematic</span><span class="p">:</span>
         <span class="n">problematic_subjects_any_zero</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_sub</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subjects with all-zero matrices in at least one condition: </span><span class="si">{</span><span class="n">problematic_subjects_any_zero</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Subjects with all-zero off-diagonal matrices in at least one condition: </span><span class="si">{</span><span class="n">problematic_subjects_any_zero</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total problematic subjects: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">problematic_subjects_any_zero</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="c1"># Remove problematic subjects from all arrays (using the list from detection)</span>
@@ -260,7 +266,7 @@ tau: ()
 <span class="n">model_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_error</span><span class="p">,</span> <span class="n">problematic_subjects_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">J_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">J_mod</span><span class="p">,</span> <span class="n">problematic_subjects_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="n">Sigma_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">Sigma_mod</span><span class="p">,</span> <span class="n">problematic_subjects_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">tau_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">tau_x</span><span class="p">,</span> <span class="n">problematic_subjects_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="c1">#tau_x = np.delete(tau_x, problematic_subjects_sorted, axis=0)</span>
 <span class="c1"># tau_array has no subject dimension, so leave it unchanged</span>
 
 <span class="c1"># Print shapes to verify removal</span>
@@ -269,9 +275,8 @@ tau: ()
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;model_error: </span><span class="si">{</span><span class="n">model_error</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;J_mod_array: </span><span class="si">{</span><span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sigma_mod: </span><span class="si">{</span><span class="n">Sigma_mod</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tau_x: </span><span class="si">{</span><span class="n">tau_x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tau: </span><span class="si">{</span><span class="n">tau</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (unchanged)&quot;</span><span class="p">)</span>
-</pre></div>
+<span class="c1">#print(f&quot;tau_x: {tau_x.shape}&quot;)</span>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -279,15 +284,15 @@ tau: ()
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Subjects with all-zero matrices in at least one condition: [114]
+Subject 114, Condition 0: All off-diagonal elements are zero
+
+Subjects with all-zero off-diagonal matrices in at least one condition: [114]
 Total problematic subjects: 1
 Shapes after removing problematic subjects:
 model_fit: (3, 156)
 model_error: (3, 156)
 J_mod_array: (3, 156, 24, 24)
 Sigma_mod: (3, 156, 24, 24)
-tau_x: (156, 3, 24)
-tau: () (unchanged)
 </pre></div></div>
 </div>
 </section>
@@ -298,8 +303,11 @@ tau: () (unchanged)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># rDCM results path (Julia version)</span>
-<span class="n">base_path</span> <span class="o">=</span> <span class="s1">&#39;/home/nicolas/Documents/RetNet/ret-EC&#39;</span>
-<span class="n">pth</span> <span class="o">=</span> <span class="n">base_path</span> <span class="o">+</span> <span class="s2">&quot;/retdata/sorted/&quot;</span>
+<span class="c1">#base_path = &#39;/home/nicolas/Documents/RetNet/ret-EC&#39;</span>
+<span class="c1">#pth = base_path + &quot;/retdata/sorted/&quot;</span>
+
+<span class="n">save_path</span> <span class="o">=</span> <span class="s2">&quot;/home/nicolas/Documents/GitHubProjects/retNet/docs_local/source/notebooks/results_rDCM/&quot;</span>
+
 <span class="n">n_sub</span> <span class="o">=</span> <span class="mi">157</span>  <span class="c1"># Changed from 156 to 157</span>
 <span class="n">N_rois</span> <span class="o">=</span> <span class="mi">24</span>
 <span class="n">EC_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_sub</span><span class="p">,</span> <span class="n">N_rois</span><span class="p">,</span> <span class="n">N_rois</span><span class="p">])</span>
@@ -307,11 +315,11 @@ tau: () (unchanged)
 
 <span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sub</span><span class="p">):</span>
     <span class="c1"># Load EC data</span>
-    <span class="n">fname</span> <span class="o">=</span> <span class="n">pth</span> <span class="o">+</span> <span class="s2">&quot;rDCM_EC_(Julia)_subj_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">+</span> <span class="s2">&quot;rDCM_EC_(Julia)_subj_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span>
     <span class="n">ec_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
 
     <span class="c1"># Load F data</span>
-    <span class="n">fname_f</span> <span class="o">=</span> <span class="n">pth</span> <span class="o">+</span> <span class="s2">&quot;rDCM_F_(Julia)_subj_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span>
+    <span class="n">fname_f</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">+</span> <span class="s2">&quot;rDCM_F_(Julia)_subj_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span>
     <span class="n">f_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname_f</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
@@ -697,7 +705,7 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 <section id="Principal-Component-Analysis">
 <h2><span class="section-number">6.6. </span>Principal Component Analysis<a class="headerlink" href="#Principal-Component-Analysis" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_mou</span> <span class="o">=</span> <span class="n">EC_normed_MOU</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="mi">156</span><span class="p">,</span><span class="mi">24</span><span class="o">*</span><span class="mi">24</span><span class="p">))</span>
@@ -710,7 +718,7 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 <section id="MOU">
 <h3><span class="section-number">6.6.1. </span>MOU<a class="headerlink" href="#MOU" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports moved to top cell</span>
@@ -1221,7 +1229,7 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 <section id="rDCM">
 <h3><span class="section-number">6.6.2. </span>rDCM<a class="headerlink" href="#rDCM" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports moved to top cell</span>
@@ -1732,7 +1740,7 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 <section id="MOU-vs-rDCM">
 <h3><span class="section-number">6.6.3. </span>MOU vs rDCM<a class="headerlink" href="#MOU-vs-rDCM" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
@@ -1749,11 +1757,12 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 </div>
 </div>
 <div class="nboutput docutils container">
-<div class="prompt empty docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Text(0.5, 1.0, &#39;PearsonRResult(statistic=0.8476521705327862, pvalue=0.0)&#39;)
+Text(0.5, 1.0, &#39;PearsonRResult(statistic=0.8476521705327864, pvalue=0.0)&#39;)
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1768,7 +1777,7 @@ Text(0.5, 1.0, &#39;PearsonRResult(statistic=0.8476521705327862, pvalue=0.0)&#39
 <section id="Variability-in-within-hemisphere-connections">
 <h2><span class="section-number">6.7. </span>Variability in within-hemisphere connections<a class="headerlink" href="#Variability-in-within-hemisphere-connections" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports moved to top cell</span>
@@ -1859,9 +1868,9 @@ Text(0.5, 1.0, &#39;PearsonRResult(statistic=0.8476521705327862, pvalue=0.0)&#39
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 (3, 314, 12, 12)
-PearsonRResult(statistic=0.9260894211209971, pvalue=5.598551765950918e-62)
-PearsonRResult(statistic=0.9719730280502421, pvalue=3.573373597049516e-91)
-PearsonRResult(statistic=0.9286876445442755, pvalue=4.841458737470439e-63)
+PearsonRResult(statistic=0.9260894211209972, pvalue=5.5985517659497575e-62)
+PearsonRResult(statistic=0.9719730280502413, pvalue=3.573373597055484e-91)
+PearsonRResult(statistic=0.9286876445442753, pvalue=4.8414587374714395e-63)
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1875,7 +1884,7 @@ PearsonRResult(statistic=0.9286876445442755, pvalue=4.841458737470439e-63)
 <section id="Variability-in-callosal-connections">
 <h2><span class="section-number">6.8. </span>Variability in callosal connections<a class="headerlink" href="#Variability-in-callosal-connections" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -1968,7 +1977,7 @@ PearsonRResult(statistic=0.9286876445442755, pvalue=4.841458737470439e-63)
 <h2><span class="section-number">6.9. </span>Model convergence<a class="headerlink" href="#Model-convergence" title="Permalink to this heading">¶</a></h2>
 <p>MOU and rDCM estimates are robustly correlated and stabilize &gt; participants.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">9</span>
@@ -2049,6 +2058,192 @@ PearsonRResult(statistic=0.9286876445442755, pvalue=4.841458737470439e-63)
 </div>
 </div>
 <p>Group‑level convergence emerges around 20 subjects.</p>
+</section>
+<section id="Graph-metrics">
+<h2><span class="section-number">6.10. </span>Graph metrics<a class="headerlink" href="#Graph-metrics" title="Permalink to this heading">¶</a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># graph from average connectivity</span>
+<span class="n">i_cond</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+<span class="c1">#plt.plot([-2,4],[-2,4],&#39;--k&#39;)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+&lt;matplotlib.collections.PathCollection at 0x71651b7942e0&gt;
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_model-convergence_35_1.png" src="../_images/notebooks_retNet_model-convergence_35_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">G_av_mou</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">G_av_dcm</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
+
+    <span class="n">G_av_mou</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rois</span><span class="p">):</span> <span class="c1"># source</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rois</span><span class="p">):</span> <span class="c1"># target</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">:</span>
+                <span class="n">G_av_mou</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">add_weighted_edges_from</span><span class="p">([(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))])</span>
+
+    <span class="n">G_av_dcm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rois</span><span class="p">):</span> <span class="c1"># source</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rois</span><span class="p">):</span> <span class="c1"># target</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span><span class="p">:</span>
+                <span class="n">G_av_dcm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">add_weighted_edges_from</span><span class="p">([(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))])</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">clustering</span><span class="p">(</span><span class="n">G_av_mou</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+[0.013506272637285257, 0.020202785256314314, 0.021362378310677537, 0.04115052982149307, 0.04913767790120809, 0.030076682395583247, 0.004719187114599733, 0.018653914800659654, 0.06409645314033396, 0.04924536916238663, 0.06356894923825612, 0.05776392488176349]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">nx</span><span class="o">.</span><span class="n">eigenvector_centrality_numpy</span><span class="p">(</span><span class="n">G_av_mou</span><span class="p">[</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+dict_values([0.27163866051169433, 0.2128763870062628, 0.2745444287633638, 0.2241297072856641, 0.32667753209726086, 0.2708271495092676, 0.34530712467501273, 0.300103953826289, 0.31951409009037685, 0.26053051373217617, 0.3247938447393352, 0.30077553198897755])
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
+<span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+
+<span class="c1"># dominating eigenvector (in previous version I forgot to transpose)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
+    <span class="n">eigval_mou</span><span class="p">,</span> <span class="n">eigvec_mou</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">i_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">eigval_mou</span><span class="p">))</span>
+    <span class="n">evc_mou</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigvec_mou</span><span class="p">[:,</span><span class="n">i_max</span><span class="p">])</span>
+    <span class="n">eigval_dcm</span><span class="p">,</span> <span class="n">eigvec_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">i_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">eigval_dcm</span><span class="p">))</span>
+    <span class="n">evc_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">eigvec_dcm</span><span class="p">[:,</span><span class="n">i_max</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">evc_mou</span><span class="p">,</span> <span class="n">evc_dcm</span><span class="p">,</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;tasks&#39;</span><span class="p">][</span><span class="n">i_cond</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.35</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.35</span><span class="p">],</span><span class="s1">&#39;--k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;mou&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;dcm&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;eigenvector centrality (own version)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+
+<span class="c1"># asymmetry for each node</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">asym_nodes</span><span class="p">(</span><span class="n">M</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">M</span><span class="o">-</span><span class="n">M</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">M</span><span class="o">+</span><span class="n">M</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">asym_nodes</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span>
+                <span class="n">asym_nodes</span><span class="p">(</span><span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;tasks&#39;</span><span class="p">][</span><span class="n">i_cond</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.35</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.35</span><span class="p">],</span><span class="s1">&#39;--k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;mou&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;dcm&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;asymmetry&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+
+<span class="c1"># eigenvector centrality from networkx, some instability for movie DCM</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">eigenvector_centrality_numpy</span><span class="p">(</span><span class="n">G_av_mou</span><span class="p">[</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">eigenvector_centrality_numpy</span><span class="p">(</span><span class="n">G_av_dcm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;tasks&#39;</span><span class="p">][</span><span class="n">i_cond</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.35</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.35</span><span class="p">],</span><span class="s1">&#39;--k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;mou&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;dcm&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;eigenvector centrality&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<br/><br/></pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_model-convergence_38_0.png" src="../_images/notebooks_retNet_model-convergence_38_0.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_model-convergence_38_1.png" src="../_images/notebooks_retNet_model-convergence_38_1.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_model-convergence_38_2.png" src="../_images/notebooks_retNet_model-convergence_38_2.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
+<span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">clustering</span><span class="p">(</span><span class="n">G_av_mou</span><span class="p">[</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+                <span class="nb">list</span><span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">clustering</span><span class="p">(</span><span class="n">G_av_dcm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;weight&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">cols</span><span class="p">[</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;tasks&#39;</span><span class="p">][</span><span class="n">i_cond</span><span class="p">])</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.2</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.2</span><span class="p">],</span><span class="s1">&#39;--k&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;mou&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;dcm&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_model-convergence_39_0.png" src="../_images/notebooks_retNet_model-convergence_39_0.png" />
+</div>
+</div>
 </section>
 </section>
 

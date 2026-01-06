@@ -49,6 +49,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#Normalize-EC-matrices">5.5. Normalize EC matrices</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Within-and-across-model-task-classification">5.6. Within and across model task classification</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Cross-decoding-between-MOU-and-rDCM">5.7. Cross-decoding between MOU and rDCM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Feature-importance-detection">5.8. Feature importance detection</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="retNet_model-convergence.html">6. Convergence of MOU and rDCM derived EC</a></li>
@@ -109,7 +110,7 @@
 <section id="Environment-setup-&amp;-index-configuration">
 <h2><span class="section-number">5.1. </span>Environment setup &amp; index configuration<a class="headerlink" href="#Environment-setup-&-index-configuration" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -154,7 +155,7 @@
 <section id="Load-MOU-Results">
 <h3><span class="section-number">5.1.1. </span>Load MOU Results<a class="headerlink" href="#Load-MOU-Results" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">out_path</span> <span class="o">=</span> <span class="s1">&#39;/home/nicolas/Documents/RetNet/ret-EC/new_results/&#39;</span>
@@ -235,25 +236,31 @@ tau: ()
 <section id="Detect-subjects-with-all-zero-matrices-in-any-condition">
 <h2><span class="section-number">5.2. </span>Detect subjects with all-zero matrices in any condition<a class="headerlink" href="#Detect-subjects-with-all-zero-matrices-in-any-condition" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Detect subjects with all-zero matrices in any condition</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Detect subjects with all-zero OFF-DIAGONAL elements in any condition</span>
 <span class="n">problematic_subjects_any_zero</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">num_subjects</span> <span class="o">=</span> <span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Assuming all conditions have the same number of subjects</span>
-<span class="n">num_conditions</span> <span class="o">=</span> <span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 3 conditions: retinotopy, movie, rest</span>
+<span class="n">num_subjects</span> <span class="o">=</span> <span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">num_conditions</span> <span class="o">=</span> <span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
 <span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_subjects</span><span class="p">):</span>
     <span class="n">is_problematic</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">for</span> <span class="n">cond_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_conditions</span><span class="p">):</span>
-        <span class="n">matrix</span> <span class="o">=</span> <span class="n">J_mod</span><span class="p">[</span><span class="n">cond_idx</span><span class="p">][</span><span class="n">i_sub</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">matrix</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">J_mod</span><span class="p">[</span><span class="n">cond_idx</span><span class="p">,</span> <span class="n">i_sub</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+        <span class="c1"># Create a copy and zero out the diagonal to check only off-diagonal elements</span>
+        <span class="n">off_diag_matrix</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">off_diag_matrix</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Check if all off-diagonal elements are zero (or very close to zero)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">off_diag_matrix</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject </span><span class="si">{</span><span class="n">i_sub</span><span class="si">}</span><span class="s2">, Condition </span><span class="si">{</span><span class="n">cond_idx</span><span class="si">}</span><span class="s2">: All off-diagonal elements are zero&quot;</span><span class="p">)</span>
             <span class="n">is_problematic</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">break</span>  <span class="c1"># No need to check further conditions for this subject</span>
+            <span class="k">break</span>
     <span class="k">if</span> <span class="n">is_problematic</span><span class="p">:</span>
         <span class="n">problematic_subjects_any_zero</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_sub</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subjects with all-zero matrices in at least one condition: </span><span class="si">{</span><span class="n">problematic_subjects_any_zero</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Subjects with all-zero off-diagonal matrices in at least one condition: </span><span class="si">{</span><span class="n">problematic_subjects_any_zero</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total problematic subjects: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">problematic_subjects_any_zero</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="c1"># Remove problematic subjects from all arrays (using the list from detection)</span>
@@ -275,8 +282,7 @@ tau: ()
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;J_mod_array: </span><span class="si">{</span><span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sigma_mod: </span><span class="si">{</span><span class="n">Sigma_mod</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tau_x: </span><span class="si">{</span><span class="n">tau_x</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tau: </span><span class="si">{</span><span class="n">tau</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2"> (unchanged)&quot;</span><span class="p">)</span>
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -284,7 +290,9 @@ tau: ()
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Subjects with all-zero matrices in at least one condition: [114]
+Subject 114, Condition 0: All off-diagonal elements are zero
+
+Subjects with all-zero off-diagonal matrices in at least one condition: [114]
 Total problematic subjects: 1
 Shapes after removing problematic subjects:
 model_fit: (3, 156)
@@ -292,19 +300,21 @@ model_error: (3, 156)
 J_mod_array: (3, 156, 24, 24)
 Sigma_mod: (3, 156, 24, 24)
 tau_x: (156, 3, 24)
-tau: () (unchanged)
 </pre></div></div>
 </div>
 </section>
 <section id="Load-rDCM-results">
 <h2><span class="section-number">5.3. </span>Load rDCM results<a class="headerlink" href="#Load-rDCM-results" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># rDCM results path (Julia version)</span>
-<span class="n">base_path</span> <span class="o">=</span> <span class="s1">&#39;/home/nicolas/Documents/RetNet/ret-EC&#39;</span>
-<span class="n">pth</span> <span class="o">=</span> <span class="n">base_path</span> <span class="o">+</span> <span class="s2">&quot;/retdata/sorted/&quot;</span>
+<span class="c1">#base_path = &#39;/home/nicolas/Documents/RetNet/ret-EC&#39;</span>
+<span class="c1">#pth = base_path + &quot;/retdata/sorted/&quot;</span>
+
+<span class="n">save_path</span> <span class="o">=</span> <span class="s2">&quot;/home/nicolas/Documents/GitHubProjects/retNet/docs_local/source/notebooks/results_rDCM/&quot;</span>
+
 <span class="n">n_sub</span> <span class="o">=</span> <span class="mi">157</span>  <span class="c1"># Changed from 156 to 157</span>
 <span class="n">N_rois</span> <span class="o">=</span> <span class="mi">24</span>
 <span class="n">EC_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_sub</span><span class="p">,</span> <span class="n">N_rois</span><span class="p">,</span> <span class="n">N_rois</span><span class="p">])</span>
@@ -312,11 +322,11 @@ tau: () (unchanged)
 
 <span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sub</span><span class="p">):</span>
     <span class="c1"># Load EC data</span>
-    <span class="n">fname</span> <span class="o">=</span> <span class="n">pth</span> <span class="o">+</span> <span class="s2">&quot;rDCM_EC_(Julia)_subj_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">+</span> <span class="s2">&quot;rDCM_EC_(Julia)_subj_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span>
     <span class="n">ec_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
 
     <span class="c1"># Load F data</span>
-    <span class="n">fname_f</span> <span class="o">=</span> <span class="n">pth</span> <span class="o">+</span> <span class="s2">&quot;rDCM_F_(Julia)_subj_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span>
+    <span class="n">fname_f</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">+</span> <span class="s2">&quot;rDCM_F_(Julia)_subj_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span>
     <span class="n">f_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname_f</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
@@ -356,7 +366,7 @@ diagonals_dcm shape: (3, 157, 24)
 <section id="Remove-the-same-problematic-subjects-from-rDCM-arrays">
 <h2><span class="section-number">5.4. </span>Remove the same problematic subjects from rDCM arrays<a class="headerlink" href="#Remove-the-same-problematic-subjects-from-rDCM-arrays" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subjects to remove: </span><span class="si">{</span><span class="n">problematic_subjects_any_zero</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
@@ -391,7 +401,7 @@ rDCM EC_avg_dcm: (3, 156, 24, 24)
 <h2><span class="section-number">5.5. </span>Normalize EC matrices<a class="headerlink" href="#Normalize-EC-matrices" title="Permalink to this heading">¶</a></h2>
 <p>To make EC matrices comparable across participants and conditions, each matrix is scaled by its L1 norm. This preserves relative differences in connection strengths while removing variations in overall magnitude.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">normalize_connectivity_matrices</span><span class="p">(</span><span class="n">EC_data</span><span class="p">,</span> <span class="n">normalization_type</span><span class="o">=</span><span class="s1">&#39;L1&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -469,7 +479,7 @@ rDCM EC_avg_dcm: (3, 156, 24, 24)
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_connectivity_matrix</span><span class="p">(</span><span class="n">EC_data</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">,</span>
@@ -622,7 +632,7 @@ rDCM EC_avg_dcm: (3, 156, 24, 24)
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">EC_normed_MOU</span> <span class="o">=</span> <span class="n">normalize_connectivity_matrices</span><span class="p">(</span>
@@ -649,7 +659,7 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">out_pth</span> <span class="o">=</span> <span class="s1">&#39;/media/nicolas/KINGSTON/retNet_final/output&#39;</span>
@@ -657,7 +667,7 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">effect_sizes</span> <span class="o">=</span> <span class="n">plot_connectivity_matrix</span><span class="p">(</span>
@@ -678,7 +688,7 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">effect_sizes</span> <span class="o">=</span> <span class="n">plot_connectivity_matrix</span><span class="p">(</span>
@@ -702,7 +712,7 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 <section id="Within-and-across-model-task-classification">
 <h2><span class="section-number">5.6. </span>Within and across model task classification<a class="headerlink" href="#Within-and-across-model-task-classification" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_mou</span> <span class="o">=</span> <span class="n">EC_normed_MOU</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="mi">156</span><span class="p">,</span><span class="mi">24</span><span class="o">*</span><span class="mi">24</span><span class="p">))</span>
@@ -736,7 +746,7 @@ X mou :  (468, 576)
 <section id="Classifier-Setup-and-Training">
 <h3><span class="section-number">5.6.1. </span>Classifier Setup and Training<a class="headerlink" href="#Classifier-Setup-and-Training" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Classifiers (with reproducible random_state)</span>
@@ -761,7 +771,7 @@ X mou :  (468, 576)
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># outer cross-validation scheme: 80% for training and 20% for testing</span>
@@ -774,7 +784,7 @@ X mou :  (468, 576)
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">X_mou</span>
@@ -840,77 +850,83 @@ X mou :  (468, 576)
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 100.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 100.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 100.0}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 0.01}
+{&#39;C&#39;: 0.01}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 100.0}
+{&#39;C&#39;: 0.01}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 0.01}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 100.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 0.01}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.01}
+{&#39;C&#39;: 10.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;C&#39;: 100.0}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 100.0}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 100.0}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 1.0}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
@@ -945,34 +961,50 @@ X mou :  (468, 576)
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
       type  clf     score
 0    train  MLR  1.000000
-1     test  MLR  0.936170
-2     shuf  MLR  0.382979
+1     test  MLR  0.946809
+2     shuf  MLR  0.319149
 3    train  MLR  1.000000
-4     test  MLR  0.882979
+4     test  MLR  0.968085
 ..     ...  ...       ...
 295   test   RF  0.904255
-296   shuf   RF  0.372340
+296   shuf   RF  0.361702
 297  train   RF  1.000000
-298   test   RF  0.882979
-299   shuf   RF  0.329787
+298   test   RF  0.914894
+299   shuf   RF  0.489362
 
 [300 rows x 3 columns]
 
 Confusion Matrix for MLR:
-[[1535.    7.   24.]
- [   0. 1451.  119.]
- [   0.  111. 1453.]]
+[[1523.   12.   31.]
+ [   0. 1466.  101.]
+ [   0.  112. 1455.]]
 
 Confusion Matrix for RF:
-[[1.538e+03 2.600e+01 9.000e+00]
- [1.800e+01 1.334e+03 2.130e+02]
- [1.000e+00 2.430e+02 1.318e+03]]
+[[1546.   15.    4.]
+ [  20. 1336.  213.]
+ [   4.  213. 1349.]]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot: train versus test accuracy</span>
@@ -1002,7 +1034,7 @@ Confusion Matrix for RF:
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mlr_train_mou</span> <span class="o">=</span> <span class="n">acc</span><span class="p">[(</span><span class="n">acc</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;train&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">acc</span><span class="p">[</span><span class="s1">&#39;clf&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;MLR&#39;</span><span class="p">)]</span>
@@ -1018,7 +1050,7 @@ Confusion Matrix for RF:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># test versus baseline accuracy</span>
@@ -1045,7 +1077,7 @@ Confusion Matrix for RF:
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports moved to top cell</span>
@@ -1059,7 +1091,7 @@ Confusion Matrix for RF:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[39]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Normalize confusion matrices</span>
@@ -1119,7 +1151,7 @@ Confusion Matrix for RF:
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/tmp/ipykernel_13010/3035824812.py:43: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+/tmp/ipykernel_63429/3035824812.py:43: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
   plt.tight_layout()
 </pre></div></div>
 </div>
@@ -1131,7 +1163,7 @@ Confusion Matrix for RF:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">X_dcm</span>
@@ -1197,61 +1229,100 @@ Confusion Matrix for RF:
 </pre></div>
 </div>
 </div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 0.01}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.01}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 10.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 {&#39;C&#39;: 0.1}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.1}
 {&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 100.0}
-{&#39;C&#39;: 0.01}
 {&#39;C&#39;: 0.1}
 {&#39;C&#39;: 100.0}
 {&#39;C&#39;: 0.1}
 {&#39;C&#39;: 0.1}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 0.01}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
 {&#39;C&#39;: 0.1}
 {&#39;C&#39;: 100.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 10.0}
 {&#39;C&#39;: 0.1}
 {&#39;C&#39;: 1.0}
 {&#39;C&#39;: 0.1}
+{&#39;C&#39;: 0.01}
+{&#39;C&#39;: 0.01}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 0.01}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.01}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 10.0}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
@@ -1277,23 +1348,6 @@ Confusion Matrix for RF:
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 50}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
@@ -1304,32 +1358,32 @@ Confusion Matrix for RF:
 {&#39;n_estimators&#39;: 100}
       type  clf     score
 0    train  MLR  1.000000
-1     test  MLR  1.000000
-2     shuf  MLR  0.287234
+1     test  MLR  0.989362
+2     shuf  MLR  0.500000
 3    train  MLR  1.000000
-4     test  MLR  0.978723
+4     test  MLR  0.946809
 ..     ...  ...       ...
-295   test   RF  0.861702
-296   shuf   RF  0.287234
+295   test   RF  0.904255
+296   shuf   RF  0.393617
 297  train   RF  1.000000
 298   test   RF  0.872340
-299   shuf   RF  0.329787
+299   shuf   RF  0.255319
 
 [300 rows x 3 columns]
 
 Confusion Matrix for MLR (DCM):
-[[1542.   17.    7.]
- [   5. 1507.   54.]
- [   0.   66. 1502.]]
+[[1543.   12.   11.]
+ [   6. 1508.   50.]
+ [   0.   74. 1496.]]
 
 Confusion Matrix for RF (DCM):
-[[1541.   18.    7.]
- [  31. 1319.  219.]
- [   0.  264. 1301.]]
+[[1.548e+03 1.500e+01 1.000e+00]
+ [1.800e+01 1.343e+03 2.070e+02]
+ [1.000e+00 2.800e+02 1.287e+03]]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot: train versus test accuracy</span>
@@ -1359,7 +1413,7 @@ Confusion Matrix for RF (DCM):
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[42]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mlr_train_dcm</span> <span class="o">=</span> <span class="n">acc</span><span class="p">[(</span><span class="n">acc</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;train&#39;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">acc</span><span class="p">[</span><span class="s1">&#39;clf&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;MLR&#39;</span><span class="p">)]</span>
@@ -1385,7 +1439,7 @@ Confusion Matrix for RF (DCM):
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[43]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># test versus baseline accuracy</span>
@@ -1412,7 +1466,7 @@ Confusion Matrix for RF (DCM):
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[44]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Normalize confusion matrices</span>
@@ -1472,7 +1526,7 @@ Confusion Matrix for RF (DCM):
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-/tmp/ipykernel_13010/4142835018.py:43: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
+/tmp/ipykernel_63429/4142835018.py:43: UserWarning: This figure includes Axes that are not compatible with tight_layout, so results might be incorrect.
   plt.tight_layout()
 </pre></div></div>
 </div>
@@ -1484,7 +1538,7 @@ Confusion Matrix for RF (DCM):
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;text.usetex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1578,7 +1632,7 @@ Confusion Matrix for RF (DCM):
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Interleave the arrays</span>
@@ -1589,7 +1643,7 @@ Confusion Matrix for RF (DCM):
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[49]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
@@ -1671,7 +1725,7 @@ Confusion Matrix for RF (DCM):
 <h2><span class="section-number">5.7. </span>Cross-decoding between MOU and rDCM<a class="headerlink" href="#Cross-decoding-between-MOU-and-rDCM" title="Permalink to this heading">¶</a></h2>
 <p>Alignment between MOU and rDCM through cross learning.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># cross learning</span>
@@ -1728,35 +1782,10 @@ Confusion Matrix for RF (DCM):
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;C&#39;: 10.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
 {&#39;C&#39;: 1.0}
 {&#39;C&#39;: 1.0}
 {&#39;C&#39;: 1.0}
 {&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 100.0}
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -1826,30 +1855,6 @@ Please also refer to the documentation for alternative solver options:
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 {&#39;C&#39;: 1.0}
-{&#39;C&#39;: 100.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;C&#39;: 10.0}
 {&#39;C&#39;: 1.0}
 {&#39;C&#39;: 1.0}
 {&#39;C&#39;: 10.0}
@@ -1875,84 +1880,7 @@ Please also refer to the documentation for alternative solver options:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 10.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 10.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
 {&#39;C&#39;: 1.0}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 10.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 10.0}
 {&#39;C&#39;: 10.0}
 </pre></div></div>
 </div>
@@ -2003,30 +1931,6 @@ Please also refer to the documentation for alternative solver options:
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 {&#39;C&#39;: 10.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
 {&#39;C&#39;: 10.0}
 </pre></div></div>
 </div>
@@ -2051,8 +1955,7 @@ Please also refer to the documentation for alternative solver options:
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 {&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 100.0}
+{&#39;C&#39;: 10.0}
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -2098,9 +2001,6 @@ Please also refer to the documentation for alternative solver options:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 10.0}
 {&#39;C&#39;: 10.0}
 </pre></div></div>
 </div>
@@ -2194,7 +2094,335 @@ Please also refer to the documentation for alternative solver options:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
+{&#39;C&#39;: 100.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 10.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 100.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 100.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 10.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
 {&#39;C&#39;: 1.0}
+{&#39;C&#39;: 10.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 100.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 100.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 10.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 100.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 100.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 100.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 10.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;C&#39;: 100.0}
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
 {&#39;C&#39;: 10.0}
 </pre></div></div>
 </div>
@@ -2218,14 +2446,27 @@ Please also refer to the documentation for alternative solver options:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 10.0}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 50}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 50}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 50}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 50}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 50}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
@@ -2237,24 +2478,13 @@ Please also refer to the documentation for alternative solver options:
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 50}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 50}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 50}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
@@ -2271,7 +2501,7 @@ Please also refer to the documentation for alternative solver options:
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[51]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot</span>
@@ -2300,7 +2530,7 @@ Please also refer to the documentation for alternative solver options:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[52]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># cross learning</span>
@@ -2357,99 +2587,6 @@ Please also refer to the documentation for alternative solver options:
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 {&#39;C&#39;: 10.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 100.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;C&#39;: 10.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;C&#39;: 100.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;C&#39;: 1.0}
 {&#39;C&#39;: 10.0}
 </pre></div></div>
 </div>
@@ -2474,45 +2611,6 @@ Please also refer to the documentation for alternative solver options:
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 {&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 10.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 10.0}
-{&#39;C&#39;: 0.1}
-{&#39;C&#39;: 1.0}
 {&#39;C&#39;: 100.0}
 </pre></div></div>
 </div>
@@ -2539,7 +2637,16 @@ Please also refer to the documentation for alternative solver options:
 {&#39;C&#39;: 10.0}
 {&#39;C&#39;: 1.0}
 {&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
 {&#39;C&#39;: 10.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 100.0}
 </pre></div></div>
 </div>
 <div class="nboutput docutils container">
@@ -2564,6 +2671,8 @@ Please also refer to the documentation for alternative solver options:
 <div class="highlight"><pre>
 {&#39;C&#39;: 1.0}
 {&#39;C&#39;: 10.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
 {&#39;C&#39;: 100.0}
 </pre></div></div>
 </div>
@@ -2587,6 +2696,10 @@ Please also refer to the documentation for alternative solver options:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
 {&#39;C&#39;: 1.0}
 {&#39;C&#39;: 100.0}
 </pre></div></div>
@@ -2619,6 +2732,14 @@ Please also refer to the documentation for alternative solver options:
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
+/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
+STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
+
+Increase the number of iterations (max_iter) or scale the data as shown in:
+    https://scikit-learn.org/stable/modules/preprocessing.html
+Please also refer to the documentation for alternative solver options:
+    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
+  n_iter_i = _check_optimize_result(
 /home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
 STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
 
@@ -2659,82 +2780,13 @@ Please also refer to the documentation for alternative solver options:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 10.0}
 {&#39;C&#39;: 10.0}
 {&#39;C&#39;: 1.0}
-{&#39;C&#39;: 100.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-{&#39;C&#39;: 1.0}
-{&#39;C&#39;: 100.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
 {&#39;C&#39;: 1.0}
 {&#39;C&#39;: 1.0}
 {&#39;C&#39;: 1.0}
-{&#39;C&#39;: 10.0}
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-/home/nicolas/anaconda3/envs/lamidec/lib/python3.8/site-packages/sklearn/linear_model/_logistic.py:460: ConvergenceWarning: lbfgs failed to converge (status=1):
-STOP: TOTAL NO. of ITERATIONS REACHED LIMIT.
-
-Increase the number of iterations (max_iter) or scale the data as shown in:
-    https://scikit-learn.org/stable/modules/preprocessing.html
-Please also refer to the documentation for alternative solver options:
-    https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression
-  n_iter_i = _check_optimize_result(
-</pre></div></div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
+{&#39;C&#39;: 1.0}
 {&#39;C&#39;: 100.0}
 </pre></div></div>
 </div>
@@ -2758,6 +2810,24 @@ Please also refer to the documentation for alternative solver options:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 0.1}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 1.0}
+{&#39;C&#39;: 10.0}
+{&#39;C&#39;: 1.0}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
+{&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 100}
@@ -2800,18 +2870,10 @@ Please also refer to the documentation for alternative solver options:
 {&#39;n_estimators&#39;: 100}
 {&#39;n_estimators&#39;: 50}
 {&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
-{&#39;n_estimators&#39;: 100}
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[53]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot</span>
@@ -2839,7 +2901,7 @@ Please also refer to the documentation for alternative solver options:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[55]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">acc</span> <span class="o">=</span> <span class="n">acc_mou2dcm</span>
@@ -2943,6 +3005,466 @@ Please also refer to the documentation for alternative solver options:
 <img alt="../_images/notebooks_retNet_model-cross-learning_43_0.png" src="../_images/notebooks_retNet_model-cross-learning_43_0.png" />
 </div>
 </div>
+</section>
+<section id="Feature-importance-detection">
+<h2><span class="section-number">5.8. </span>Feature importance detection<a class="headerlink" href="#Feature-importance-detection" title="Permalink to this heading">¶</a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">rois_sorted</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s1">&#39;V1 vf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V1 vp&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V1 df&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V1 dp&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V2 vf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V2 vp&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V2 df&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V2 dp&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V3 vf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V3 vp&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V3 df&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V3 dp&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V1 vf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V1 vp&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V1 df&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V1 dp&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V2 vf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V2 vp&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V2 df&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V2 dp&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V3 vf&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V3 vp&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V3 df&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;V3 dp&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<section id="MOU-features">
+<h3><span class="section-number">5.8.1. </span>MOU features<a class="headerlink" href="#MOU-features" title="Permalink to this heading">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[40]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># quick fix to get coefficients from mlr estimator in pipeline</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_coef</span><span class="p">(</span><span class="n">clf</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">clf</span><span class="o">.</span><span class="n">coef_</span>  <span class="c1"># repeat classification</span>
+
+<span class="n">clf</span> <span class="o">=</span> <span class="n">dict_clf</span><span class="p">[</span><span class="s1">&#39;MLR&#39;</span><span class="p">]</span> <span class="c1"># MLR</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clf</span><span class="p">)</span>
+
+<span class="n">rkgs_MOU</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cvs</span><span class="o">.</span><span class="n">get_n_splits</span><span class="p">(),</span> <span class="mi">24</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="n">i_rep</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">train_ind</span><span class="p">,</span> <span class="n">test_ind</span> <span class="ow">in</span> <span class="n">cvs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X_mou</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+
+    <span class="c1"># wrap classifier to be fitted to data to calculate the ranking</span>
+    <span class="n">feature_select</span> <span class="o">=</span> <span class="n">RFE</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">n_features_to_select</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                         <span class="n">importance_getter</span><span class="o">=</span><span class="n">get_coef</span><span class="p">)</span>
+
+    <span class="c1"># perform RFE</span>
+    <span class="n">feature_select</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_mou</span><span class="p">[</span><span class="n">train_ind</span><span class="p">,:],</span> <span class="n">y</span><span class="p">[</span><span class="n">train_ind</span><span class="p">])</span>
+    <span class="n">rkgs_MOU</span><span class="p">[</span><span class="n">i_rep</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">feature_select</span><span class="o">.</span><span class="n">ranking_</span>
+    <span class="n">i_rep</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+LogisticRegression(max_iter=500, random_state=0)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[41]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean_rkg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rkgs_MOU</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">#print(np.argsort(mean_rkg))</span>
+
+<span class="n">i_roi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="mi">24</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">j_roi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="mi">24</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">mask_info_feat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">24</span><span class="p">,</span><span class="mi">24</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">mean_rkg</span><span class="p">)[:</span><span class="mi">20</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;from </span><span class="si">{</span><span class="n">rois_sorted</span><span class="p">[</span><span class="n">i_roi</span><span class="p">[</span><span class="n">ii</span><span class="p">]]</span><span class="si">}</span><span class="s1"> to </span><span class="si">{</span><span class="n">rois_sorted</span><span class="p">[</span><span class="n">j_roi</span><span class="p">[</span><span class="n">ii</span><span class="p">]]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">mask_info_feat</span><span class="p">[</span><span class="n">i_roi</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">j_roi</span><span class="p">[</span><span class="n">ii</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask_info_feat</span><span class="p">)</span>
+
+
+<span class="n">mask_info_feat_MOU</span> <span class="o">=</span> <span class="n">mask_info_feat</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+from V1 dp to V1 vp
+from V1 dp to V1 vp
+from V1 dp to V1 dp
+from V3 dp to V1 dp
+from V1 dp to V1 dp
+from V2 df to V3 df
+from V3 vp to V3 vp
+from V3 vp to V1 vp
+from V1 vp to V1 vp
+from V1 vp to V1 vp
+from V3 vp to V1 vp
+from V2 df to V3 df
+from V3 dp to V1 dp
+from V3 vp to V3 vp
+from V1 vp to V1 dp
+from V1 vp to V1 dp
+from V2 df to V1 df
+from V1 vf to V2 vf
+from V2 vp to V2 vp
+from V2 vp to V2 vp
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_model-cross-learning_48_1.png" src="../_images/notebooks_retNet_model-cross-learning_48_1.png" />
+</div>
+</div>
+</section>
+<section id="rDCM-features">
+<h3><span class="section-number">5.8.2. </span>rDCM features<a class="headerlink" href="#rDCM-features" title="Permalink to this heading">¶</a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># quick fix to get coefficients from random forest estimator in pipeline</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_coef</span><span class="p">(</span><span class="n">clf</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">clf</span><span class="o">.</span><span class="n">feature_importances_</span>  <span class="c1"># repeat classification</span>
+
+<span class="n">clf</span> <span class="o">=</span> <span class="n">dict_clf</span><span class="p">[</span><span class="s1">&#39;RF&#39;</span><span class="p">]</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">clf</span><span class="p">)</span>
+
+<span class="n">rkgs_rDCM</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">cvs</span><span class="o">.</span><span class="n">get_n_splits</span><span class="p">(),</span> <span class="mi">24</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+<span class="n">i_rep</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="k">for</span> <span class="n">train_ind</span><span class="p">,</span> <span class="n">test_ind</span> <span class="ow">in</span> <span class="n">cvs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X_dcm</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+
+    <span class="c1"># wrap classifier to be fitted to data to calculate the ranking</span>
+    <span class="n">feature_select</span> <span class="o">=</span> <span class="n">RFE</span><span class="p">(</span><span class="n">clf</span><span class="p">,</span> <span class="n">n_features_to_select</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                         <span class="n">importance_getter</span><span class="o">=</span><span class="n">get_coef</span><span class="p">)</span>
+
+    <span class="c1"># perform RFE</span>
+    <span class="n">feature_select</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_dcm</span><span class="p">[</span><span class="n">train_ind</span><span class="p">,:],</span> <span class="n">y</span><span class="p">[</span><span class="n">train_ind</span><span class="p">])</span>
+    <span class="n">rkgs_rDCM</span><span class="p">[</span><span class="n">i_rep</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">feature_select</span><span class="o">.</span><span class="n">ranking_</span>
+    <span class="n">i_rep</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+RandomForestClassifier(random_state=0)
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mean_rkg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">rkgs_rDCM</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1">#print(np.argsort(mean_rkg))</span>
+
+<span class="n">i_roi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="mi">24</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">j_roi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">24</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="mi">24</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="n">mask_info_feat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">24</span><span class="p">,</span><span class="mi">24</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">mean_rkg</span><span class="p">)[:</span><span class="mi">20</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;from </span><span class="si">{</span><span class="n">rois_sorted</span><span class="p">[</span><span class="n">i_roi</span><span class="p">[</span><span class="n">ii</span><span class="p">]]</span><span class="si">}</span><span class="s1"> to </span><span class="si">{</span><span class="n">rois_sorted</span><span class="p">[</span><span class="n">j_roi</span><span class="p">[</span><span class="n">ii</span><span class="p">]]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">mask_info_feat</span><span class="p">[</span><span class="n">i_roi</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">j_roi</span><span class="p">[</span><span class="n">ii</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask_info_feat</span><span class="p">)</span>
+
+<span class="n">mask_info_feat_DCM</span> <span class="o">=</span> <span class="n">mask_info_feat</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><br/><span></span><span class="c1">#fig, ax = plt.figure(dpi=150, facecolor=&quot;w&quot;)</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+<span class="n">EC_max</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mask_info_feat_MOU</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mask_info_feat_DCM</span><span class="p">))</span>
+
+<span class="n">im_vfm</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask_info_feat_MOU</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">EC_max</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greys&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Source ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Target ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s1">&#39;MOU&#39;</span><span class="p">)</span>
+
+
+<span class="n">im_rs</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask_info_feat_DCM</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">vmax</span><span class="o">=</span><span class="n">EC_max</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greys&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Source ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Target ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s1">&#39;rDCM&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">()]</span>
+<span class="n">empty_string_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">empty_string_labels</span><span class="p">)</span>
+
+
+
+<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;greatLinks.png&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span>
+    <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span><span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Calculate relative frequencies for each ROI</span>
+<span class="c1"># MOU relative frequencies</span>
+<span class="n">mou_binary</span> <span class="o">=</span> <span class="p">(</span><span class="n">mask_info_feat_MOU</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">mou_freq_rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mou_binary</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">mou_binary</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Target ROI frequencies</span>
+<span class="n">mou_freq_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">mou_binary</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">mou_binary</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Source ROI frequencies</span>
+
+<span class="c1"># DCM relative frequencies</span>
+<span class="n">dcm_binary</span> <span class="o">=</span> <span class="p">(</span><span class="n">mask_info_feat_DCM</span><span class="o">.</span><span class="n">T</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">dcm_freq_rows</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dcm_binary</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">dcm_binary</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Target ROI frequencies</span>
+<span class="n">dcm_freq_cols</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dcm_binary</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">dcm_binary</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Source ROI frequencies</span>
+
+<span class="c1"># Create figure with subplots for MOU</span>
+<span class="n">fig1</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="n">gs1</span> <span class="o">=</span> <span class="n">fig1</span><span class="o">.</span><span class="n">add_gridspec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                       <span class="n">hspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="c1"># Top histogram - MOU source ROI frequencies</span>
+<span class="n">ax_hist_top1</span> <span class="o">=</span> <span class="n">fig1</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">ax_hist_top1</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mou_freq_cols</span><span class="p">)),</span> <span class="n">mou_freq_cols</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">ax_hist_top1</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Relative</span><span class="se">\n</span><span class="s1">Frequency&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax_hist_top1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Source ROI Frequency&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax_hist_top1</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax_hist_top1</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+<span class="n">ax_hist_top1</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="c1">#ax_hist_top1.set_ylim(0, 1)</span>
+
+<span class="c1"># Right histogram - MOU target ROI frequencies</span>
+<span class="n">ax_hist_right1</span> <span class="o">=</span> <span class="n">fig1</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs1</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">mou_freq_rows_reversed</span> <span class="o">=</span> <span class="n">mou_freq_rows</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Reverse to match heatmap y-axis</span>
+<span class="n">ax_hist_right1</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mou_freq_rows_reversed</span><span class="p">)),</span> <span class="n">mou_freq_rows_reversed</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">ax_hist_right1</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Relative</span><span class="se">\n</span><span class="s1">Frequency&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax_hist_right1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Target ROI</span><span class="se">\n</span><span class="s1">Frequency&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+<span class="n">ax_hist_right1</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax_hist_right1</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
+<span class="n">ax_hist_right1</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="c1">#ax_hist_right1.set_xlim(0, 1)</span>
+
+<span class="c1"># MOU heatmap</span>
+<span class="n">ax_mou</span> <span class="o">=</span> <span class="n">fig1</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs1</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">im_mou</span> <span class="o">=</span> <span class="n">ax_mou</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask_info_feat_MOU</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">EC_max</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greys&#39;</span><span class="p">)</span>
+<span class="n">ax_mou</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Source ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax_mou</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Target ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax_mou</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax_mou</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax_mou</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+<span class="n">ax_mou</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax_mou</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax_mou</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">tick_right</span><span class="p">()</span>
+<span class="n">ax_mou</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;MOU&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="n">fname1</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;MOU_frequency_histograms.svg&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname1</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">,</span>
+    <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Create figure with subplots for DCM</span>
+<span class="n">fig2</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="n">gs2</span> <span class="o">=</span> <span class="n">fig2</span><span class="o">.</span><span class="n">add_gridspec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">height_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="n">width_ratios</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                       <span class="n">hspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="c1"># Top histogram - DCM source ROI frequencies</span>
+<span class="n">ax_hist_top2</span> <span class="o">=</span> <span class="n">fig2</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">ax_hist_top2</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dcm_freq_cols</span><span class="p">)),</span> <span class="n">dcm_freq_cols</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">ax_hist_top2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Relative</span><span class="se">\n</span><span class="s1">Frequency&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax_hist_top2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Source ROI Frequency&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax_hist_top2</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax_hist_top2</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
+<span class="n">ax_hist_top2</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="c1">#ax_hist_top2.set_ylim(0, 1)</span>
+
+<span class="c1"># Right histogram - DCM target ROI frequencies</span>
+<span class="n">ax_hist_right2</span> <span class="o">=</span> <span class="n">fig2</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs2</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">dcm_freq_rows_reversed</span> <span class="o">=</span> <span class="n">dcm_freq_rows</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Reverse to match heatmap y-axis</span>
+<span class="n">ax_hist_right2</span><span class="o">.</span><span class="n">barh</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dcm_freq_rows_reversed</span><span class="p">)),</span> <span class="n">dcm_freq_rows_reversed</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+<span class="n">ax_hist_right2</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Relative</span><span class="se">\n</span><span class="s1">Frequency&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax_hist_right2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Target ROI</span><span class="se">\n</span><span class="s1">Frequency&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+<span class="n">ax_hist_right2</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax_hist_right2</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
+<span class="n">ax_hist_right2</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="c1">#ax_hist_right2.set_xlim(0, 1)</span>
+
+<span class="c1"># DCM heatmap</span>
+<span class="n">ax_dcm</span> <span class="o">=</span> <span class="n">fig2</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs2</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">im_dcm</span> <span class="o">=</span> <span class="n">ax_dcm</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask_info_feat_DCM</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">EC_max</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greys&#39;</span><span class="p">)</span>
+<span class="n">ax_dcm</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Source ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax_dcm</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Target ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax_dcm</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax_dcm</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax_dcm</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">tick_top</span><span class="p">()</span>
+<span class="n">ax_dcm</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax_dcm</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax_dcm</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">tick_right</span><span class="p">()</span>
+<span class="n">ax_dcm</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;rDCM&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+
+<span class="n">fname2</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;DCM_frequency_histograms.svg&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname2</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">,</span>
+    <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="c1"># Print statistics</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MOU - Mean source ROI frequency: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mou_freq_cols</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MOU - Mean target ROI frequency: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">mou_freq_rows</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DCM - Mean source ROI frequency: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dcm_freq_cols</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;DCM - Mean target ROI frequency: </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">dcm_freq_rows</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Explore overlap between MOU and DCM informative features</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+<span class="c1"># Left: MOU informative features</span>
+<span class="n">im_mou</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask_info_feat_MOU</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">EC_max</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greys&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Source ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Target ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;MOU&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+<span class="c1"># Middle: DCM informative features</span>
+<span class="n">im_dcm</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mask_info_feat_DCM</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">EC_max</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greys&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Source ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;rDCM&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">()]</span>
+<span class="n">empty_string_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">empty_string_labels</span><span class="p">)</span>
+
+<span class="c1"># Right: Overlap (intersection)</span>
+<span class="n">overlap_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_and</span><span class="p">(</span><span class="n">mask_info_feat_MOU</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">mask_info_feat_DCM</span><span class="o">.</span><span class="n">T</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">overlap_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">mask_info_feat_MOU</span><span class="p">,</span> <span class="n">mask_info_feat_DCM</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">*</span> <span class="n">overlap_mask</span>
+
+<span class="n">im_overlap</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">overlap_values</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">EC_max</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Reds&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;text.usetex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bold&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;serif&#39;</span>
+
+<span class="c1"># Calculate Jaccard similarity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">jaccard_score</span>
+<span class="n">mou_binary</span> <span class="o">=</span> <span class="p">(</span><span class="n">mask_info_feat_MOU</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">dcm_binary</span> <span class="o">=</span> <span class="p">(</span><span class="n">mask_info_feat_DCM</span><span class="o">.</span><span class="n">T</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">jaccard_overall</span> <span class="o">=</span> <span class="n">jaccard_score</span><span class="p">(</span><span class="n">mou_binary</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">dcm_binary</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+<span class="c1"># Set up the plot area</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="c1"># Plot MOU connections as squares and DCM connections as crosses</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)):</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)):</span>
+        <span class="n">mou_val</span> <span class="o">=</span> <span class="n">mask_info_feat_MOU</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+        <span class="n">dcm_val</span> <span class="o">=</span> <span class="n">mask_info_feat_DCM</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+
+        <span class="c1"># MOU connections as unfilled squares (black)</span>
+        <span class="k">if</span> <span class="n">mou_val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">square_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">mou_val</span> <span class="o">/</span> <span class="n">EC_max</span><span class="p">)</span> <span class="o">*</span> <span class="mi">30</span>  <span class="c1"># Smaller square size</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">square_size</span><span class="p">,</span> <span class="n">facecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>
+                      <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+
+        <span class="c1"># DCM connections as crosses (black)</span>
+        <span class="k">if</span> <span class="n">dcm_val</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">cross_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">dcm_val</span> <span class="o">/</span> <span class="n">EC_max</span><span class="p">)</span> <span class="o">*</span> <span class="mi">30</span>  <span class="c1"># Smaller cross size</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">cross_size</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span>
+                      <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+
+<span class="c1"># Set labels and formatting to match reference</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Source ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Target ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$Optimal\ feature\ subset$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+
+<span class="c1"># Set ticks and labels</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="c1"># Add subtle grid</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">)</span>
+
+<span class="c1"># Make frame thicker to match reference</span>
+<span class="k">for</span> <span class="n">spine</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+    <span class="n">spine</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mf">1.5</span><span class="p">)</span>
+
+<span class="c1"># Add legend outside the matrix with no frame</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line2D</span>
+<span class="n">legend_elements</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;s&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">markerfacecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span>
+           <span class="n">markeredgecolor</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\mathit</span><span class="si">{MOU}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">markeredgewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">),</span>
+    <span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\mathit</span><span class="si">{rDCM}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="p">]</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_elements</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span>
+          <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Print Jaccard index</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Jaccard Index: </span><span class="si">{</span><span class="n">jaccard_overall</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;merged_connectivity_matrix.svg&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">,</span>
+    <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</section>
 </section>
 </section>
 
