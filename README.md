@@ -1,3 +1,3 @@
 # retNet
 
-[docs](https://nicogravel.github.io/retNet)
+[docs](https://nicogravel.github.io/retNet/html/index.html)
