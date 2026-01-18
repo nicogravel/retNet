@@ -43,15 +43,13 @@
 <li class="toctree-l1"><a class="reference internal" href="retNet_model-cross-learning.html">5. Cross-task generalization between MOU and rDCM</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">6. Convergence of MOU and rDCM derived EC</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#Environment-setup-&amp;-index-configuration">6.1. Environment setup &amp; index configuration</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Detect-subjects-with-all-zero-matrices-in-any-condition">6.2. Detect subjects with all-zero matrices in any condition</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Load-rDCM-results">6.3. Load rDCM results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Remove-the-same-problematic-subjects-from-rDCM-arrays">6.4. Remove the same problematic subjects from rDCM arrays</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Normalize-EC-matrices">6.5. Normalize EC matrices</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Principal-Component-Analysis">6.6. Principal Component Analysis</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Variability-in-within-hemisphere-connections">6.7. Variability in within-hemisphere connections</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Variability-in-callosal-connections">6.8. Variability in callosal connections</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Model-convergence">6.9. Model convergence</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#Graph-metrics">6.10. Graph metrics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Load-rDCM-results">6.2. Load rDCM results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Normalize-EC-matrices">6.3. Normalize EC matrices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Principal-Component-Analysis">6.4. Principal Component Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Variability-in-within-hemisphere-connections">6.5. Variability in within-hemisphere connections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Variability-in-callosal-connections">6.6. Variability in callosal connections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Model-convergence">6.7. Model convergence</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Graph-metrics">6.8. Graph metrics</a></li>
 </ul>
 </li>
 </ul>
@@ -141,6 +139,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.decomposition</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCA</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
 
 <span class="c1"># Jupyter magic commands</span>
 <span class="o">%</span><span class="k">matplotlib</span> inline
@@ -154,7 +153,7 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#out_path = &#39;/home/nicolas/Documents/RetNet/ret-EC/new_results/&#39;</span>
-<span class="n">save_path</span> <span class="o">=</span> <span class="s2">&quot;/home/nicolas/Documents/GitHubProjects/retNet/docs_local/source/notebooks/results_MOU/&quot;</span>
+<span class="n">save_path</span> <span class="o">=</span> <span class="s2">&quot;/home/nicolas/Documents/GitHubProjects/retNet/temp/results_MOU/&quot;</span>
 
 <span class="c1"># Index dictionary</span>
 <span class="n">conf</span> <span class="o">=</span> <span class="p">{</span>
@@ -198,8 +197,7 @@
 <span class="n">model_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;Error_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
 <span class="n">J_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;J_mod_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
 <span class="n">Sigma_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">save_path</span><span class="p">,</span> <span class="s1">&#39;Sigma_mod_&#39;</span> <span class="o">+</span> <span class="n">appendix</span> <span class="o">+</span> <span class="s1">&#39;.npy&#39;</span><span class="p">))</span>
-<span class="c1">#tau_x = np.load(os.path.join(save_path, &#39;Tau_rois_&#39; + appendix + &#39;.npy&#39;))</span>
-<span class="c1">#tau = np.load(os.path.join(save_path, &#39;Tau_mean_&#39; + appendix + &#39;.npy&#39;))</span>
+
 
 
 <span class="c1"># Print shapes of all arrays to determine the correct axis for subject removal</span>
@@ -219,63 +217,36 @@
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Current shapes before removal:
-model_fit: (3, 157)
-model_error: (3, 157)
-J_mod: (3, 157, 24, 24)
-Sigma_mod: (3, 157, 24, 24)
+model_fit: (3, 156)
+model_error: (3, 156)
+J_mod: (3, 156, 24, 24)
+Sigma_mod: (3, 156, 24, 24)
 </pre></div></div>
 </div>
 </section>
 </section>
-<section id="Detect-subjects-with-all-zero-matrices-in-any-condition">
-<h2><span class="section-number">6.2. </span>Detect subjects with all-zero matrices in any condition<a class="headerlink" href="#Detect-subjects-with-all-zero-matrices-in-any-condition" title="Permalink to this heading">¶</a></h2>
+<section id="Load-rDCM-results">
+<h2><span class="section-number">6.2. </span>Load rDCM results<a class="headerlink" href="#Load-rDCM-results" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Detect subjects with all-zero OFF-DIAGONAL elements in any condition</span>
-<span class="n">problematic_subjects_any_zero</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">num_subjects</span> <span class="o">=</span> <span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-<span class="n">num_conditions</span> <span class="o">=</span> <span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="s1">&#39;rDCM_2024&#39;</span>
 
-<span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_subjects</span><span class="p">):</span>
-    <span class="n">is_problematic</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">for</span> <span class="n">cond_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_conditions</span><span class="p">):</span>
-        <span class="n">matrix</span> <span class="o">=</span> <span class="n">J_mod</span><span class="p">[</span><span class="n">cond_idx</span><span class="p">,</span> <span class="n">i_sub</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
-        <span class="c1"># Create a copy and zero out the diagonal to check only off-diagonal elements</span>
-        <span class="n">off_diag_matrix</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">fill_diagonal</span><span class="p">(</span><span class="n">off_diag_matrix</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">out_path</span> <span class="o">=</span> <span class="s2">&quot;../../../temp/results_rDCM/&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading results from:&quot;</span><span class="p">,</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">())</span>
 
-        <span class="c1"># Check if all off-diagonal elements are zero (or very close to zero)</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">off_diag_matrix</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-10</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subject </span><span class="si">{</span><span class="n">i_sub</span><span class="si">}</span><span class="s2">, Condition </span><span class="si">{</span><span class="n">cond_idx</span><span class="si">}</span><span class="s2">: All off-diagonal elements are zero&quot;</span><span class="p">)</span>
-            <span class="n">is_problematic</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">break</span>
-    <span class="k">if</span> <span class="n">is_problematic</span><span class="p">:</span>
-        <span class="n">problematic_subjects_any_zero</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i_sub</span><span class="p">)</span>
+<span class="c1"># Load pre-averaged results directly</span>
+<span class="n">EC_avg_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s2">&quot;EC_avg_&quot;</span> <span class="o">+</span> <span class="n">model</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span><span class="p">))</span>
+<span class="n">diagonals_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s2">&quot;diagonals_&quot;</span> <span class="o">+</span> <span class="n">model</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span><span class="p">))</span>
+<span class="n">F_avg_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">out_path</span><span class="p">,</span> <span class="s2">&quot;F_avg_&quot;</span> <span class="o">+</span> <span class="n">model</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span><span class="p">))</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Subjects with all-zero off-diagonal matrices in at least one condition: </span><span class="si">{</span><span class="n">problematic_subjects_any_zero</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Total problematic subjects: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">problematic_subjects_any_zero</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;EC_avg_dcm shape:&#39;</span><span class="p">,</span> <span class="n">EC_avg_dcm</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>       <span class="c1"># Expected: (3, 156, 24, 24)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;diagonals_dcm shape:&#39;</span><span class="p">,</span> <span class="n">diagonals_dcm</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1"># Expected: (3, 156, 24)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;F_avg_dcm shape:&#39;</span><span class="p">,</span> <span class="n">F_avg_dcm</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>         <span class="c1"># Expected: (10, 156) or (3, 156) if you saved F_avg</span>
 
-<span class="c1"># Remove problematic subjects from all arrays (using the list from detection)</span>
-<span class="c1"># Sort in descending order to avoid index shifting</span>
-<span class="n">problematic_subjects_sorted</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">problematic_subjects_any_zero</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># Remove from arrays using the correct subject axis for each</span>
-<span class="n">model_fit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_fit</span><span class="p">,</span> <span class="n">problematic_subjects_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">model_error</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">model_error</span><span class="p">,</span> <span class="n">problematic_subjects_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">J_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">J_mod</span><span class="p">,</span> <span class="n">problematic_subjects_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">Sigma_mod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">Sigma_mod</span><span class="p">,</span> <span class="n">problematic_subjects_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="c1">#tau_x = np.delete(tau_x, problematic_subjects_sorted, axis=0)</span>
-<span class="c1"># tau_array has no subject dimension, so leave it unchanged</span>
-
-<span class="c1"># Print shapes to verify removal</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Shapes after removing problematic subjects:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;model_fit: </span><span class="si">{</span><span class="n">model_fit</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;model_error: </span><span class="si">{</span><span class="n">model_error</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;J_mod_array: </span><span class="si">{</span><span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Sigma_mod: </span><span class="si">{</span><span class="n">Sigma_mod</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="c1">#print(f&quot;tau_x: {tau_x.shape}&quot;)</span>
+<span class="n">out_pth</span> <span class="o">=</span> <span class="s1">&#39;/media/nicolas/KINGSTON/retNet_final/output&#39;</span>
 <br/></pre></div>
 </div>
 </div>
@@ -284,117 +255,18 @@ Sigma_mod: (3, 157, 24, 24)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Subject 114, Condition 0: All off-diagonal elements are zero
-
-Subjects with all-zero off-diagonal matrices in at least one condition: [114]
-Total problematic subjects: 1
-Shapes after removing problematic subjects:
-model_fit: (3, 156)
-model_error: (3, 156)
-J_mod_array: (3, 156, 24, 24)
-Sigma_mod: (3, 156, 24, 24)
-</pre></div></div>
-</div>
-</section>
-<section id="Load-rDCM-results">
-<h2><span class="section-number">6.3. </span>Load rDCM results<a class="headerlink" href="#Load-rDCM-results" title="Permalink to this heading">¶</a></h2>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># rDCM results path (Julia version)</span>
-<span class="c1">#base_path = &#39;/home/nicolas/Documents/RetNet/ret-EC&#39;</span>
-<span class="c1">#pth = base_path + &quot;/retdata/sorted/&quot;</span>
-
-<span class="n">save_path</span> <span class="o">=</span> <span class="s2">&quot;/home/nicolas/Documents/GitHubProjects/retNet/docs_local/source/notebooks/results_rDCM/&quot;</span>
-
-<span class="n">n_sub</span> <span class="o">=</span> <span class="mi">157</span>  <span class="c1"># Changed from 156 to 157</span>
-<span class="n">N_rois</span> <span class="o">=</span> <span class="mi">24</span>
-<span class="n">EC_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_sub</span><span class="p">,</span> <span class="n">N_rois</span><span class="p">,</span> <span class="n">N_rois</span><span class="p">])</span>
-<span class="n">F_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_sub</span><span class="p">])</span>
-
-<span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sub</span><span class="p">):</span>
-    <span class="c1"># Load EC data</span>
-    <span class="n">fname</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">+</span> <span class="s2">&quot;rDCM_EC_(Julia)_subj_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span>
-    <span class="n">ec_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
-
-    <span class="c1"># Load F data</span>
-    <span class="n">fname_f</span> <span class="o">=</span> <span class="n">save_path</span> <span class="o">+</span> <span class="s2">&quot;rDCM_F_(Julia)_subj_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i_sub</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.npy&quot;</span>
-    <span class="n">f_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">fname_f</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-        <span class="n">EC_dcm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="n">i_sub</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">ec_data</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">F_dcm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="n">i_sub</span><span class="p">]</span> <span class="o">=</span> <span class="n">f_data</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;EC_dcm shape:&#39;</span><span class="p">,</span> <span class="n">EC_dcm</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-
-<span class="c1"># Average EC_dcm over task conditions, excluding diagonals</span>
-<span class="n">EC_avg_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_sub</span><span class="p">,</span> <span class="mi">24</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
-<span class="n">diagonals_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_sub</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
-
-<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
-    <span class="n">sessions</span> <span class="o">=</span> <span class="n">conf</span><span class="p">[</span><span class="s2">&quot;task&quot;</span><span class="p">][</span><span class="n">i_cond</span><span class="p">]</span>  <span class="c1"># Already 0-based in Python</span>
-    <span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sub</span><span class="p">):</span>
-        <span class="n">avg_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">EC_dcm</span><span class="p">[</span><span class="n">sessions</span><span class="p">,</span> <span class="n">i_sub</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">diagonals_dcm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="n">i_sub</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">avg_matrix</span><span class="p">)</span>
-        <span class="n">avg_matrix</span> <span class="o">-=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">diagonals_dcm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="n">i_sub</span><span class="p">,</span> <span class="p">:])</span>
-        <span class="n">EC_avg_dcm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="n">i_sub</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">avg_matrix</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;EC_avg_dcm shape:&#39;</span><span class="p">,</span> <span class="n">EC_avg_dcm</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;diagonals_dcm shape:&#39;</span><span class="p">,</span> <span class="n">diagonals_dcm</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-EC_dcm shape: (10, 157, 24, 24)
-EC_avg_dcm shape: (3, 157, 24, 24)
-diagonals_dcm shape: (3, 157, 24)
-</pre></div></div>
-</div>
-</section>
-<section id="Remove-the-same-problematic-subjects-from-rDCM-arrays">
-<h2><span class="section-number">6.4. </span>Remove the same problematic subjects from rDCM arrays<a class="headerlink" href="#Remove-the-same-problematic-subjects-from-rDCM-arrays" title="Permalink to this heading">¶</a></h2>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Subjects to remove: </span><span class="si">{</span><span class="n">problematic_subjects_any_zero</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-<span class="c1"># Remove from rDCM arrays using the correct subject axis</span>
-<span class="n">EC_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">EC_dcm</span><span class="p">,</span> <span class="n">problematic_subjects_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">F_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">F_dcm</span><span class="p">,</span> <span class="n">problematic_subjects_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">EC_avg_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">EC_avg_dcm</span><span class="p">,</span> <span class="n">problematic_subjects_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">diagonals_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">diagonals_dcm</span><span class="p">,</span> <span class="n">problematic_subjects_sorted</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Both MOU and rDCM now have matching subjects:&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;MOU J_mod: </span><span class="si">{</span><span class="n">J_mod</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rDCM EC_avg_dcm: </span><span class="si">{</span><span class="n">EC_avg_dcm</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Subjects to remove: [114]
-
-Both MOU and rDCM now have matching subjects:
-MOU J_mod: (3, 156, 24, 24)
-rDCM EC_avg_dcm: (3, 156, 24, 24)
+Loading results from: /home/nicolas/Documents/GitHubProjects/retNet/temp/results_rDCM
+EC_avg_dcm shape: (3, 156, 24, 24)
+diagonals_dcm shape: (3, 156, 24)
+F_avg_dcm shape: (3, 156)
 </pre></div></div>
 </div>
 </section>
 <section id="Normalize-EC-matrices">
-<h2><span class="section-number">6.5. </span>Normalize EC matrices<a class="headerlink" href="#Normalize-EC-matrices" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">6.3. </span>Normalize EC matrices<a class="headerlink" href="#Normalize-EC-matrices" title="Permalink to this heading">¶</a></h2>
 <p>To make EC matrices comparable across participants and conditions, each matrix is scaled by its L1 norm. This preserves relative differences in connection strengths while removing variations in overall magnitude.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">normalize_connectivity_matrices</span><span class="p">(</span><span class="n">EC_data</span><span class="p">,</span> <span class="n">normalization_type</span><span class="o">=</span><span class="s1">&#39;L1&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -471,161 +343,8 @@ rDCM EC_avg_dcm: (3, 156, 24, 24)
 <br/></pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">plot_connectivity_matrix</span><span class="p">(</span><span class="n">EC_data</span><span class="p">,</span> <span class="n">model_name</span><span class="p">,</span> <span class="n">output_filename</span><span class="p">,</span>
-                             <span class="n">effect_size_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
-                             <span class="n">colorbar_label</span><span class="o">=</span><span class="s1">&#39;EC&#39;</span><span class="p">,</span>
-                             <span class="n">use_latex</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Plot connectivity matrices with effect sizes for multiple conditions.</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    EC_data : ndarray</span>
-<span class="sd">        Effective connectivity data with shape (n_conditions, n_subjects, n_rois, n_rois)</span>
-<span class="sd">    model_name : str</span>
-<span class="sd">        Model name (e.g., &#39;new_2021&#39;) to determine colormap normalization</span>
-<span class="sd">    output_filename : str</span>
-<span class="sd">        Full path for saving the output figure</span>
-<span class="sd">    effect_size_threshold : float, optional</span>
-<span class="sd">        Threshold for displaying effect sizes (default: 0.1)</span>
-<span class="sd">    colorbar_label : str, optional</span>
-<span class="sd">        Label for the colorbar (default: &#39;EC&#39;)</span>
-<span class="sd">    use_latex : bool, optional</span>
-<span class="sd">        Whether to use LaTeX rendering for text (default: True)</span>
-
-<span class="sd">    Returns</span>
-<span class="sd">    -------</span>
-<span class="sd">    fig : matplotlib.figure.Figure</span>
-<span class="sd">        The created figure object</span>
-<span class="sd">    ax : array of matplotlib.axes.Axes</span>
-<span class="sd">        Array of axes objects</span>
-<span class="sd">    effect_sizes : ndarray</span>
-<span class="sd">        Computed effect sizes with shape (n_conditions, n_rois, n_rois)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Set plot style</span>
-    <span class="k">if</span> <span class="n">use_latex</span><span class="p">:</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;text.usetex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bold&#39;</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;serif&#39;</span>
-
-    <span class="c1"># ROI labels</span>
-    <span class="n">rois_sorted</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="s1">&#39;V1 vf&#39;</span><span class="p">,</span> <span class="s1">&#39;V1 vp&#39;</span><span class="p">,</span> <span class="s1">&#39;V1 df&#39;</span><span class="p">,</span> <span class="s1">&#39;V1 dp&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;V2 vf&#39;</span><span class="p">,</span> <span class="s1">&#39;V2 vp&#39;</span><span class="p">,</span> <span class="s1">&#39;V2 df&#39;</span><span class="p">,</span> <span class="s1">&#39;V2 dp&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;V3 vf&#39;</span><span class="p">,</span> <span class="s1">&#39;V3 vp&#39;</span><span class="p">,</span> <span class="s1">&#39;V3 df&#39;</span><span class="p">,</span> <span class="s1">&#39;V3 dp&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;V1 vf&#39;</span><span class="p">,</span> <span class="s1">&#39;V1 vp&#39;</span><span class="p">,</span> <span class="s1">&#39;V1 df&#39;</span><span class="p">,</span> <span class="s1">&#39;V1 dp&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;V2 vf&#39;</span><span class="p">,</span> <span class="s1">&#39;V2 vp&#39;</span><span class="p">,</span> <span class="s1">&#39;V2 df&#39;</span><span class="p">,</span> <span class="s1">&#39;V2 dp&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;V3 vf&#39;</span><span class="p">,</span> <span class="s1">&#39;V3 vp&#39;</span><span class="p">,</span> <span class="s1">&#39;V3 df&#39;</span><span class="p">,</span> <span class="s1">&#39;V3 dp&#39;</span>
-    <span class="p">]</span>
-
-    <span class="c1"># Cohen&#39;s d effect size function</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">cohen_d</span><span class="p">(</span><span class="n">group1</span><span class="p">,</span> <span class="n">group2</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate Cohen&#39;s d effect size between two groups.&quot;&quot;&quot;</span>
-        <span class="n">mean1</span><span class="p">,</span> <span class="n">mean2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">group1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">group2</span><span class="p">)</span>
-        <span class="n">std1</span><span class="p">,</span> <span class="n">std2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">group1</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nanstd</span><span class="p">(</span><span class="n">group2</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-        <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">group1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">group2</span><span class="p">)</span>
-        <span class="n">pooled_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(((</span><span class="n">n1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">std1</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">n2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">std2</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n1</span> <span class="o">+</span> <span class="n">n2</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span>
-        <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="n">mean1</span> <span class="o">-</span> <span class="n">mean2</span><span class="p">)</span> <span class="o">/</span> <span class="n">pooled_std</span>
-        <span class="k">return</span> <span class="n">d</span>
-
-    <span class="c1"># Get dimensions</span>
-    <span class="n">n_cond</span><span class="p">,</span> <span class="n">n_sub</span><span class="p">,</span> <span class="n">n_rois</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">EC_data</span><span class="o">.</span><span class="n">shape</span>
-
-    <span class="c1"># Calculate effect sizes</span>
-    <span class="n">effect_sizes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_cond</span><span class="p">,</span> <span class="n">n_rois</span><span class="p">,</span> <span class="n">n_rois</span><span class="p">))</span>
-    <span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">roi_p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rois</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">roi_q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rois</span><span class="p">):</span>
-                <span class="n">effect_sizes</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="n">roi_p</span><span class="p">,</span> <span class="n">roi_q</span><span class="p">]</span> <span class="o">=</span> <span class="n">cohen_d</span><span class="p">(</span>
-                    <span class="n">EC_data</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:,</span> <span class="n">roi_p</span><span class="p">,</span> <span class="n">roi_q</span><span class="p">],</span>
-                    <span class="n">EC_data</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-                <span class="p">)</span>
-
-    <span class="c1"># Create figure</span>
-    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_cond</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Calculate color limits</span>
-    <span class="n">EC_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">EC_data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-    <span class="n">EC_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">EC_data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-
-    <span class="c1"># Plot each condition</span>
-    <span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
-        <span class="c1"># Create colormap normalization</span>
-        <span class="k">if</span> <span class="n">model_name</span> <span class="o">==</span> <span class="s1">&#39;new_2021&#39;</span><span class="p">:</span>
-            <span class="n">divnorm</span> <span class="o">=</span> <span class="n">colors</span><span class="o">.</span><span class="n">TwoSlopeNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">EC_min</span><span class="p">,</span> <span class="n">vcenter</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">EC_max</span><span class="p">)</span>
-            <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">EC_data</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                <span class="n">norm</span><span class="o">=</span><span class="n">divnorm</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;BrBG_r&#39;</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">EC_data</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
-                <span class="n">vmin</span><span class="o">=</span><span class="n">EC_min</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">EC_max</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Greys&#39;</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Add effect size annotations</span>
-        <span class="k">for</span> <span class="n">roi_p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rois</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">roi_q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_rois</span><span class="p">):</span>
-                <span class="k">if</span> <span class="n">effect_sizes</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="n">roi_p</span><span class="p">,</span> <span class="n">roi_q</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">effect_size_threshold</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="n">roi_p</span> <span class="o">!=</span> <span class="n">roi_q</span><span class="p">:</span>  <span class="c1"># Skip diagonal</span>
-                        <span class="n">txt</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
-                            <span class="n">roi_p</span><span class="p">,</span> <span class="n">roi_q</span><span class="p">,</span>
-                            <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">effect_sizes</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="w"> </span><span class="n">roi_p</span><span class="p">,</span><span class="w"> </span><span class="n">roi_q</span><span class="p">]</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
-                            <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">,</span>
-                            <span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">30</span>
-                        <span class="p">)</span>
-                        <span class="n">txt</span><span class="o">.</span><span class="n">set_path_effects</span><span class="p">([</span>
-                            <span class="n">PathEffects</span><span class="o">.</span><span class="n">withStroke</span><span class="p">(</span><span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">foreground</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
-                        <span class="p">])</span>
-
-        <span class="c1"># Set labels and ticks</span>
-        <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Source ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
-        <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Target ROI&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
-        <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
-        <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="n">rois_sorted</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-        <span class="c1"># Hide y-labels for subplots after the first</span>
-        <span class="k">if</span> <span class="n">i_cond</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">)))</span>
-            <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">rois_sorted</span><span class="p">))</span>
-
-        <span class="c1"># Set title</span>
-        <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;tasks&#39;</span><span class="p">][</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">24</span><span class="p">)</span>
-
-        <span class="c1"># Add colorbar to first subplot</span>
-        <span class="k">if</span> <span class="n">i_cond</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">cbar</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span>
-                <span class="n">im</span><span class="p">,</span>
-                <span class="n">cax</span><span class="o">=</span><span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.32</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.07</span><span class="p">,</span> <span class="mf">0.12</span><span class="p">,</span> <span class="mf">0.024</span><span class="p">]),</span>
-                <span class="n">extend</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span>
-                <span class="n">orientation</span><span class="o">=</span><span class="s1">&#39;horizontal&#39;</span>
-            <span class="p">)</span>
-            <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
-            <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;EC ($</span><span class="si">{</span><span class="n">colorbar_label</span><span class="si">}</span><span class="s1">$)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
-
-    <span class="c1"># Save figure</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
-        <span class="n">output_filename</span><span class="p">,</span>
-        <span class="n">transparent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span>
-        <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span>
-        <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
-        <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
-        <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">effect_sizes</span>
-</pre></div>
-</div>
-</div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">EC_normed_MOU</span> <span class="o">=</span> <span class="n">normalize_connectivity_matrices</span><span class="p">(</span>
@@ -651,79 +370,43 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 EC shape: (3, 156, 24, 24), normalized using L1 norm
 </pre></div></div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">out_pth</span> <span class="o">=</span> <span class="s1">&#39;/media/nicolas/KINGSTON/retNet_final/output&#39;</span>
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">effect_sizes</span> <span class="o">=</span> <span class="n">plot_connectivity_matrix</span><span class="p">(</span>
-    <span class="n">EC_data</span><span class="o">=</span><span class="n">EC_normed_MOU</span><span class="p">,</span>
-    <span class="n">model_name</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-    <span class="n">output_filename</span><span class="o">=</span><span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;retNet24_MOU.png&#39;</span><span class="p">,</span>
-    <span class="n">effect_size_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
-    <span class="n">colorbar_label</span><span class="o">=</span><span class="s1">&#39;MOU&#39;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_16_0.png" src="../_images/notebooks_retNet_model-convergence_16_0.png" />
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">effect_sizes</span> <span class="o">=</span> <span class="n">plot_connectivity_matrix</span><span class="p">(</span>
-    <span class="n">EC_data</span><span class="o">=</span><span class="n">EC_normed_rDCM</span><span class="p">,</span>
-    <span class="n">model_name</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
-    <span class="n">output_filename</span><span class="o">=</span><span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;retNet24_rDCM.png&#39;</span><span class="p">,</span>
-    <span class="n">effect_size_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
-    <span class="n">colorbar_label</span><span class="o">=</span><span class="s1">&#39;rDCM&#39;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_17_0.png" src="../_images/notebooks_retNet_model-convergence_17_0.png" />
-</div>
-</div>
 </section>
 <section id="Principal-Component-Analysis">
-<h2><span class="section-number">6.6. </span>Principal Component Analysis<a class="headerlink" href="#Principal-Component-Analysis" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">6.4. </span>Principal Component Analysis<a class="headerlink" href="#Principal-Component-Analysis" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_mou</span> <span class="o">=</span> <span class="n">EC_normed_MOU</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="mi">156</span><span class="p">,</span><span class="mi">24</span><span class="o">*</span><span class="mi">24</span><span class="p">))</span>
 <span class="n">X_dcm</span> <span class="o">=</span> <span class="n">EC_normed_rDCM</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="mi">156</span><span class="p">,</span><span class="mi">24</span><span class="o">*</span><span class="mi">24</span><span class="p">))</span>
+
+<span class="n">X_mou</span><span class="o">=</span> <span class="n">X_mou</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X_mou</span><span class="p">)</span>
+<span class="n">X_dcm</span> <span class="o">=</span> <span class="n">X_dcm</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X_dcm</span><span class="p">)</span>
 
 <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="mi">156</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="mi">156</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
 <section id="MOU">
-<h3><span class="section-number">6.6.1. </span>MOU<a class="headerlink" href="#MOU" title="Permalink to this heading">¶</a></h3>
+<h3><span class="section-number">6.4.1. </span>MOU<a class="headerlink" href="#MOU" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports moved to top cell</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X_mou</span> <span class="o">=</span> <span class="n">EC_normed_MOU</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="mi">156</span><span class="p">,</span><span class="mi">24</span><span class="o">*</span><span class="mi">24</span><span class="p">))</span>
+<span class="n">X_dcm</span> <span class="o">=</span> <span class="n">EC_normed_rDCM</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="mi">156</span><span class="p">,</span><span class="mi">24</span><span class="o">*</span><span class="mi">24</span><span class="p">))</span>
+
+<span class="n">X_mou</span><span class="o">=</span> <span class="n">X_mou</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X_mou</span><span class="p">)</span>
+<span class="n">X_dcm</span> <span class="o">=</span> <span class="n">X_dcm</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">X_dcm</span><span class="p">)</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="mi">156</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">3</span><span class="o">*</span><span class="mi">156</span><span class="p">))</span>
+
 
 <span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;text.usetex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bold&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;serif&#39;</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
 <span class="n">n</span> <span class="o">=</span> <span class="mi">9</span>
@@ -733,11 +416,13 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 
 <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">156</span><span class="o">*</span><span class="mi">3</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_pca</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_pca</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="mi">3</span><span class="p">])</span> <span class="c1">#    cols[int(y[i])])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_pca</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_pca</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;PC1&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;PC2&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;vfm&#39;</span><span class="p">,</span><span class="s1">&#39;movie&#39;</span><span class="p">,</span><span class="s1">&#39;rest &#39;</span><span class="p">],</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">),</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>  <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">})</span>
 
-<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;PCA_MOU.svg&#39;</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;/PCA_MOU.svg&#39;</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">,</span>
     <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span><span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
 </pre></div>
@@ -1222,19 +907,17 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_21_1.png" src="../_images/notebooks_retNet_model-convergence_21_1.png" />
+<img alt="../_images/notebooks_retNet_model-convergence_13_1.png" src="../_images/notebooks_retNet_model-convergence_13_1.png" />
 </div>
 </div>
 </section>
 <section id="rDCM">
-<h3><span class="section-number">6.6.2. </span>rDCM<a class="headerlink" href="#rDCM" title="Permalink to this heading">¶</a></h3>
+<h3><span class="section-number">6.4.2. </span>rDCM<a class="headerlink" href="#rDCM" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports moved to top cell</span>
-
-<span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">pca</span> <span class="o">=</span> <span class="n">PCA</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
 <span class="n">n</span> <span class="o">=</span> <span class="mi">9</span>
@@ -1244,11 +927,14 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 
 <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">]</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">156</span><span class="o">*</span><span class="mi">3</span><span class="p">):</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_pca</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_pca</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="mi">3</span><span class="p">])</span> <span class="c1">#    cols[int(y[i])])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x_pca</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_pca</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="mi">3</span><span class="p">])</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;PC1&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;PC2&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;vfm&#39;</span><span class="p">,</span><span class="s1">&#39;movie&#39;</span><span class="p">,</span><span class="s1">&#39;rest &#39;</span><span class="p">],</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">),</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>  <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">})</span>
 
-<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;PCA_rDCM.svg&#39;</span>
+<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;/PCA_rDCM.svg&#39;</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">,</span>
     <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span><span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
 <br/></pre></div>
@@ -1733,251 +1419,381 @@ EC shape: (3, 156, 24, 24), normalized using L1 norm
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_23_1.png" src="../_images/notebooks_retNet_model-convergence_23_1.png" />
+<img alt="../_images/notebooks_retNet_model-convergence_15_1.png" src="../_images/notebooks_retNet_model-convergence_15_1.png" />
 </div>
 </div>
 </section>
 <section id="MOU-vs-rDCM">
-<h3><span class="section-number">6.6.3. </span>MOU vs rDCM<a class="headerlink" href="#MOU-vs-rDCM" title="Permalink to this heading">¶</a></h3>
+<h3><span class="section-number">6.4.3. </span>MOU vs rDCM<a class="headerlink" href="#MOU-vs-rDCM" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">stt</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="n">EC_dcm</span><span class="p">[</span><span class="mi">0</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
-
-
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">stt</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="mi">1</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
-
-
-<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="mi">2</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="mi">2</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">stt</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="mi">2</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="mi">2</span><span class="p">,:,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
-<br/></pre></div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">EC_normed_MOU</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
 </div>
 </div>
-<div class="nboutput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Text(0.5, 1.0, &#39;PearsonRResult(statistic=0.8476521705327864, pvalue=0.0)&#39;)
+(3, 156, 24, 24)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">EC_normed_rDCM</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(3, 156, 24, 24)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;text.usetex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bold&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;serif&#39;</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">YlGnBu_r</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+<span class="n">colors_cb</span> <span class="o">=</span> <span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">colors</span><span class="p">[</span><span class="mi">6</span><span class="p">]]</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;vfm&#39;</span><span class="p">,</span> <span class="s1">&#39;movie&#39;</span><span class="p">,</span> <span class="s1">&#39;rest&#39;</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:,</span> <span class="p">:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">p</span> <span class="o">=</span> <span class="n">stt</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+    <span class="c1"># Format p-value (use proper LaTeX for &lt; symbol)</span>
+    <span class="k">if</span> <span class="n">p</span> <span class="o">&lt;</span> <span class="mf">0.001</span><span class="p">:</span>
+        <span class="n">p_str</span> <span class="o">=</span> <span class="sa">r</span><span class="s1">&#39;$p\textless 0.001$&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">p_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;$p=</span><span class="si">{</span><span class="n">p</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">$&#39;</span>
+
+    <span class="c1"># Rasterize scatter points to reduce SVG size</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">colors_cb</span><span class="p">[</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+               <span class="n">edgecolors</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">labels</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="si">}</span><span class="s1"> ($r=</span><span class="si">{</span><span class="n">r</span><span class="si">:</span><span class="s1">.2f</span><span class="si">}</span><span class="s1">$, </span><span class="si">{</span><span class="n">p_str</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">,</span>
+               <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;MOU &#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;rDCM &#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="c1"># Add diagonal reference line</span>
+<span class="n">lims</span> <span class="o">=</span> <span class="p">[</span><span class="nb">min</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">0</span><span class="p">]),</span>
+        <span class="nb">max</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">()[</span><span class="mi">1</span><span class="p">])]</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lims</span><span class="p">,</span> <span class="n">lims</span><span class="p">,</span> <span class="s1">&#39;--k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">([</span><span class="s1">&#39;vfm&#39;</span><span class="p">,</span><span class="s1">&#39;movie&#39;</span><span class="p">,</span><span class="s1">&#39;rest &#39;</span><span class="p">],</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.98</span><span class="p">,</span> <span class="mf">0.98</span><span class="p">),</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>  <span class="n">title</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">prop</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="mi">12</span><span class="p">})</span>
+
+<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;/MOU_vs_rDCM_scatter.svg&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">,</span>
+            <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+*c* argument looks like a single numeric RGB or RGBA sequence, which should be avoided as value-mapping will have precedence in case its length matches with *x* &amp; *y*.  Please use the *color* keyword-argument or provide a 2D array with a single row if you intend to specify the same RGB or RGBA value for all points.
+*c* argument looks like a single numeric RGB or RGBA sequence, which should be avoided as value-mapping will have precedence in case its length matches with *x* &amp; *y*.  Please use the *color* keyword-argument or provide a 2D array with a single row if you intend to specify the same RGB or RGBA value for all points.
+*c* argument looks like a single numeric RGB or RGBA sequence, which should be avoided as value-mapping will have precedence in case its length matches with *x* &amp; *y*.  Please use the *color* keyword-argument or provide a 2D array with a single row if you intend to specify the same RGB or RGBA value for all points.
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_25_1.png" src="../_images/notebooks_retNet_model-convergence_25_1.png" />
+<img alt="../_images/notebooks_retNet_model-convergence_19_1.png" src="../_images/notebooks_retNet_model-convergence_19_1.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;text.usetex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bold&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;serif&#39;</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">YlGnBu_r</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+<span class="n">colors_cb</span> <span class="o">=</span> <span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">colors</span><span class="p">[</span><span class="mi">6</span><span class="p">]]</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;vfm&#39;</span><span class="p">,</span> <span class="s1">&#39;movie&#39;</span><span class="p">,</span> <span class="s1">&#39;rest&#39;</span><span class="p">]</span>
+
+<span class="c1"># Create a minimal figure just for the legend</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Patch</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>  <span class="c1"># Hide the axes</span>
+
+<span class="c1"># Create legend elements</span>
+<span class="n">legend_elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">colors_cb</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+
+<span class="c1"># Add horizontal legend</span>
+<span class="n">legend</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_elements</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                   <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+
+<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;/Legend_only.svg&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">,</span>
+            <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_model-convergence_20_0.png" src="../_images/notebooks_retNet_model-convergence_20_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;text.usetex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bold&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;serif&#39;</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">9</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">YlGnBu_r</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+<span class="n">colors_cb</span> <span class="o">=</span> <span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">colors</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">colors</span><span class="p">[</span><span class="mi">6</span><span class="p">]]</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;vfm&#39;</span><span class="p">,</span> <span class="s1">&#39;movie&#39;</span><span class="p">,</span> <span class="s1">&#39;rest&#39;</span><span class="p">]</span>
+
+<span class="c1"># Create a minimal figure just for the legend</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="kn">import</span> <span class="n">Patch</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>  <span class="c1"># Hide the axes</span>
+
+<span class="c1"># Create legend elements</span>
+<span class="n">legend_elements</span> <span class="o">=</span> <span class="p">[</span><span class="n">Patch</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="n">colors_cb</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]</span>
+
+<span class="c1"># Add vertical legend</span>
+<span class="n">legend</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_elements</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">ncol</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                   <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+
+<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;/Legend_only.svg&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">,</span>
+            <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_model-convergence_21_0.png" src="../_images/notebooks_retNet_model-convergence_21_0.png" />
 </div>
 </div>
 </section>
 </section>
 <section id="Variability-in-within-hemisphere-connections">
-<h2><span class="section-number">6.7. </span>Variability in within-hemisphere connections<a class="headerlink" href="#Variability-in-within-hemisphere-connections" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">6.5. </span>Variability in within-hemisphere connections<a class="headerlink" href="#Variability-in-within-hemisphere-connections" title="Permalink to this heading">¶</a></h2>
+</section>
+<section id="Variability-in-callosal-connections">
+<h2><span class="section-number">6.6. </span>Variability in callosal connections<a class="headerlink" href="#Variability-in-callosal-connections" title="Permalink to this heading">¶</a></h2>
+<p>Callosal connections are less affected by local vascular signal spread across V1–V3 and therefore exhibit lower variability.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Imports moved to top cell</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;text.usetex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;bold&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;font.family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;serif&#39;</span>
 
 <span class="n">n_rois</span> <span class="o">=</span> <span class="mi">12</span>
 <span class="n">n_cond</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">n_sub</span> <span class="o">=</span> <span class="mi">156</span>
 
+<span class="c1"># Set all colors to black</span>
+<span class="n">colors_cb</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="s1">&#39;k&#39;</span><span class="p">]</span>  <span class="c1"># Black for all conditions</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;vfm&#39;</span><span class="p">,</span> <span class="s1">&#39;movie&#39;</span><span class="p">,</span> <span class="s1">&#39;rest&#39;</span><span class="p">]</span>
 
-<span class="n">rois_sorted</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;$ventral \mathbf</span><span class="si">{V1}</span><span class="s1">_</span><span class="si">{fovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$ventral \mathbf</span><span class="si">{V1}</span><span class="s1">_</span><span class="si">{parafovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$dorsal \mathbf</span><span class="si">{V1}</span><span class="s1">_</span><span class="si">{fovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$dorsal \mathbf</span><span class="si">{V1}</span><span class="s1">_</span><span class="si">{parafovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$ventral \mathbf</span><span class="si">{V2}</span><span class="s1">_</span><span class="si">{fovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$ventral \mathbf</span><span class="si">{V2}</span><span class="s1">_</span><span class="si">{parafovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$dorsal \mathbf</span><span class="si">{V2}</span><span class="s1">_</span><span class="si">{fovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$dorsal \mathbf</span><span class="si">{V2}</span><span class="s1">_</span><span class="si">{parafovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$ventral \mathbf</span><span class="si">{V3}</span><span class="s1">_</span><span class="si">{fovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$ventral \mathbf</span><span class="si">{V3}</span><span class="s1">_</span><span class="si">{parafovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$dorsal \mathbf</span><span class="si">{V3}</span><span class="s1">_</span><span class="si">{fovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$dorsal \mathbf</span><span class="si">{V3}</span><span class="s1">_</span><span class="si">{parafovea}</span><span class="s1">$&#39;</span><span class="p">]</span>
+<span class="c1"># Prepare data for both within and between hemisphere connections</span>
+<span class="n">xm_within</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
+<span class="n">ym_within</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
+<span class="n">xm_between</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
+<span class="n">ym_between</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
 
-
-<span class="n">EC_hemis_mou</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_cond</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">n_sub</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">])</span>
-<span class="n">EC_hemis_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_cond</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">n_sub</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">])</span>
-
+<span class="c1"># Compute within-hemisphere data</span>
 <span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sub</span><span class="p">):</span>
-        <span class="n">EC_hemis_mou</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">n_sub</span><span class="p">,:,:]</span>       <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">12</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">EC_hemis_mou</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">n_sub</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">n_sub</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,</span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">,</span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">EC_hemis_dcm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">n_sub</span><span class="p">,:,:]</span>       <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">12</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">EC_hemis_dcm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">n_sub</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">n_sub</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,</span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">,</span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+            <span class="n">x_within</span> <span class="o">=</span> <span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">y_within</span> <span class="o">=</span> <span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">xm_within</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x_within</span><span class="p">)</span>
+            <span class="n">ym_within</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_within</span><span class="p">)</span>
 
+            <span class="n">x_between</span> <span class="o">=</span> <span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="o">+</span><span class="mi">12</span> <span class="k">if</span> <span class="n">q</span><span class="o">&lt;</span><span class="mi">12</span> <span class="k">else</span> <span class="n">q</span><span class="o">-</span><span class="mi">12</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">y_between</span> <span class="o">=</span> <span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="o">+</span><span class="mi">12</span> <span class="k">if</span> <span class="n">q</span><span class="o">&lt;</span><span class="mi">12</span> <span class="k">else</span> <span class="n">q</span><span class="o">-</span><span class="mi">12</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">xm_between</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x_between</span><span class="p">)</span>
+            <span class="n">ym_between</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y_between</span><span class="p">)</span>
 
+<span class="c1"># Find global axis limits across all conditions</span>
+<span class="n">all_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">xm_within</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">xm_between</span><span class="o">.</span><span class="n">flatten</span><span class="p">()])</span>
+<span class="n">all_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">ym_within</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">ym_between</span><span class="o">.</span><span class="n">flatten</span><span class="p">()])</span>
+<span class="n">xlim</span> <span class="o">=</span> <span class="p">[</span><span class="n">all_x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">all_x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">]</span>
+<span class="n">ylim</span> <span class="o">=</span> <span class="p">[</span><span class="n">all_y</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.0001</span><span class="p">,</span> <span class="n">all_y</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mf">0.0001</span><span class="p">]</span>
 
+<span class="c1"># Create figure with gridspec - tighter spacing</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+<span class="n">gs</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_gridspec</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">hspace</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span> <span class="n">wspace</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span>
+                      <span class="n">left</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="mf">0.92</span><span class="p">,</span> <span class="n">top</span><span class="o">=</span><span class="mf">0.94</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="mf">0.12</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">EC_hemis_mou</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
-
-<span class="c1"># Assuming EC_mou and EC_dcm are already defined</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">YlGnBu_r</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
-
-<span class="n">xm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
-<span class="n">ym</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
-
+<span class="c1"># Row 1: Within-hemisphere connections</span>
 <span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;tasks&#39;</span><span class="p">][</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i_cond</span><span class="p">])</span>
 
+    <span class="c1"># Only add title to top row</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
             <span class="n">y</span> <span class="o">=</span> <span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-            <span class="n">xm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="n">ym</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
             <span class="n">xerr</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
             <span class="n">yerr</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
-            <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;Black&#39;</span> <span class="c1">#colors[p]  # Get color from colormap</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">xm_within</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">],</span> <span class="n">ym_within</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">],</span>
+                       <span class="n">xerr</span><span class="o">=</span><span class="n">xerr</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">yerr</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">capsize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                       <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                       <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-            <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">xm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">],</span> <span class="n">ym</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">],</span> <span class="n">xerr</span><span class="o">=</span><span class="n">xerr</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">yerr</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">capsize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">rois_sorted</span><span class="p">[</span><span class="n">p</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+    <span class="c1"># Make subplot square</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">)</span>
 
-    <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$\mathbf</span><span class="si">{MOU}</span><span class="s1">$&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$\mathbf</span><span class="si">{rDCM}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="c1"># Add diagonal and set limits</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">ylim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="s1">&#39;--k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="c1"># Only show x-label on bottom row</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span>
 
+    <span class="c1"># Only show y-axis on leftmost column</span>
+    <span class="k">if</span> <span class="n">i_cond</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;rDCM&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
 
+    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">spine</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">spine</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="c1"># stats</span>
+<span class="c1"># Row 2: Between-hemisphere (callosal) connections</span>
 <span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">stt</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">xm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="n">ym</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()))</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">gs</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">i_cond</span><span class="p">])</span>
 
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+            <span class="n">xerr</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">yerr</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
 
+            <span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">xm_between</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">],</span> <span class="n">ym_between</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">],</span>
+                       <span class="n">xerr</span><span class="o">=</span><span class="n">xerr</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">yerr</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">capsize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                       <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+                       <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">rasterized</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;withinHemis_Alignment.png&#39;</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span>
-    <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span><span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+    <span class="c1"># Make subplot square</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_aspect</span><span class="p">(</span><span class="s1">&#39;equal&#39;</span><span class="p">,</span> <span class="n">adjustable</span><span class="o">=</span><span class="s1">&#39;box&#39;</span><span class="p">)</span>
 
-    <span class="c1">#plt.legend(labels=rois_sorted,loc=&#39;center left&#39;, bbox_to_anchor=(1.05, 0.45), frameon=False)</span>
+    <span class="c1"># Add diagonal and set limits</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">xlim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">xlim</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">ylim</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">ylim</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="s1">&#39;--k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+
+    <span class="c1"># Only show x-label on bottom row</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;MOU&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Only show y-axis on leftmost column</span>
+    <span class="k">if</span> <span class="n">i_cond</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;rDCM&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">spine</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+        <span class="n">spine</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Add row labels on the right</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.94</span><span class="p">,</span> <span class="mf">0.73</span><span class="p">,</span> <span class="s1">&#39;within &#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span>
+         <span class="n">rotation</span><span class="o">=</span><span class="mi">270</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.94</span><span class="p">,</span> <span class="mf">0.27</span><span class="p">,</span> <span class="s1">&#39;between&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="s1">&#39;bold&#39;</span><span class="p">,</span>
+         <span class="n">rotation</span><span class="o">=</span><span class="mi">270</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;left&#39;</span><span class="p">)</span>
+
+<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;/Hemis_Alignment_grid.svg&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">,</span>
+            <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<br/></pre></div>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Within-hemisphere correlations:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">labels</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">stt</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">xm_within</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="w"> </span><span class="n">ym_within</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Between-hemisphere correlations:&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">labels</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">stt</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">xm_between</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span><span class="w"> </span><span class="n">ym_between</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_model-convergence_25_0.png" src="../_images/notebooks_retNet_model-convergence_25_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
 <div class="highlight"><pre>
-(3, 314, 12, 12)
-PearsonRResult(statistic=0.9260894211209972, pvalue=5.5985517659497575e-62)
-PearsonRResult(statistic=0.9719730280502413, pvalue=3.573373597055484e-91)
-PearsonRResult(statistic=0.9286876445442753, pvalue=4.8414587374714395e-63)
+
+Within-hemisphere correlations:
+vfm: PearsonRResult(statistic=0.9260894211209972, pvalue=5.5985517659497575e-62)
+movie: PearsonRResult(statistic=0.9719730280502413, pvalue=3.573373597055484e-91)
+rest: PearsonRResult(statistic=0.9286876445442753, pvalue=4.8414587374714395e-63)
+
+Between-hemisphere correlations:
+vfm: PearsonRResult(statistic=0.9529489598409404, pvalue=1.7263373652392927e-75)
+movie: PearsonRResult(statistic=0.9612103843626386, pvalue=2.570281820838483e-81)
+rest: PearsonRResult(statistic=0.9359738591161524, pvalue=2.9824675050069767e-66)
 </pre></div></div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_27_1.png" src="../_images/notebooks_retNet_model-convergence_27_1.png" />
-</div>
-</div>
-</section>
-<section id="Variability-in-callosal-connections">
-<h2><span class="section-number">6.8. </span>Variability in callosal connections<a class="headerlink" href="#Variability-in-callosal-connections" title="Permalink to this heading">¶</a></h2>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">sem</span>
-
-<span class="n">n_rois</span> <span class="o">=</span> <span class="mi">12</span>
-<span class="n">n_cond</span> <span class="o">=</span> <span class="mi">3</span>
-
-
-<span class="n">rois_sorted</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;$ventral \mathbf</span><span class="si">{V1}</span><span class="s1">_</span><span class="si">{fovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$ventral \mathbf</span><span class="si">{V1}</span><span class="s1">_</span><span class="si">{parafovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$dorsal \mathbf</span><span class="si">{V1}</span><span class="s1">_</span><span class="si">{fovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$dorsal \mathbf</span><span class="si">{V1}</span><span class="s1">_</span><span class="si">{parafovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$ventral \mathbf</span><span class="si">{V2}</span><span class="s1">_</span><span class="si">{fovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$ventral \mathbf</span><span class="si">{V2}</span><span class="s1">_</span><span class="si">{parafovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$dorsal \mathbf</span><span class="si">{V2}</span><span class="s1">_</span><span class="si">{fovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$dorsal \mathbf</span><span class="si">{V2}</span><span class="s1">_</span><span class="si">{parafovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$ventral \mathbf</span><span class="si">{V3}</span><span class="s1">_</span><span class="si">{fovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$ventral \mathbf</span><span class="si">{V3}</span><span class="s1">_</span><span class="si">{parafovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$dorsal \mathbf</span><span class="si">{V3}</span><span class="s1">_</span><span class="si">{fovea}</span><span class="s1">$&#39;</span><span class="p">,</span>
-        <span class="s1">&#39;$dorsal \mathbf</span><span class="si">{V3}</span><span class="s1">_</span><span class="si">{parafovea}</span><span class="s1">$&#39;</span><span class="p">]</span>
-
-
-<span class="n">EC_hemis_mou</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_cond</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">n_sub</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">])</span>
-<span class="n">EC_hemis_dcm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="n">n_cond</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">n_sub</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">])</span>
-
-<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
-    <span class="k">for</span> <span class="n">i_sub</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_sub</span><span class="p">):</span>
-        <span class="n">EC_hemis_mou</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">n_sub</span><span class="p">,:,:]</span>       <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">EC_hemis_mou</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">n_sub</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">n_sub</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,</span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">12</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">EC_hemis_dcm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="n">n_sub</span><span class="p">,:,:]</span>       <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,</span><span class="mi">0</span><span class="p">:</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">EC_hemis_dcm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">n_sub</span><span class="p">:</span><span class="mi">2</span><span class="o">*</span><span class="n">n_sub</span><span class="p">,:,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmean</span><span class="p">(</span><span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,</span><span class="mi">12</span><span class="p">:</span><span class="mi">24</span><span class="p">,</span><span class="mi">0</span><span class="p">:</span><span class="mi">12</span><span class="p">],</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-
-
-
-
-<span class="c1"># Assuming EC_mou and EC_dcm are already defined</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span><span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">constrained_layout</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="n">colors</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">YlGnBu_r</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
-
-<span class="n">xm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
-<span class="n">ym</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span>
-
-<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">conf</span><span class="p">[</span><span class="s1">&#39;tasks&#39;</span><span class="p">][</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">22</span><span class="p">)</span>
-
-
-    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">q</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">):</span>
-            <span class="n">x</span> <span class="o">=</span> <span class="n">EC_normed_MOU</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-            <span class="n">y</span> <span class="o">=</span> <span class="n">EC_normed_rDCM</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span> <span class="p">:,</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-            <span class="n">xm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="n">ym</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-            <span class="n">xerr</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-            <span class="n">yerr</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
-
-            <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;Black&#39;</span> <span class="c1">#colors[p]  # Get color from colormap</span>
-
-            <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span><span class="n">xm</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">],</span> <span class="n">ym</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">],</span> <span class="n">xerr</span><span class="o">=</span><span class="n">xerr</span><span class="p">,</span> <span class="n">yerr</span><span class="o">=</span><span class="n">yerr</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">capsize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">label</span><span class="o">=</span><span class="n">rois_sorted</span><span class="p">[</span><span class="n">p</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
-
-    <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$\mathbf</span><span class="si">{MOU}</span><span class="s1">$&#39;</span><span class="p">)</span>
-    <span class="n">ax</span><span class="p">[</span><span class="n">i_cond</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;$\mathbf</span><span class="si">{rDCM}</span><span class="s1">$&#39;</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
-
-
-<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;betweenHemis_Alignment.png&#39;</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;png&#39;</span><span class="p">,</span>
-    <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span><span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-
-<span class="c1">#plt.legend(labels=rois_sorted,loc=&#39;center left&#39;, bbox_to_anchor=(1.05, 0.45), frameon=False)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<br/></pre></div>
-</div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_29_0.png" src="../_images/notebooks_retNet_model-convergence_29_0.png" />
-</div>
-</div>
-<p>Callosal connections are less affected by local vascular signal spread across V1–V3 and therefore exhibit lower variability.</p>
 </section>
 <section id="Model-convergence">
-<h2><span class="section-number">6.9. </span>Model convergence<a class="headerlink" href="#Model-convergence" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">6.7. </span>Model convergence<a class="headerlink" href="#Model-convergence" title="Permalink to this heading">¶</a></h2>
 <p>MOU and rDCM estimates are robustly correlated and stabilize &gt; participants.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[50]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">9</span>
@@ -1996,7 +1812,7 @@ PearsonRResult(statistic=0.9286876445442753, pvalue=4.8414587374714395e-63)
     <span class="n">plt</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">R2_cond</span><span class="p">[</span><span class="n">i_cond</span><span class="p">],</span> <span class="n">positions</span><span class="o">=</span><span class="p">[</span><span class="n">i_cond</span><span class="p">])</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="n">ymin</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">ymax</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">EC_dcm</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+<span class="c1">#print(EC_dcm.shape)</span>
 
 <span class="n">n_rep</span> <span class="o">=</span> <span class="mi">100</span>
 <span class="n">v_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">16</span><span class="p">,</span><span class="mi">32</span><span class="p">,</span><span class="mi">64</span><span class="p">,</span><span class="mi">128</span><span class="p">])</span>
@@ -2039,7 +1855,6 @@ PearsonRResult(statistic=0.9286876445442753, pvalue=4.8414587374714395e-63)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-(10, 156, 24, 24)
 [  2   4   8  16  32  64 128]
 </pre></div></div>
 </div>
@@ -2047,20 +1862,55 @@ PearsonRResult(statistic=0.9286876445442753, pvalue=4.8414587374714395e-63)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_32_1.png" src="../_images/notebooks_retNet_model-convergence_32_1.png" />
+<img alt="../_images/notebooks_retNet_model-convergence_27_1.png" src="../_images/notebooks_retNet_model-convergence_27_1.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_32_2.png" src="../_images/notebooks_retNet_model-convergence_32_2.png" />
+<img alt="../_images/notebooks_retNet_model-convergence_27_2.png" src="../_images/notebooks_retNet_model-convergence_27_2.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[62]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;w&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i_cond</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_cond</span><span class="p">):</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">R2_cond_av</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">yerr</span> <span class="o">=</span> <span class="n">sem</span><span class="p">(</span><span class="n">R2_cond_av</span><span class="p">[</span><span class="n">i_cond</span><span class="p">,:,:]</span><span class="o">.</span><span class="n">flatten</span><span class="p">())</span>
+    <span class="c1"># Shaded error region</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">v_n</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">yerr</span><span class="o">*</span><span class="mf">2.58</span><span class="p">,</span> <span class="n">y</span> <span class="o">+</span> <span class="n">yerr</span><span class="o">*</span><span class="mf">2.58</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i_cond</span><span class="o">*</span><span class="mi">3</span><span class="p">],</span><span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+    <span class="c1"># Line plot</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">v_n</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="n">i_cond</span><span class="o">*</span><span class="mi">3</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Pearson</span><span class="se">\&#39;</span><span class="s1">s $\mathit</span><span class="si">{R}</span><span class="s1">$&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Subjects ($\mathit</span><span class="si">{n}</span><span class="s1">$)&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">labelsize</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+
+<span class="n">fname</span> <span class="o">=</span> <span class="n">out_pth</span> <span class="o">+</span> <span class="s1">&#39;/MOU-rDCM_Alignment.svg&#39;</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fname</span><span class="p">,</span> <span class="n">transparent</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="s1">&#39;figure&#39;</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;svg&#39;</span><span class="p">,</span>
+    <span class="n">facecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span><span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_retNet_model-convergence_28_0.png" src="../_images/notebooks_retNet_model-convergence_28_0.png" />
 </div>
 </div>
 <p>Group‑level convergence emerges around 20 subjects.</p>
 </section>
 <section id="Graph-metrics">
-<h2><span class="section-number">6.10. </span>Graph metrics<a class="headerlink" href="#Graph-metrics" title="Permalink to this heading">¶</a></h2>
+<h2><span class="section-number">6.8. </span>Graph metrics<a class="headerlink" href="#Graph-metrics" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
@@ -2085,7 +1935,7 @@ PearsonRResult(statistic=0.9286876445442753, pvalue=4.8414587374714395e-63)
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_35_1.png" src="../_images/notebooks_retNet_model-convergence_35_1.png" />
+<img alt="../_images/notebooks_retNet_model-convergence_31_1.png" src="../_images/notebooks_retNet_model-convergence_31_1.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -2200,21 +2050,21 @@ dict_values([0.27163866051169433, 0.2128763870062628, 0.2745444287633638, 0.2241
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_38_0.png" src="../_images/notebooks_retNet_model-convergence_38_0.png" />
+<img alt="../_images/notebooks_retNet_model-convergence_34_0.png" src="../_images/notebooks_retNet_model-convergence_34_0.png" />
 </div>
 </div>
 <div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_38_1.png" src="../_images/notebooks_retNet_model-convergence_38_1.png" />
+<img alt="../_images/notebooks_retNet_model-convergence_34_1.png" src="../_images/notebooks_retNet_model-convergence_34_1.png" />
 </div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_38_2.png" src="../_images/notebooks_retNet_model-convergence_38_2.png" />
+<img alt="../_images/notebooks_retNet_model-convergence_34_2.png" src="../_images/notebooks_retNet_model-convergence_34_2.png" />
 </div>
 </div>
 <div class="nbinput docutils container">
@@ -2241,7 +2091,7 @@ dict_values([0.27163866051169433, 0.2128763870062628, 0.2745444287633638, 0.2241
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_retNet_model-convergence_39_0.png" src="../_images/notebooks_retNet_model-convergence_39_0.png" />
+<img alt="../_images/notebooks_retNet_model-convergence_35_0.png" src="../_images/notebooks_retNet_model-convergence_35_0.png" />
 </div>
 </div>
 </section>
